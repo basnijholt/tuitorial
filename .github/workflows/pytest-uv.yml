@@ -1,0 +1,48 @@
+name: pytest-uv
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.13t"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv venv --python ${{ matrix.python-version }}
+
+      - name: Install tuitorial (minimal)
+        run: |
+          # Install minimal dependencies for testing
+          uv pip install -e ".[test]"
+
+      - name: Run pytest (minimal)
+        run: |
+          source .venv/bin/activate
+          pytest
+
+      - name: Install tuitorial (all dependencies)
+        run: |
+          if [[ ${{ matrix.python-version }} == "3.13t" ]]; then
+            # Install all optional dependencies that work with 3.13t
+            uv pip install -e ".[xarray,widgets,pandas,test]"
+          else
+            uv pip install -e ".[all,pydantic,test]"
+          fi
+
+      - name: Run pytest (all dependencies)
+        run: |
+          source .venv/bin/activate
+          pytest

@@ -1,0 +1,49 @@
+# This file is generated from pyproject.toml using .github/update-environment.py
+name: tuitorial-sphinx
+
+channels:
+- conda-forge
+
+dependencies:
+  - python
+  - pip
+  # from pyproject.toml
+  - cloudpickle
+  - networkx
+  - numpy
+  # optional-dependencies: adaptive
+  - adaptive
+  - adaptive-scheduler>=2.14.0
+  # optional-dependencies: pandas
+  - pandas
+  # optional-dependencies: plotting
+  - bokeh
+  - python-graphviz
+  - holoviews
+  - matplotlib
+  # optional-dependencies: profiling
+  - psutil
+  # optional-dependencies: rich
+  - rich
+  # optional-dependencies: widgets
+  - graphviz-anywidget>=0.3.0
+  - ipywidgets
+  # optional-dependencies: xarray
+  - xarray
+  # optional-dependencies: zarr
+  - zarr
+  # optional-dependencies: docs
+  - emoji
+  - jupytext
+  - myst-nb
+  - myst-parser
+  - sphinx-autodoc-typehints
+  - sphinx-book-theme
+  - sphinx-copybutton
+  - sphinx-notfound-page
+  - sphinx-togglebutton
+  - sphinx
+  - versioningit
+  - nltk
+  - scikit-image
+  - seaborn

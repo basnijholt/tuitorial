@@ -1,0 +1,181 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling", "versioningit"]
+
+[project]
+name = "tuitorial"
+description = "A Python library for defining, managing, and executing function pipelines."
+requires-python = ">=3.10"
+dynamic = ["version"]
+maintainers = [{ name = "Bas Nijholt", email = "bas@nijho.lt" }]
+license = { text = "MIT" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: System :: Distributed Computing",
+]
+dependencies = ["cloudpickle", "networkx", "numpy"]
+
+[project.optional-dependencies]
+adaptive = ["adaptive", "adaptive-scheduler>=2.14.0"]
+pandas = ["pandas"]
+plotting = ["bokeh", "graphviz", "holoviews","matplotlib"]
+profiling = ["psutil"]
+pydantic = ["pydantic"]
+rich = ["rich"]
+widgets = ["graphviz-anywidget>=0.3.0", "ipywidgets"]
+xarray = ["xarray"]
+zarr = ["zarr"]
+test = [
+    "coverage",
+    "pytest-asyncio",
+    "pytest-codspeed",
+    "pytest-cov",
+    "pytest-timeout",
+    "pytest-xdist",
+    "pytest",
+    "versioningit",
+]
+docs = [
+    "emoji",
+    "jupytext",
+    "myst-nb",
+    "myst-parser",
+    "sphinx-autodoc-typehints",
+    "sphinx-book-theme",
+    "sphinx-copybutton",
+    "sphinx-notfound-page",
+    "sphinx-togglebutton",
+    "sphinx",
+    "versioningit",
+    # Used for the example notebook
+    "nltk",
+    "scikit-image",
+    "seaborn",
+    "tuitorial[all]",
+]
+# all doesn't include 'pydantic' because there are no specific features that depend on it
+all = ["tuitorial[adaptive,pandas,plotting,profiling,rich,widgets,xarray,zarr]"]
+dev = [ # all + dev deps
+    "black[jupyter]",
+    "mypy",
+    "pre-commit",
+    "ruff",
+    "versioningit",
+    "tuitorial[all,test,docs,pydantic]",
+]
+[project.urls]
+homepage = "https://tuitorial.readthedocs.io/"
+documentation = "https://tuitorial.readthedocs.io/"
+repository = "https://github.com/tuitorial/tuitorial"
+
+[project.readme]
+content-type = "text/markdown"
+file = "README.md"
+
+[tool.hatch.version]
+source = "versioningit"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tuitorial"]
+
+[tool.hatch.build.hooks.versioningit-onbuild]
+build-file = "tuitorial/_version.py"
+source-file = "tuitorial/_version.py"
+
+[tool.versioningit]
+default-version = "0.0.0"
+
+[tool.versioningit.vcs]
+method = "git"
+match = ["v*"]
+default-tag = "0.0.0"
+
+[tool.versioningit.format]
+dirty = "{version}.dev{distance}+{branch}.{vcs}{rev}.dirty"
+distance = "{version}.dev{distance}+{branch}.{vcs}{rev}"
+distance-dirty = "{version}.dev{distance}+{branch}.{vcs}{rev}.dirty"
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "module"
+addopts = """
+    -vvv
+    --cov=tuitorial
+    --cov-report term
+    --cov-report html
+    --cov-report xml
+    --cov-fail-under=35
+    --asyncio-mode=strict
+    --timeout 60
+"""
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING",
+    "if __name__ == .__main__.:",
+]
+
+[tool.coverage.run]
+omit = [
+    "tuitorial/map/_types.py", # Only imported in `if TYPE_CHECKING` block
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "T20",     # flake8-print
+    "S101",    # Use of assert detected
+    "PD901",   # df is a bad variable name. Be kinder to your future self.
+    "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in {name}
+    "D402",    # First line should not be the function's signature
+    "PLW0603", # Using the global statement to update `X` is discouraged
+    "D401",    # First line of docstring should be in imperative mood
+    "SLF001",  # Private member accessed
+    "S603",    # `subprocess` call: check for execution of untrusted input
+    "S607",    # Starting a process with a partial executable path
+    "PLR0913", # Too many arguments to function call (N > 5)
+    "TD002",   # Missing author in TODO; try: `# TODO(<author_name>): ...`
+    "TD003",   # Missing issue link on the line following this TODO
+    "FIX002",  # Line contains TODO"
+    "E501",    # Line too long
+    "D107",    # Missing docstring in `__init__`
+    "B905",    # `zip()` without an explicit `strict=` parameter
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["SLF001", "ANN", "D", "PLR2004", "ARG001"]
+"tests/test_examples.py" = ["E501"]
+".github/*" = ["INP001"]
+"example.ipynb" = [
+    "D101",
+    "D103",
+    "DTZ005",
+    "PLR2004",
+    "ARG001",
+    "ANN001",
+    "ANN201",
+    "NPY002",
+    "RET504",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 18
+
+[tool.mypy]
+python_version = "3.10"

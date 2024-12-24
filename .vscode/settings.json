@@ -1,0 +1,7 @@
+{
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "--timeout=0",
+        "tests",
+    ]
+}

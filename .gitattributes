@@ -1,0 +1,2 @@
+tuitorial/_static_version.py export-subst
+*.ipynb filter=ipynb_filter
