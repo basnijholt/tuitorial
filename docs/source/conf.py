@@ -3,7 +3,6 @@
 #
 
 import os
-import shutil
 import sys
 from pathlib import Path
 
@@ -67,7 +66,6 @@ default_role = "autolink"
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "networkx": ("https://networkx.org/documentation/stable/", None),
 }
 
 autodoc_member_order = "bysource"
@@ -107,13 +105,6 @@ def replace_named_emojis(input_file: Path, output_file: Path) -> None:
             outfile.write(content_with_emojis)
 
 
-def convert_notebook_to_md(input_file: Path, output_file: Path) -> None:
-    """Convert a notebook to markdown."""
-    import jupytext
-
-    notebook = jupytext.read(input_file)
-    notebook.metadata["jupytext"] = {"formats": "md:myst"}
-    jupytext.write(notebook, output_file)
 
 
 def _change_alerts_to_admonitions(input_text: str) -> str:
@@ -200,14 +191,6 @@ def process_readme_for_sphinx_docs(readme_path: Path, docs_path: Path) -> None:
 readme_path = package_path / "README.md"
 process_readme_for_sphinx_docs(readme_path, docs_path)
 
-# Add the example notebook to the docs
-nb = package_path / "example.ipynb"
-convert_notebook_to_md(nb, docs_path / "source" / "tutorial.md")
-
-# Copy nb to docs/source/notebooks
-nb_docs_folder = docs_path / "source" / "notebooks"
-nb_docs_folder.mkdir(exist_ok=True)
-shutil.copy(nb, nb_docs_folder)
 
 # Group into single streams to prevent multiple output boxes
 nb_merge_streams = True
