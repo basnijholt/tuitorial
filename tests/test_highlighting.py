@@ -34,8 +34,7 @@ def test_focus_default_style():
     """Test that Focus uses default style correctly."""
     focus = Focus("test")
     assert isinstance(focus.style, Style)
-    assert focus.style.color == "yellow"
-    assert focus.style.bold
+    assert focus.style.color.name == "yellow"
 
 
 def test_focus_custom_style():

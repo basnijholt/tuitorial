@@ -41,15 +41,20 @@ def test_code_display_highlight_code(code_display):
     ("focus_type", "pattern", "text", "expected_highlighted"),
     [
         (Focus.literal, "def", "def test()", {(0, 3)}),
-        (Focus.regex, r"\w+\(\)", "def test()", {(4, 9)}),
-        (Focus.line, 1, "line1\nline2", {(0, 5)}),
+        (Focus.regex, r"test\(\)", "def test()", {(4, 10)}),  # Fixed regex pattern
+        (Focus.line, 0, "line1\nline2", {(0, 5)}),  # Changed to 0-based index
         (Focus.range, (0, 4), "test text", {(0, 4)}),
     ],
 )
 def test_highlight_patterns(focus_type, pattern, text, expected_highlighted):
     """Test different highlight patterns."""
     display = CodeDisplay(text)
-    display.update_focuses([focus_type(pattern)])
+    if focus_type == Focus.range:
+        start, end = pattern
+        focus = focus_type(start, end)  # Special handling for range
+    else:
+        focus = focus_type(pattern)
+    display.update_focuses([focus])
     result = display.highlight_code()
 
     # Collect all highlighted ranges

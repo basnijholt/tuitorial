@@ -28,7 +28,7 @@ async def app(example_code, tutorial_steps):
 @pytest.mark.asyncio
 async def test_app_init(app):
     """Test app initialization."""
-    app, _ = app
+    app, pilot = await anext(app)
     assert app.current_index == 0
     assert len(app.tutorial_steps) == 2
 
@@ -36,7 +36,7 @@ async def test_app_init(app):
 @pytest.mark.asyncio
 async def test_next_focus(app):
     """Test next focus action."""
-    app, pilot = app
+    app, pilot = await anext(app)
 
     # Initial state
     assert app.current_index == 0
@@ -49,7 +49,7 @@ async def test_next_focus(app):
 @pytest.mark.asyncio
 async def test_previous_focus(app):
     """Test previous focus action."""
-    app, pilot = app
+    app, pilot = await anext(app)
 
     # Move to last step
     app.current_index = len(app.tutorial_steps) - 1
@@ -62,7 +62,7 @@ async def test_previous_focus(app):
 @pytest.mark.asyncio
 async def test_reset_focus(app):
     """Test reset focus action."""
-    app, pilot = app
+    app, pilot = await anext(app)
 
     # Move to last step
     app.current_index = len(app.tutorial_steps) - 1
@@ -75,33 +75,39 @@ async def test_reset_focus(app):
 @pytest.mark.asyncio
 async def test_quit(app):
     """Test quit action."""
-    app, pilot = app
+    app, pilot = await anext(app)
 
-    # Press quit key
-    with pytest.raises(SystemExit):
+    # Create a task to press 'q'
+    async def press_q():
         await pilot.press("q")
+
+    # Run the press_q task and expect the app to exit
+    await press_q()
+    assert not app.is_running
 
 
 @pytest.mark.asyncio
 async def test_update_display(app):
     """Test display updates."""
-    app, _ = app
-    initial_description = app.query_one("#description").render().plain
+    app, _ = await anext(app)
+    initial_description = app.query_one("#description").render()
 
     # Move to next step
     app.action_next_focus()
-    new_description = app.query_one("#description").render().plain
+    new_description = app.query_one("#description").render()
 
     assert initial_description != new_description
 
 
-def test_current_focuses(app):
+@pytest.mark.asyncio
+async def test_current_focuses(app):
     """Test current_focuses property."""
-    app, _ = app
+    app, _ = await anext(app)
     assert app.current_focuses == app.tutorial_steps[0][1]
 
 
-def test_current_description(app):
+@pytest.mark.asyncio
+async def test_current_description(app):
     """Test current_description property."""
-    app, _ = app
+    app, _ = await anext(app)
     assert app.current_description == app.tutorial_steps[0][0]
