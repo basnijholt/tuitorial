@@ -37,6 +37,7 @@ dependencies = ["rich", "textual"]
 
 [dependency-groups]
 dev = [
+    "pytest-cov>=6.0.0",
     "pytest>=8.3.4",
     "pytest-asyncio>=0.25.0",
     "pytest-timeout>=2.3.1",
