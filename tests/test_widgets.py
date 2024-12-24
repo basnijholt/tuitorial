@@ -67,6 +67,7 @@ def test_highlight_patterns(focus_type, pattern, text, expected_highlighted):
     assert highlighted_ranges == expected_highlighted
 
 
+@pytest.mark.parametrize("dim_background", [True, False])
 @pytest.mark.parametrize(
     ("code", "focus", "expected_bright", "expected_dim"),
     [
@@ -135,9 +136,9 @@ def test_highlight_patterns(focus_type, pattern, text, expected_highlighted):
         ),
     ],
 )
-def test_highlighting_ranges(code, focus, expected_bright, expected_dim):
+def test_highlighting_ranges(code, focus, expected_bright, expected_dim, dim_background):
     """Test that highlighting ranges are correct with no off-by-one errors."""
-    display = CodeDisplay(code)
+    display = CodeDisplay(code, dim_background=dim_background)
     display.update_focuses([focus])
     result = display.highlight_code()
 
@@ -153,7 +154,7 @@ def test_highlighting_ranges(code, focus, expected_bright, expected_dim):
                 bright_ranges.add((start, end))
 
     assert bright_ranges == expected_bright
-    assert dim_ranges == expected_dim
+    assert dim_ranges == (expected_dim if dim_background else set())
 
 
 def test_multiple_focuses():
@@ -212,15 +213,36 @@ def test_focus_at_boundaries():
     assert (8, 11) in bright_ranges
 
 
-def test_no_focuses():
-    """Test that entire text is dimmed when there are no focuses."""
-    code = "abc def"
-    display = CodeDisplay(code)
+@pytest.mark.parametrize("dim_background", [True, False])
+def test_dim_background(dim_background):
+    """Test that dim_background parameter works correctly."""
+    code = "abc def ghi"
+    focus = Focus.literal("def")
+
+    display = CodeDisplay(code, [focus], dim_background=dim_background)
     result = display.highlight_code()
 
     dim_ranges = {(start, end) for start, end, style in result.spans if style and style.dim}
 
-    assert dim_ranges == {(0, 7)}  # entire text is dim
+    if dim_background:
+        assert dim_ranges == {(0, 4), (7, 11)}  # "abc " and " ghi"
+    else:
+        assert not dim_ranges  # no dim ranges when dim_background is False
+
+
+@pytest.mark.parametrize("dim_background", [True, False])
+def test_no_focuses(dim_background):
+    """Test text dimming behavior when there are no focuses."""
+    code = "abc def"
+    display = CodeDisplay(code, dim_background=dim_background)
+    result = display.highlight_code()
+
+    dim_ranges = {(start, end) for start, end, style in result.spans if style and style.dim}
+
+    if dim_background:
+        assert dim_ranges == {(0, 7)}  # entire text is dim
+    else:
+        assert not dim_ranges  # no dim ranges
 
 
 def test_style_preservation():
