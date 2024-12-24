@@ -7,7 +7,7 @@ from rich.style import Style
 from rich.text import Text
 from textual.widgets import Static
 
-from .highlighting import Focus, FocusType
+from .highlighting import Focus, FocusType, _BetweenTuple, _RangeTuple, _StartsWithTuple
 
 
 class CodeDisplay(Static):
@@ -99,7 +99,7 @@ def _collect_line_ranges(code: str, focus: Focus) -> set[tuple[int, int, Style]]
 
 def _collect_range_ranges(_: str, focus: Focus) -> set[tuple[int, int, Style]]:
     """Collect ranges for range focus type."""
-    assert isinstance(focus.pattern, tuple)
+    assert isinstance(focus.pattern, _RangeTuple)
     start, end = focus.pattern
     assert isinstance(start, int)
     return {(start, end, focus.style)}
@@ -123,6 +123,8 @@ def _collect_highlight_ranges(
                 ranges.update(_collect_range_ranges(code, focus))
             case FocusType.STARTSWITH:
                 ranges.update(_collect_startswith_ranges(code, focus))
+            case FocusType.BETWEEN:
+                ranges.update(_collect_between_ranges(code, focus))
 
     return ranges
 
@@ -205,7 +207,7 @@ def _collect_startswith_ranges(code: str, focus: Focus) -> set[tuple[int, int, S
 
     """
     ranges = set()
-    assert isinstance(focus.pattern, tuple)
+    assert isinstance(focus.pattern, _StartsWithTuple)
     text, from_start_of_line = focus.pattern
     assert isinstance(text, str)
     assert isinstance(from_start_of_line, bool)
@@ -235,5 +237,50 @@ def _collect_startswith_ranges(code: str, focus: Focus) -> set[tuple[int, int, S
                 end = len(code)
             ranges.add((start, end, focus.style))
             pos = start + 1
+
+    return ranges
+
+
+def _collect_between_ranges(code: str, focus: Focus) -> set[tuple[int, int, Style]]:
+    """Collect ranges for between focus type."""
+    ranges = set()
+    assert isinstance(focus.pattern, _BetweenTuple)
+    start_pattern, end_pattern, inclusive, multiline, match_index, greedy = focus.pattern
+
+    # Escape special characters if they're not already regex patterns
+    if not any(c in start_pattern for c in ".^$*+?{}[]\\|()"):
+        start_pattern = re.escape(start_pattern)
+    if not any(c in end_pattern for c in ".^$*+?{}[]\\|()"):
+        end_pattern = re.escape(end_pattern)
+
+    # Create the regex pattern
+    flags = re.MULTILINE | re.DOTALL if multiline else 0
+
+    if inclusive:
+        # Include the patterns in the match
+        quantifier = ".*" if greedy else ".*?"
+        pattern = f"({start_pattern})({quantifier})({end_pattern})"
+    else:
+        # Use positive lookbehind/ahead to match between patterns
+        quantifier = ".*" if greedy else ".*?"
+        pattern = f"(?<={start_pattern})({quantifier})(?={end_pattern})"
+
+    matches = list(re.finditer(pattern, code, flags=flags))
+
+    if match_index is not None:
+        # Only include the specified match
+        if 0 <= match_index < len(matches):
+            match = matches[match_index]
+            if inclusive:
+                ranges.add((match.start(), match.end(), focus.style))
+            else:
+                ranges.add((match.start(1), match.end(1), focus.style))
+    else:
+        # Include all matches
+        for match in matches:
+            if inclusive:
+                ranges.add((match.start(), match.end(), focus.style))
+            else:
+                ranges.add((match.start(1), match.end(1), focus.style))
 
     return ranges
