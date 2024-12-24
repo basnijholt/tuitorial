@@ -110,6 +110,23 @@ Focus.line(1, style="bold blue")  # Highlight first line
 Focus.range(0, 10, style="bold magenta")  # Highlight first 10 characters
 ```
 
+#### Starts With
+
+Highlights lines starting with the specified text. Can be configured to match from the start of any line or only at the start of the line.
+
+```python
+Focus.startswith("import", style="bold blue", from_start_of_line=True)
+Focus.startswith("from", style="bold blue", from_start_of_line=False)
+```
+
+#### Between
+
+Highlights text between two specified patterns. Supports inclusive or exclusive bounds, multiline matching, and greedy or non-greedy matching.
+
+```python
+Focus.between("start_function", "end_function", style="bold blue", inclusive=True, multiline=True)
+```
+
 ## 🎨 Styling
 
 Styles can be customized using Rich's style syntax:
