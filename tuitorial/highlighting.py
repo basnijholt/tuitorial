@@ -32,8 +32,24 @@ class Focus:
         cls,
         text: str,
         style: Style = Style(color="yellow", bold=True),  # noqa: B008
+        *,
+        word_boundary: bool = False,
     ) -> Focus:
-        """Create a focus for a literal string."""
+        """Create a focus for a literal string.
+
+        Parameters
+        ----------
+        text
+            The text to match
+        style
+            The style to apply to the matched text
+        word_boundary
+            If True, only match the text when it appears as a word
+
+        """
+        if word_boundary:
+            pattern = re.compile(rf"\b{re.escape(text)}\b")
+            return cls(pattern, style, FocusType.REGEX)
         return cls(text, style, FocusType.LITERAL)
 
     @classmethod

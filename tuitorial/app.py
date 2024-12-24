@@ -52,7 +52,10 @@ class TutorialApp(App):
         """Create child widgets for the app."""
         yield Header(show_clock=True)
         yield Container(
-            Static(f"Step {self.current_index + 1}/{len(self.tutorial_steps)}", id="description"),
+            Static(
+                f"Step {self.current_index + 1}/{len(self.tutorial_steps)}\n{self.current_description}",
+                id="description",
+            ),
             self.code_display,
         )
         yield Footer()

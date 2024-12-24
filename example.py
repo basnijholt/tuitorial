@@ -25,9 +25,10 @@ def combine(x: int, y: int) -> int:
             [Focus.regex(r'mapspec="[^"]*"', Style(color="bright_blue", bold=True))],
         ),
         (
-            "Input Indices\nHighlighting the input indices [i] and [j]",
+            "Input Indices\nHighlighting the input indices \\[i] and \\[j]",
             [
                 Focus.literal("[i]", Style(color="bright_yellow", bold=True)),
+                Focus.literal("i", Style(color="bright_yellow", bold=True), word_boundary=True),
                 Focus.literal("[j]", Style(color="bright_green", bold=True)),
             ],
         ),

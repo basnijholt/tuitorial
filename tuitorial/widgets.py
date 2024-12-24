@@ -36,14 +36,16 @@ class CodeDisplay(Static):
 
             elif focus.type == FocusType.REGEX:
                 pattern = (
-                    focus.pattern
+                    focus.pattern  # type: ignore[assignment]
                     if isinstance(focus.pattern, Pattern)
-                    else re.compile(focus.pattern)
+                    else re.compile(focus.pattern)  # type: ignore[type-var]
                 )
+                assert isinstance(pattern, Pattern)
                 for match in pattern.finditer(self.code):
                     text.stylize(focus.style, match.start(), match.end())
 
             elif focus.type == FocusType.LINE:
+                assert isinstance(focus.pattern, int)
                 line_number = int(focus.pattern)
                 lines = self.code.split("\n")
                 if 0 <= line_number < len(lines):
@@ -52,6 +54,7 @@ class CodeDisplay(Static):
                     text.stylize(focus.style, start, end)
 
             elif focus.type == FocusType.RANGE:
+                assert isinstance(focus.pattern, tuple)
                 start, end = focus.pattern
                 text.stylize(focus.style, start, end)
 

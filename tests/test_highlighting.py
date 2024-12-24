@@ -6,6 +6,7 @@ import pytest
 from rich.style import Style
 
 from tuitorial.highlighting import Focus, FocusType
+from tuitorial.widgets import CodeDisplay
 
 
 def test_focus_type_enum():
@@ -55,3 +56,24 @@ def test_regex_pattern_passthrough():
     pattern = re.compile(r"\w+")
     focus = Focus.regex(pattern)
     assert focus.pattern is pattern
+
+
+def test_literal_word_boundary():
+    """Test literal focus with word boundary."""
+    text = "i init in string"  # "i" as word, "i" in "init", "in", and "string"
+
+    display = CodeDisplay(text)
+
+    # Without word boundary
+    focus = Focus.literal("i")
+    display.update_focuses([focus])
+    result = display.highlight_code()
+    highlighted = {(start, end) for start, end, style in result.spans if style and style.bold}
+    assert highlighted == {(0, 1), (13, 14), (2, 3), (4, 5), (7, 8)}  # matches all "i"s
+
+    # With word boundary
+    focus = Focus.literal("i", word_boundary=True)
+    display.update_focuses([focus])
+    result = display.highlight_code()
+    highlighted = {(start, end) for start, end, style in result.spans if style and style.bold}
+    assert highlighted == {(0, 1)}  # only matches the standalone "i"
