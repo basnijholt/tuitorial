@@ -4,7 +4,8 @@ from typing import ClassVar, NamedTuple
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.widgets import Footer, Header, Static, Tab, TabbedContent, Tabs
+from textual.containers import Container
+from textual.widgets import Footer, Header, Static, TabbedContent, TabPane, Tabs
 
 from .highlighting import Focus
 from .widgets import CodeDisplay
@@ -21,7 +22,7 @@ class Chapter:
     """A chapter of a tutorial, containing multiple steps."""
 
     def __init__(self, title: str, code: str, steps: list[Step]) -> None:
-        self.title = title
+        self.title = title or f"Untitled {id(self)}"
         self.code = code
         self.steps = steps
         self.current_step_index = 0
@@ -39,9 +40,6 @@ class Chapter:
 
     def update_display(self) -> None:
         """Update the display with current focus."""
-        self.code_display.update_step_description(
-            f"Step {self.current_step_index + 1}/{len(self.steps)}\n{self.current_step.description}",
-        )
         self.code_display.update_focuses(self.current_step.focuses)
 
     def next_step(self) -> None:
@@ -67,11 +65,13 @@ class Chapter:
 
     def compose(self) -> ComposeResult:
         """Compose the chapter display."""
-        yield Static(
-            f"Step {self.current_step_index + 1}/{len(self.steps)}\n{self.current_step.description}",
-            id="description",
+        yield Container(
+            Static(
+                f"Step {self.current_step_index + 1}/{len(self.steps)}\n{self.current_step.description}",
+                id="description",
+            ),
+            self.code_display,
         )
-        yield self.code_display
 
 
 class TutorialApp(App):
@@ -127,13 +127,8 @@ class TutorialApp(App):
         yield Header(show_clock=True)
         with TabbedContent():
             for chapter in self.chapters:
-                with Tab(chapter.title, id=chapter.title.lower().replace(" ", "-")):
-                    yield Static(
-                        f"Step {chapter.current_step_index + 1}/{len(chapter.steps)}\n"
-                        f"{chapter.current_step.description}",
-                        id=f"{chapter.title.lower().replace(' ', '-')}-description",
-                    )
-                    yield chapter.code_display
+                with TabPane(chapter.title):
+                    yield from chapter.compose()
         yield Footer()
 
     @property
