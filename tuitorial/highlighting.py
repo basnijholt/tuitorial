@@ -17,13 +17,14 @@ class FocusType(Enum):
     REGEX = auto()
     LINE = auto()
     RANGE = auto()
+    STARTSWITH = auto()
 
 
 @dataclass
 class Focus:
     """A pattern to focus on with its style."""
 
-    pattern: str | Pattern | tuple[int, int] | int
+    pattern: str | Pattern | tuple[int, int] | int | tuple[str, bool]
     style: Style = Style(color="yellow", bold=True)  # noqa: RUF009
     type: FocusType = FocusType.LITERAL
 
@@ -81,3 +82,25 @@ class Focus:
     ) -> Focus:
         """Create a focus for a range of characters."""
         return cls((start, end), style, FocusType.RANGE)
+
+    @classmethod
+    def startswith(
+        cls,
+        text: str,
+        style: Style = Style(color="blue", bold=True),  # noqa: B008
+        *,
+        from_start_of_line: bool = False,
+    ) -> Focus:
+        """Create a focus for text that starts with the given pattern.
+
+        Parameters
+        ----------
+        text
+            The text to match at the start
+        style
+            The style to apply to the matched text
+        from_start_of_line
+            If True, only match at the start of lines, if False match anywhere
+
+        """
+        return cls((text, from_start_of_line), style, FocusType.STARTSWITH)

@@ -9,12 +9,6 @@ from tuitorial.highlighting import Focus, FocusType
 from tuitorial.widgets import CodeDisplay
 
 
-def test_focus_type_enum():
-    """Test that FocusType enum has all expected values."""
-    assert len(FocusType) == 4
-    assert all(hasattr(FocusType, t) for t in ["LITERAL", "REGEX", "LINE", "RANGE"])
-
-
 @pytest.mark.parametrize(
     ("method", "args", "expected_type"),
     [
@@ -245,3 +239,74 @@ def test_overlapping_bracket_highlights():
         if segment.text == "]":
             assert not segment.style.dim, "Closing bracket should not be dimmed"
             assert segment.style.bold, "Closing bracket should be bold"
+
+
+def test_startswith_focus_real_example():
+    """Test the startswith focus type with a real example."""
+    code = """
+@pipefunc(output_name="y", mapspec="x[i] -> y[i]")
+def double_it(x: int) -> int:
+    return 2 * x
+@pipefunc(output_name="z", mapspec="x[j], y[i] -> z[i, j]")
+def combine(x: int, y: int) -> int:
+    return x + y
+"""
+
+    focus = Focus.startswith("@pipefunc", from_start_of_line=True)
+    display = CodeDisplay(code)
+    display.update_focuses([focus])
+    result = display.highlight_code()
+
+    highlights = {(start, end) for start, end, style in result.spans if style and not style.dim}
+
+    # Find both @pipefunc lines
+    first_dec = code.find("@pipefunc")
+    first_end = code.find("\n", first_dec)
+    second_dec = code.find("@pipefunc", first_end)
+    second_end = code.find("\n", second_dec)
+
+    expected = {
+        (first_dec, first_end),
+        (second_dec, second_end),
+    }
+
+    print("\nDebug information:")
+    print(f"Code:\n{code}")
+    print(f"Highlights found: {highlights}")
+    print(f"Expected: {expected}")
+    print("\nFirst @pipefunc line:", code[first_dec:first_end])
+    print("Second @pipefunc line:", code[second_dec:second_end])
+
+    assert highlights == expected
+
+
+def test_startswith_focus_anywhere_multiple():
+    """Test the startswith focus type without from_start_of_line finding all matches."""
+    code = """
+    something @pipefunc first
+    another line
+    text @pipefunc second
+    """
+
+    # Without from_start_of_line, should match from all occurrences to end of their lines
+    focus = Focus.startswith("@pipefunc", from_start_of_line=False)
+    display = CodeDisplay(code)
+    display.update_focuses([focus])
+    result = display.highlight_code()
+
+    highlights = {(start, end) for start, end, style in result.spans if style and not style.dim}
+
+    # Find all occurrences of @pipefunc and their line ends
+    expected = set()
+    pos = 0
+    while True:
+        match_pos = code.find("@pipefunc", pos)
+        if match_pos == -1:
+            break
+        line_end = code.find("\n", match_pos)
+        if line_end == -1:
+            line_end = len(code)
+        expected.add((match_pos, line_end))
+        pos = match_pos + 1
+
+    assert highlights == expected

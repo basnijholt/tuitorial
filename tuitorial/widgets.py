@@ -101,6 +101,7 @@ def _collect_range_ranges(_: str, focus: Focus) -> set[tuple[int, int, Style]]:
     """Collect ranges for range focus type."""
     assert isinstance(focus.pattern, tuple)
     start, end = focus.pattern
+    assert isinstance(start, int)
     return {(start, end, focus.style)}
 
 
@@ -110,16 +111,18 @@ def _collect_highlight_ranges(
 ) -> set[tuple[int, int, Style]]:
     """Collect all ranges that need highlighting with their styles."""
     ranges = set()
-    focus_type_handlers = {
-        FocusType.LITERAL: _collect_literal_ranges,
-        FocusType.REGEX: _collect_regex_ranges,
-        FocusType.LINE: _collect_line_ranges,
-        FocusType.RANGE: _collect_range_ranges,
-    }
-
     for focus in focuses:
-        handler = focus_type_handlers[focus.type]
-        ranges.update(handler(code, focus))
+        match focus.type:
+            case FocusType.LITERAL:
+                ranges.update(_collect_literal_ranges(code, focus))
+            case FocusType.REGEX:
+                ranges.update(_collect_regex_ranges(code, focus))
+            case FocusType.LINE:
+                ranges.update(_collect_line_ranges(code, focus))
+            case FocusType.RANGE:
+                ranges.update(_collect_range_ranges(code, focus))
+            case FocusType.STARTSWITH:
+                ranges.update(_collect_startswith_ranges(code, focus))
 
     return ranges
 
@@ -180,3 +183,57 @@ def _apply_highlights(
     # Dim any remaining text
     if dim_background and current_pos < len(code):
         text.stylize(Style(dim=True), current_pos, len(code))
+
+
+def _collect_startswith_ranges(code: str, focus: Focus) -> set[tuple[int, int, Style]]:
+    """Collect ranges for startswith focus type.
+
+    Matches and highlights entire lines that start with the pattern
+    (ignoring leading whitespace) or from the pattern to the end of line.
+
+    Parameters
+    ----------
+    code
+        The code to search
+    focus
+        Focus object containing the pattern to match and whether to match from line starts
+
+    If from_start_of_line is True, matches the pattern at the start of any line
+    (ignoring leading whitespace) and highlights the entire line.
+    If from_start_of_line is False, finds all occurrences of the pattern anywhere
+    and highlights from each occurrence to the end of its line.
+
+    """
+    ranges = set()
+    assert isinstance(focus.pattern, tuple)
+    text, from_start_of_line = focus.pattern
+    assert isinstance(text, str)
+    assert isinstance(from_start_of_line, bool)
+
+    if from_start_of_line:
+        # Process each line, keeping track of position
+        pos = 0
+        for line in code.splitlines(keepends=True):
+            stripped = line.lstrip()
+            if stripped.startswith(text):
+                # Find start of the actual text in the original line
+                start = pos + line.find(text)
+                end = pos + len(line.rstrip("\n"))
+                ranges.add((start, end, focus.style))
+            pos += len(line)
+    else:
+        # Find all occurrences
+        pos = 0
+        while True:
+            # Find next occurrence of pattern
+            start = code.find(text, pos)
+            if start == -1:
+                break
+            # Find the end of the line containing this occurrence
+            end = code.find("\n", start)
+            if end == -1:
+                end = len(code)
+            ranges.add((start, end, focus.style))
+            pos = start + 1
+
+    return ranges

@@ -20,6 +20,16 @@ def combine(x: int, y: int) -> int:
     # Define tutorial steps with different highlight colors
     tutorial_steps = [
         (
+            "@pipefunc decorator\nShows all pipefunc decorators in the code",
+            [
+                Focus.startswith(
+                    "@pipefunc",
+                    Style(color="bright_yellow", bold=True),
+                    from_start_of_line=True,
+                ),
+            ],
+        ),
+        (
             "Mapspec Overview\nShows all mapspec patterns in the code",
             [Focus.regex(r'mapspec="[^"]*"', Style(color="bright_blue", bold=True))],
         ),
@@ -34,7 +44,7 @@ def combine(x: int, y: int) -> int:
         ),
         (
             "Function Definitions\nShows all function definitions in the code",
-            [Focus.regex(r"def.*:$", Style(color="bright_magenta", bold=True))],
+            [Focus.regex(r"def.*:(?:\n|$)", Style(color="bright_magenta", bold=True))],
         ),
         (
             "First Function\nComplete implementation of double_it",
