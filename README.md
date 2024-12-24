@@ -12,6 +12,25 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [🎯 Features](#-features)
+- [🚀 Installation](#-installation)
+- [🎮 Quick Start](#-quick-start)
+- [🎯 Focus Types](#-focus-types)
+  - [Literal Match](#literal-match)
+  - [Regular Expression](#regular-expression)
+  - [Line Number](#line-number)
+  - [Range](#range)
+- [🎨 Styling](#-styling)
+- [⌨️ Controls](#-controls)
+- [📖 Advanced Usage](#-advanced-usage)
+  - [Custom Highlighting Patterns](#custom-highlighting-patterns)
+  - [Multiple Highlights per Step](#multiple-highlights-per-step)
+- [🧪 Development](#-development)
+- [🤝 Contributing](#-contributing)
+- [📝 License](#-license)
+- [🙏 Acknowledgments](#-acknowledgments)
+- [📚 Similar Projects](#-similar-projects)
+- [🐛 Troubleshooting](#-troubleshooting)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
