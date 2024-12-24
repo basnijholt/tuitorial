@@ -21,6 +21,8 @@
   - [Regular Expression](#regular-expression)
   - [Line Number](#line-number)
   - [Range](#range)
+    - [Starts With](#starts-with)
+    - [Between](#between)
 - [🎨 Styling](#-styling)
 - [⌨️ Controls](#-controls)
 - [📖 Advanced Usage](#-advanced-usage)
