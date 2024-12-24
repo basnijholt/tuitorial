@@ -4,7 +4,6 @@ from typing import ClassVar
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.containers import Container
 from textual.widgets import Footer, Header, Static
 
 from .highlighting import Focus
@@ -62,13 +61,12 @@ class TutorialApp(App):
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Header(show_clock=True)
-        yield Container(
-            Static(
-                f"Step {self.current_index + 1}/{len(self.tutorial_steps)}\n{self.current_description}",
-                id="description",
-            ),
-            self.code_display,
+        yield Static(
+            f"Step {self.current_index + 1}/{len(self.tutorial_steps)}\n{self.current_description}",
+            id="description",
         )
+        yield self.code_display
+
         yield Footer()
 
     @property
