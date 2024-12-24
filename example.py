@@ -2,8 +2,7 @@
 
 from rich.style import Style
 
-from tuitorial.app import TutorialApp
-from tuitorial.highlighting import Focus
+from tuitorial import Focus, TutorialApp
 
 
 def main() -> None:
