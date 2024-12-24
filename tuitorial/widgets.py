@@ -35,6 +35,15 @@ class CodeDisplay(Static):
         self.code = code
         self.focuses = focuses or []
         self.dim_background = dim_background
+        self.step_description_widget = Static("", id="description")
+
+    def compose(self):
+        """Add the description widget."""
+        yield self.step_description_widget
+
+    def update_step_description(self, new_description: str) -> None:
+        """Update the step description."""
+        self.step_description_widget.update(new_description)
 
     def update_focuses(self, focuses: list[Focus]) -> None:
         """Update the focuses and refresh the display."""
