@@ -11,12 +11,30 @@ from .highlighting import Focus, FocusType
 
 
 class CodeDisplay(Static):
-    """A widget to display code with highlighting."""
+    """A widget to display code with highlighting.
 
-    def __init__(self, code: str, focuses: list[Focus] | None = None) -> None:
+    Parameters
+    ----------
+    code
+        The code to display
+    focuses
+        List of Focus objects to apply
+    dim_background
+        Whether to dim the non-highlighted text
+
+    """
+
+    def __init__(
+        self,
+        code: str,
+        focuses: list[Focus] | None = None,
+        *,
+        dim_background: bool = True,
+    ) -> None:
         super().__init__()
         self.code = code
         self.focuses = focuses or []
+        self.dim_background = dim_background
 
     def update_focuses(self, focuses: list[Focus]) -> None:
         """Update the focuses and refresh the display."""
@@ -62,16 +80,17 @@ class CodeDisplay(Static):
                 highlighted_ranges.add((start, end))
                 text.stylize(focus.style, start, end)
 
-        # Then dim all non-highlighted ranges
-        current_pos = 0
-        for start, end in sorted(highlighted_ranges):
-            if current_pos < start:
-                text.stylize(Style(dim=True), current_pos, start)
-            current_pos = end
+        # Then dim all non-highlighted ranges if dim_background is True
+        if self.dim_background:
+            current_pos = 0
+            for start, end in sorted(highlighted_ranges):
+                if current_pos < start:
+                    text.stylize(Style(dim=True), current_pos, start)
+                current_pos = end
 
-        # Dim any remaining text after the last highlight
-        if current_pos < len(self.code):
-            text.stylize(Style(dim=True), current_pos, len(self.code))
+            # Dim any remaining text after the last highlight
+            if current_pos < len(self.code):
+                text.stylize(Style(dim=True), current_pos, len(self.code))
 
         return text
 

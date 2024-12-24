@@ -38,15 +38,26 @@ class TutorialApp(App):
         Binding("q", "quit", "Quit"),
         Binding("right", "next_focus", "Next Focus"),
         Binding("left", "previous_focus", "Previous Focus"),
+        Binding("d", "toggle_dim", "Toggle Dim"),
         ("r", "reset_focus", "Reset Focus"),
     ]
 
-    def __init__(self, code: str, tutorial_steps: list[tuple[str, list[Focus]]]) -> None:
+    def __init__(
+        self,
+        code: str,
+        tutorial_steps: list[tuple[str, list[Focus]]],
+        *,
+        dim_background: bool = True,
+    ) -> None:
         super().__init__()
         self.code = code
         self.tutorial_steps = tutorial_steps
         self.current_index = 0
-        self.code_display = CodeDisplay(self.code, self.current_focuses)
+        self.code_display = CodeDisplay(
+            self.code,
+            self.current_focuses,
+            dim_background=dim_background,
+        )
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -94,4 +105,10 @@ class TutorialApp(App):
     def action_reset_focus(self) -> None:
         """Reset to first focus pattern."""
         self.current_index = 0
+        self.update_display()
+
+    def action_toggle_dim(self) -> None:
+        """Toggle dim background."""
+        self.code_display.dim_background = not self.code_display.dim_background
+        self.code_display.refresh()
         self.update_display()
