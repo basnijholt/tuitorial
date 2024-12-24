@@ -1,5 +1,6 @@
 # tests/test_widgets.py
 import pytest
+from rich.style import Style
 from rich.text import Text
 
 from tuitorial.highlighting import Focus
@@ -64,3 +65,175 @@ def test_highlight_patterns(focus_type, pattern, text, expected_highlighted):
             highlighted_ranges.add((start, end))
 
     assert highlighted_ranges == expected_highlighted
+
+
+@pytest.mark.parametrize(
+    ("code", "focus", "expected_bright", "expected_dim"),
+    [
+        # Single character highlight
+        (
+            "abc",
+            Focus.literal("b"),
+            {(1, 2)},  # "b" is bright
+            {(0, 1), (2, 3)},  # "a" and "c" are dim
+        ),
+        # First character highlight
+        (
+            "abc",
+            Focus.literal("a"),
+            {(0, 1)},  # "a" is bright
+            {(1, 3)},  # "bc" is dim
+        ),
+        # Last character highlight
+        (
+            "abc",
+            Focus.literal("c"),
+            {(2, 3)},  # "c" is bright
+            {(0, 2)},  # "ab" is dim
+        ),
+        # Multiple character highlight
+        (
+            "abcdef",
+            Focus.literal("bcd"),
+            {(1, 4)},  # "bcd" is bright
+            {(0, 1), (4, 6)},  # "a" and "ef" are dim
+        ),
+        # Entire string highlight
+        (
+            "abc",
+            Focus.literal("abc"),
+            {(0, 3)},  # "abc" is bright
+            set(),  # nothing is dim
+        ),
+        # Multiple occurrences
+        (
+            "aba",
+            Focus.literal("a"),
+            {(0, 1), (2, 3)},  # both "a"s are bright
+            {(1, 2)},  # "b" is dim
+        ),
+        # Empty string
+        (
+            "",
+            Focus.literal("a"),
+            set(),  # nothing is bright
+            set(),  # nothing is dim
+        ),
+        # Newlines
+        (
+            "a\nb\nc",
+            Focus.literal("b"),
+            {(2, 3)},  # "b" is bright
+            {(0, 2), (3, 5)},  # "a\n" and "\nc" are dim
+        ),
+        # Multiple newlines
+        (
+            "\n\n\n",
+            Focus.literal("\n"),
+            {(0, 1), (1, 2), (2, 3)},  # all newlines are bright
+            set(),  # nothing is dim
+        ),
+    ],
+)
+def test_highlighting_ranges(code, focus, expected_bright, expected_dim):
+    """Test that highlighting ranges are correct with no off-by-one errors."""
+    display = CodeDisplay(code)
+    display.update_focuses([focus])
+    result = display.highlight_code()
+
+    # Collect bright and dim ranges
+    bright_ranges = set()
+    dim_ranges = set()
+
+    for start, end, style in result.spans:
+        if style:
+            if style.dim:
+                dim_ranges.add((start, end))
+            else:
+                bright_ranges.add((start, end))
+
+    assert bright_ranges == expected_bright
+    assert dim_ranges == expected_dim
+
+
+def test_multiple_focuses():
+    """Test that multiple focuses work correctly."""
+    code = "abc def ghi"
+    focuses = [
+        Focus.literal("abc"),
+        Focus.literal("ghi"),
+    ]
+
+    display = CodeDisplay(code)
+    display.update_focuses(focuses)
+    result = display.highlight_code()
+
+    bright_ranges = {(start, end) for start, end, style in result.spans if style and not style.dim}
+    dim_ranges = {(start, end) for start, end, style in result.spans if style and style.dim}
+
+    assert bright_ranges == {(0, 3), (8, 11)}  # "abc" and "ghi"
+    assert dim_ranges == {(3, 8)}  # " def "
+
+
+def test_overlapping_focuses():
+    """Test that overlapping focuses are handled correctly."""
+    code = "abcdef"
+    focuses = [
+        Focus.literal("abc"),
+        Focus.literal("cde"),
+    ]
+
+    display = CodeDisplay(code)
+    display.update_focuses(focuses)
+    result = display.highlight_code()
+
+    bright_ranges = {(start, end) for start, end, style in result.spans if style and not style.dim}
+    dim_ranges = {(start, end) for start, end, style in result.spans if style and style.dim}
+
+    assert bright_ranges == {(0, 3), (2, 5)}  # "abc" and "cde"
+    assert dim_ranges == {(5, 6)}  # "f"
+
+
+def test_focus_at_boundaries():
+    """Test highlighting at string boundaries."""
+    code = "abc\ndef\nghi"
+
+    # Test start boundary
+    display = CodeDisplay(code)
+    display.update_focuses([Focus.literal("abc")])
+    result = display.highlight_code()
+    bright_ranges = {(start, end) for start, end, style in result.spans if style and not style.dim}
+    assert (0, 3) in bright_ranges
+
+    # Test end boundary
+    display.update_focuses([Focus.literal("ghi")])
+    result = display.highlight_code()
+    bright_ranges = {(start, end) for start, end, style in result.spans if style and not style.dim}
+    assert (8, 11) in bright_ranges
+
+
+def test_no_focuses():
+    """Test that entire text is dimmed when there are no focuses."""
+    code = "abc def"
+    display = CodeDisplay(code)
+    result = display.highlight_code()
+
+    dim_ranges = {(start, end) for start, end, style in result.spans if style and style.dim}
+
+    assert dim_ranges == {(0, 7)}  # entire text is dim
+
+
+def test_style_preservation():
+    """Test that styles are preserved correctly."""
+    code = "abc"
+    custom_style = Style(color="red", bold=True)
+    focus = Focus.literal("b", style=custom_style)
+
+    display = CodeDisplay(code)
+    display.update_focuses([focus])
+    result = display.highlight_code()
+
+    for start, end, style in result.spans:
+        if (start, end) == (1, 2):  # the "b"
+            assert style.color.name == "red"
+            assert style.bold is True

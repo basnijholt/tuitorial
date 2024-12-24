@@ -26,14 +26,17 @@ class CodeDisplay(Static):
     def highlight_code(self) -> Text:
         """Apply highlighting to the code."""
         text = Text(self.code)
-        text.stylize(Style(dim=True))
 
+        # Keep track of highlighted ranges
+        highlighted_ranges = set()
+
+        # First, collect all ranges that should be highlighted
         for focus in self.focuses:
             if focus.type == FocusType.LITERAL:
                 pattern = re.escape(str(focus.pattern))
                 for match in re.finditer(pattern, self.code):
+                    highlighted_ranges.add((match.start(), match.end()))
                     text.stylize(focus.style, match.start(), match.end())
-
             elif focus.type == FocusType.REGEX:
                 pattern = (
                     focus.pattern  # type: ignore[assignment]
@@ -42,8 +45,8 @@ class CodeDisplay(Static):
                 )
                 assert isinstance(pattern, Pattern)
                 for match in pattern.finditer(self.code):
+                    highlighted_ranges.add((match.start(), match.end()))
                     text.stylize(focus.style, match.start(), match.end())
-
             elif focus.type == FocusType.LINE:
                 assert isinstance(focus.pattern, int)
                 line_number = int(focus.pattern)
@@ -51,12 +54,24 @@ class CodeDisplay(Static):
                 if 0 <= line_number < len(lines):
                     start = sum(len(line) + 1 for line in lines[:line_number])
                     end = start + len(lines[line_number])
+                    highlighted_ranges.add((start, end))
                     text.stylize(focus.style, start, end)
-
             elif focus.type == FocusType.RANGE:
                 assert isinstance(focus.pattern, tuple)
                 start, end = focus.pattern
+                highlighted_ranges.add((start, end))
                 text.stylize(focus.style, start, end)
+
+        # Then dim all non-highlighted ranges
+        current_pos = 0
+        for start, end in sorted(highlighted_ranges):
+            if current_pos < start:
+                text.stylize(Style(dim=True), current_pos, start)
+            current_pos = end
+
+        # Dim any remaining text after the last highlight
+        if current_pos < len(self.code):
+            text.stylize(Style(dim=True), current_pos, len(self.code))
 
         return text
 
