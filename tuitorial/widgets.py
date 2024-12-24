@@ -136,11 +136,21 @@ def _is_overlapping(
     end: int,
     processed_ranges: set[tuple[int, int]],
 ) -> bool:
-    """Check if a range overlaps with any processed ranges."""
-    return any(
-        (p_start <= start < p_end) or (p_start < end <= p_end)
-        for p_start, p_end in processed_ranges
-    )
+    """Check if a range overlaps with any processed ranges in an invalid way.
+
+    Allows partial overlaps but prevents:
+    1. Complete containment of the new range
+    2. Complete containment of an existing range
+    """
+    for p_start, p_end in processed_ranges:
+        # Skip if either range completely contains the other
+        if (p_start <= start and p_end >= end) or (start <= p_start and end >= p_end):
+            return True
+
+        # Allow partial overlaps
+        continue
+
+    return False
 
 
 def _apply_highlights(
