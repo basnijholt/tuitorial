@@ -1,4 +1,5 @@
 # Tuitorial 📚
+
 > Create beautiful terminal-based code tutorials with syntax highlighting and interactive navigation.
 
 [![PyPI version](https://badge.fury.io/py/tuitorial.svg)](https://badge.fury.io/py/tuitorial)
@@ -35,6 +36,7 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## 🎯 Features
+
 - 🎨 Rich syntax highlighting with customizable styles
 - 🔍 Multiple focus types: literal, regex, line, and range
 - ⌨️ Interactive keyboard navigation
@@ -85,21 +87,25 @@ app.run()
 ## 🎯 Focus Types
 
 ### Literal Match
+
 ```python
 Focus.literal("def", style="bold yellow")
 ```
 
 ### Regular Expression
+
 ```python
 Focus.regex(r"def \w+\(.*\):", style="bold green")
 ```
 
 ### Line Number
+
 ```python
 Focus.line(1, style="bold blue")  # Highlight first line
 ```
 
 ### Range
+
 ```python
 Focus.range(0, 10, style="bold magenta")  # Highlight first 10 characters
 ```
@@ -107,6 +113,7 @@ Focus.range(0, 10, style="bold magenta")  # Highlight first 10 characters
 ## 🎨 Styling
 
 Styles can be customized using Rich's style syntax:
+
 ```python
 from rich.style import Style
 
@@ -118,6 +125,7 @@ Focus.literal("def", style=Style(bold=True, color="yellow"))
 ```
 
 ## ⌨️ Controls
+
 - `→` Next step
 - `←` Previous step
 - `r` Reset to first step
@@ -169,23 +177,27 @@ tutorial_steps = [
 ## 🧪 Development
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/basnijholt/tuitorial.git
 cd tuitorial
 ```
 
 2. Create a virtual environment:
+
 ```bash
 python -m venv venv
 source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 ```
 
 3. Install development dependencies:
+
 ```bash
 pip install -e ".[test]"
 ```
 
 4. Run tests:
+
 ```bash
 pytest
 ```
