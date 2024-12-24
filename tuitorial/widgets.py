@@ -45,16 +45,17 @@ class CodeDisplay(Static):
         """Apply highlighting to the code."""
         text = Text(self.code)
 
-        # Keep track of highlighted ranges
+        # First collect all ranges that need highlighting with their styles
         highlighted_ranges = set()
 
-        # First, collect all ranges that should be highlighted
+        # Process all focus types and collect their ranges
         for focus in self.focuses:
             if focus.type == FocusType.LITERAL:
                 pattern = re.escape(str(focus.pattern))
+                if getattr(focus, "word_boundary", False):
+                    pattern = rf"\b{pattern}\b"
                 for match in re.finditer(pattern, self.code):
-                    highlighted_ranges.add((match.start(), match.end()))
-                    text.stylize(focus.style, match.start(), match.end())
+                    highlighted_ranges.add((match.start(), match.end(), focus.style))
             elif focus.type == FocusType.REGEX:
                 pattern = (
                     focus.pattern  # type: ignore[assignment]
@@ -63,8 +64,7 @@ class CodeDisplay(Static):
                 )
                 assert isinstance(pattern, Pattern)
                 for match in pattern.finditer(self.code):
-                    highlighted_ranges.add((match.start(), match.end()))
-                    text.stylize(focus.style, match.start(), match.end())
+                    highlighted_ranges.add((match.start(), match.end(), focus.style))
             elif focus.type == FocusType.LINE:
                 assert isinstance(focus.pattern, int)
                 line_number = int(focus.pattern)
@@ -72,25 +72,42 @@ class CodeDisplay(Static):
                 if 0 <= line_number < len(lines):
                     start = sum(len(line) + 1 for line in lines[:line_number])
                     end = start + len(lines[line_number])
-                    highlighted_ranges.add((start, end))
-                    text.stylize(focus.style, start, end)
+                    highlighted_ranges.add((start, end, focus.style))
             elif focus.type == FocusType.RANGE:
                 assert isinstance(focus.pattern, tuple)
                 start, end = focus.pattern
-                highlighted_ranges.add((start, end))
-                text.stylize(focus.style, start, end)
+                highlighted_ranges.add((start, end, focus.style))
 
-        # Then dim all non-highlighted ranges if dim_background is True
-        if self.dim_background:
-            current_pos = 0
-            for start, end in sorted(highlighted_ranges):
-                if current_pos < start:
-                    text.stylize(Style(dim=True), current_pos, start)
-                current_pos = end
+        # Sort ranges by start position and length (longer matches first)
+        sorted_ranges = sorted(
+            highlighted_ranges,
+            key=lambda x: (x[0], -(x[1] - x[0])),  # Sort by position and prefer longer matches
+        )
 
-            # Dim any remaining text after the last highlight
-            if current_pos < len(self.code):
-                text.stylize(Style(dim=True), current_pos, len(self.code))
+        # Apply highlights without overlaps
+        current_pos = 0
+        processed_ranges = set()
+
+        for start, end, style in sorted_ranges:
+            # Skip if this range overlaps with an already processed range
+            if any(
+                (p_start <= start < p_end) or (p_start < end <= p_end)
+                for p_start, p_end in processed_ranges
+            ):
+                continue
+
+            # Add dim style to gap before this highlight if needed
+            if self.dim_background and current_pos < start:
+                text.stylize(Style(dim=True), current_pos, start)
+
+            # Add the highlight style
+            text.stylize(style, start, end)
+            processed_ranges.add((start, end))
+            current_pos = max(current_pos, end)
+
+        # Dim any remaining text
+        if self.dim_background and current_pos < len(self.code):
+            text.stylize(Style(dim=True), current_pos, len(self.code))
 
         return text
 

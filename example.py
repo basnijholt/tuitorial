@@ -13,7 +13,7 @@ def main() -> None:
 def double_it(x: int) -> int:
     return 2 * x
 
-@pipefunc(output_name="z", mapspec="x[i], y[j] -> z[i, j]")
+@pipefunc(output_name="z", mapspec="x[j], y[i] -> z[i, j]")
 def combine(x: int, y: int) -> int:
     return x + y
 """
@@ -27,8 +27,9 @@ def combine(x: int, y: int) -> int:
         (
             "Input Indices\nHighlighting the input indices \\[i] and \\[j]",
             [
-                Focus.literal("[i]", Style(color="bright_yellow", bold=True)),
                 Focus.literal("i", Style(color="bright_yellow", bold=True), word_boundary=True),
+                Focus.literal("[i]", Style(color="bright_yellow", bold=True)),
+                Focus.literal("j", Style(color="bright_green", bold=True), word_boundary=True),
                 Focus.literal("[j]", Style(color="bright_green", bold=True)),
             ],
         ),
