@@ -1,5 +1,5 @@
 alias t := test
-alias e := example
+alias x := example
 
 test:
     uv sync
