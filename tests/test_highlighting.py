@@ -1,6 +1,7 @@
 # tests/test_highlighting.py
 import re
-from typing import Pattern
+from re import Pattern
+
 import pytest
 from rich.style import Style
 
@@ -14,7 +15,7 @@ def test_focus_type_enum():
 
 
 @pytest.mark.parametrize(
-    "method,args,expected_type",
+    ("method", "args", "expected_type"),
     [
         ("literal", ("test",), FocusType.LITERAL),
         ("regex", (r"\w+",), FocusType.REGEX),

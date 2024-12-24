@@ -1,7 +1,5 @@
 # tests/test_app.py
 import pytest
-from textual.app import App
-from textual.pilot import Pilot
 
 from tuitorial.app import TutorialApp
 from tuitorial.highlighting import Focus

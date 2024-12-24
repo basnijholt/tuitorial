@@ -1,8 +1,6 @@
 # tests/test_widgets.py
 import pytest
 from rich.text import Text
-from textual.app import App
-from textual.widget import Widget
 
 from tuitorial.highlighting import Focus
 from tuitorial.widgets import CodeDisplay
@@ -40,7 +38,7 @@ def test_code_display_highlight_code(code_display):
 
 
 @pytest.mark.parametrize(
-    "focus_type,pattern,text,expected_highlighted",
+    ("focus_type", "pattern", "text", "expected_highlighted"),
     [
         (Focus.literal, "def", "def test()", {(0, 3)}),
         (Focus.regex, r"\w+\(\)", "def test()", {(4, 9)}),
