@@ -7,6 +7,14 @@
 [![Coverage](https://codecov.io/gh/basnijholt/tuitorial/branch/main/graph/badge.svg)](https://codecov.io/gh/basnijholt/tuitorial)
 [![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
+## 📚 Table of Contents
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 🎯 Features
 - 🎨 Rich syntax highlighting with customizable styles
 - 🔍 Multiple focus types: literal, regex, line, and range
