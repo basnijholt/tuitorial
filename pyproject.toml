@@ -4,7 +4,7 @@ requires = ["hatchling", "versioningit"]
 
 [project]
 name = "tuitorial"
-description = "A Python library for defining, managing, and executing function pipelines."
+description = "A tutorial presentation tool using Textual"
 requires-python = ">=3.10"
 dynamic = ["version"]
 maintainers = [{ name = "Bas Nijholt", email = "bas@nijho.lt" }]
@@ -24,60 +24,12 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Topic :: System :: Distributed Computing",
 ]
-dependencies = ["cloudpickle", "networkx", "numpy"]
+dependencies = ["rich", "textual"]
 
-[project.optional-dependencies]
-adaptive = ["adaptive", "adaptive-scheduler>=2.14.0"]
-pandas = ["pandas"]
-plotting = ["bokeh", "graphviz", "holoviews","matplotlib"]
-profiling = ["psutil"]
-pydantic = ["pydantic"]
-rich = ["rich"]
-widgets = ["graphviz-anywidget>=0.3.0", "ipywidgets"]
-xarray = ["xarray"]
-zarr = ["zarr"]
-test = [
-    "coverage",
-    "pytest-asyncio",
-    "pytest-codspeed",
-    "pytest-cov",
-    "pytest-timeout",
-    "pytest-xdist",
-    "pytest",
-    "versioningit",
-]
-docs = [
-    "emoji",
-    "jupytext",
-    "myst-nb",
-    "myst-parser",
-    "sphinx-autodoc-typehints",
-    "sphinx-book-theme",
-    "sphinx-copybutton",
-    "sphinx-notfound-page",
-    "sphinx-togglebutton",
-    "sphinx",
-    "versioningit",
-    # Used for the example notebook
-    "nltk",
-    "scikit-image",
-    "seaborn",
-    "tuitorial[all]",
-]
-# all doesn't include 'pydantic' because there are no specific features that depend on it
-all = ["tuitorial[adaptive,pandas,plotting,profiling,rich,widgets,xarray,zarr]"]
-dev = [ # all + dev deps
-    "black[jupyter]",
-    "mypy",
-    "pre-commit",
-    "ruff",
-    "versioningit",
-    "tuitorial[all,test,docs,pydantic]",
-]
 [project.urls]
 homepage = "https://tuitorial.readthedocs.io/"
 documentation = "https://tuitorial.readthedocs.io/"
-repository = "https://github.com/tuitorial/tuitorial"
+repository = "https://github.com/basnijholt/tuitorial"
 
 [project.readme]
 content-type = "text/markdown"
@@ -128,9 +80,7 @@ exclude_lines = [
 ]
 
 [tool.coverage.run]
-omit = [
-    "tuitorial/map/_types.py", # Only imported in `if TYPE_CHECKING` block
-]
+omit = []
 
 [tool.ruff]
 line-length = 100
