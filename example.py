@@ -2,24 +2,26 @@
 
 from rich.style import Style
 
-from tuitorial import Focus, TutorialApp
+from tuitorial import Chapter, Focus, Step, TutorialApp
 
 
 def main() -> None:
     """Run the example tutorial app."""
-    example_code = """
+    example_code_chapter_1 = """
 @pipefunc(output_name="y", mapspec="x[i] -> y[i]")
 def double_it(x: int) -> int:
     return 2 * x
+"""
 
+    example_code_chapter_2 = """
 @pipefunc(output_name="z", mapspec="x[j], y[i] -> z[i, j]")
 def combine(x: int, y: int) -> int:
     return x + y
 """
 
-    # Define tutorial steps with different highlight colors
-    tutorial_steps = [
-        (
+    # Define tutorial steps for chapter 1
+    tutorial_steps_chapter_1 = [
+        Step(
             "@pipefunc decorator\nShows all pipefunc decorators in the code",
             [
                 Focus.startswith(
@@ -29,41 +31,56 @@ def combine(x: int, y: int) -> int:
                 ),
             ],
         ),
-        (
+        Step(
             "Mapspec Overview\nShows all mapspec patterns in the code",
             [Focus.regex(r'mapspec="[^"]*"', Style(color="bright_blue", bold=True))],
         ),
-        (
-            "Input Indices\nHighlighting the input indices \\[i] and \\[j]",
+        Step(
+            "Input Indices\nHighlighting the input indices \\[i]",
             [
                 Focus.literal("i", Style(color="bright_yellow", bold=True), word_boundary=True),
                 Focus.literal("[i]", Style(color="bright_yellow", bold=True)),
-                Focus.literal("j", Style(color="bright_green", bold=True), word_boundary=True),
-                Focus.literal("[j]", Style(color="bright_green", bold=True)),
             ],
         ),
-        (
+        Step(
             "Function Definitions\nShows all function definitions in the code",
             [Focus.regex(r"def.*:(?:\n|$)", Style(color="bright_magenta", bold=True))],
         ),
-        (
+        Step(
             "First Function\nComplete implementation of double_it",
-            [Focus.range(1, example_code.find("\n\n"), Style(color="bright_cyan", bold=True))],
+            [Focus.range(1, len(example_code_chapter_1), Style(color="bright_cyan", bold=True))],
         ),
-        (
+    ]
+
+    # Define tutorial steps for chapter 2
+    tutorial_steps_chapter_2 = [
+        Step(
             "Second Function\nComplete implementation of combine",
             [
                 Focus.range(
-                    example_code.find("\n\n") + 2,
-                    len(example_code),
+                    1,
+                    len(example_code_chapter_2),
                     Style(color="bright_red", bold=True),
                 ),
             ],
         ),
+        Step(
+            "Input Indices\nHighlighting the input indices \\[j] and \\[i]",
+            [
+                Focus.literal("j", Style(color="bright_green", bold=True), word_boundary=True),
+                Focus.literal("[j]", Style(color="bright_green", bold=True)),
+                Focus.literal("i", Style(color="bright_yellow", bold=True), word_boundary=True),
+                Focus.literal("[i]", Style(color="bright_yellow", bold=True)),
+            ],
+        ),
     ]
 
-    # Run the app
-    app = TutorialApp(example_code, tutorial_steps)
+    # Create chapters
+    chapter_1 = Chapter("Chapter 1", example_code_chapter_1, tutorial_steps_chapter_1)
+    chapter_2 = Chapter("Chapter 2", example_code_chapter_2, tutorial_steps_chapter_2)
+
+    # Run the app with multiple chapters
+    app = TutorialApp([chapter_1, chapter_2])
     app.run()
 
 
