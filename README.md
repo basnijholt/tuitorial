@@ -253,6 +253,49 @@ tutorial_steps = [
 ]
 ```
 
+## 📖 Helper Functions
+
+### `create_bullet_point_chapter`
+
+This helper function simplifies the creation of chapters that present information in a bullet-point format.
+Each step in the generated chapter will highlight a different bullet point.
+
+**Usage:**
+
+```python
+from rich.style import Style
+from tuitorial import TutorialApp
+from tuitorial.helpers import create_bullet_point_chapter
+
+bullet_points = [
+    "This is the first point.",
+    "Here is the second point.",
+    "And finally, the third point.",
+]
+
+# Create a chapter with bullet points
+bullet_point_chapter = create_bullet_point_chapter(
+    "My Bullet Points",
+    bullet_points,
+    style=Style(color="magenta", bold=True),
+)
+
+# You can also add extra descriptive text per step:
+bullet_point_chapter_with_extras = create_bullet_point_chapter(
+    "My Bullet Points with Extras",
+    bullet_points,
+    extras=[
+        "Extra info for point 1.",
+        "More details about point 2.",
+        "Final thoughts on point 3.",
+    ],
+    style=Style(color="green", bold=True),
+)
+
+app = TutorialApp([bullet_point_chapter, bullet_point_chapter_with_extras])
+app.run()
+```
+
 ## 🧪 Development
 
 1. Clone the repository:
