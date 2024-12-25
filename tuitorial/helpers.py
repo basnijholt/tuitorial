@@ -9,6 +9,7 @@ def create_bullet_point_chapter(
     title: str,
     bullet_points: list[str],
     extras: list[str] | None = None,
+    marker: str = "-",
     style: Style = Style(color="cyan", bold=True),  # noqa: B008
 ) -> Chapter:
     """Generates a Chapter with bullet points.
@@ -24,6 +25,8 @@ def create_bullet_point_chapter(
     extras
         A list of strings, each representing extra content for the corresponding
         bullet point. If None, no extra content is added.
+    marker
+        The string used to mark each bullet point. If "1.", the list will be numbered.
     style
         The style to apply to the highlighted bullet points.
 
@@ -39,7 +42,13 @@ def create_bullet_point_chapter(
         msg = "The number of extras must match the number of bullet points."
         raise ValueError(msg)
     # Create the code content with bullet points
-    code = "\n".join(f"- {point}" for point in bullet_points)
+    code = ""
+    for i, point in enumerate(bullet_points):
+        if marker == "1.":
+            code += f"{i + 1}. {point}\n"
+        else:
+            code += f"{marker} {point}\n"
+    code = code.rstrip("\n")
 
     # Create steps, each highlighting one bullet point
     steps = [Step(extra, [Focus.line(i, style=style)]) for i, extra in enumerate(extras)]

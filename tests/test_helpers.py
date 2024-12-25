@@ -66,3 +66,15 @@ def test_create_bullet_point_chapter_invalid_extras():
         match="The number of extras must match the number of bullet points.",
     ):
         create_bullet_point_chapter(title, bullet_points, extras=extras)
+
+
+def test_create_bullet_point_numbered():
+    """Test creating a numbered bullet point chapter."""
+    title = "Test Chapter"
+    bullet_points = ["Point 1", "Point 2"]
+    chapter = create_bullet_point_chapter(title, bullet_points, marker="1.")
+
+    assert chapter.code == "1. Point 1\n2. Point 2"
+    for i, step in enumerate(chapter.steps):
+        focus = step.focuses[0]
+        assert focus.pattern == i
