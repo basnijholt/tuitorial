@@ -2,6 +2,7 @@
 
 from typing import ClassVar, NamedTuple
 
+from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Container
@@ -25,36 +26,40 @@ class Chapter:
         self.title = title or f"Untitled {id(self)}"
         self.code = code
         self.steps = steps
-        self.current_step_index = 0
+        self.current_index = 0
         self.code_display = CodeDisplay(
             self.code,
             self.current_step.focuses,
             dim_background=True,
         )
+        self.description = Static("", id="description")
         self.update_display()
 
     @property
     def current_step(self) -> Step:
         """Get the current step."""
-        return self.steps[self.current_step_index]
+        return self.steps[self.current_index]
 
     def update_display(self) -> None:
         """Update the display with current focus."""
         self.code_display.update_focuses(self.current_step.focuses)
+        self.description.update(
+            f"Step {self.current_index + 1}/{len(self.steps)}\n{self.current_step.description}",
+        )
 
     def next_step(self) -> None:
         """Handle next focus action."""
-        self.current_step_index = (self.current_step_index + 1) % len(self.steps)
+        self.current_index = (self.current_index + 1) % len(self.steps)
         self.update_display()
 
     def previous_step(self) -> None:
         """Handle previous focus action."""
-        self.current_step_index = (self.current_step_index - 1) % len(self.steps)
+        self.current_index = (self.current_index - 1) % len(self.steps)
         self.update_display()
 
     def reset_step(self) -> None:
         """Reset to first focus pattern."""
-        self.current_step_index = 0
+        self.current_index = 0
         self.update_display()
 
     def toggle_dim(self) -> None:
@@ -65,13 +70,7 @@ class Chapter:
 
     def compose(self) -> ComposeResult:
         """Compose the chapter display."""
-        yield Container(
-            Static(
-                f"Step {self.current_step_index + 1}/{len(self.steps)}\n{self.current_step.description}",
-                id="description",
-            ),
-            self.code_display,
-        )
+        yield Container(self.description, self.code_display)
 
 
 class TutorialApp(App):
@@ -111,8 +110,8 @@ class TutorialApp(App):
 
     BINDINGS: ClassVar[list[Binding]] = [
         Binding("q", "quit", "Quit"),
-        Binding("right", "next_focus", "Next Focus"),
-        Binding("left", "previous_focus", "Previous Focus"),
+        Binding("down", "next_focus", "Next Focus"),
+        Binding("up", "previous_focus", "Previous Focus"),
         Binding("d", "toggle_dim", "Toggle Dim"),
         ("r", "reset_focus", "Reset Focus"),
     ]
@@ -126,8 +125,8 @@ class TutorialApp(App):
         """Create child widgets for the app."""
         yield Header(show_clock=True)
         with TabbedContent():
-            for chapter in self.chapters:
-                with TabPane(chapter.title):
+            for i, chapter in enumerate(self.chapters):
+                with TabPane(chapter.title, id=f"chapter_{i}"):
                     yield from chapter.compose()
         yield Footer()
 
@@ -136,39 +135,18 @@ class TutorialApp(App):
         """Get the current chapter."""
         return self.chapters[self.current_chapter_index]
 
-    def on_mount(self) -> None:
-        """Called when app is mounted."""
-        # Initialize all chapters
-        for chapter in self.chapters:
-            chapter.update_display()
-        self.query_one(TabbedContent).focus()
-
-    def on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
-        """Handle chapter changes."""
-        if event.tab is None:
-            return
-
-        # Find the chapter by matching the tab's ID
-        tab_id = event.tab.id
-        for index, chapter in enumerate(self.chapters):
-            if chapter.title.lower().replace(" ", "-") == tab_id:
-                self.current_chapter_index = index
-                self.current_chapter.reset_step()
-                break
+    @on(TabbedContent.TabActivated)
+    @on(Tabs.TabActivated)
+    def on_change(self, event: TabbedContent.TabActivated | Tabs.TabActivated) -> None:
+        """Handle tab change event."""
+        tab_id = event.pane.id
+        assert tab_id.startswith("chapter_")
+        index = tab_id.split("_")[-1]
+        self.current_chapter_index = int(index)
 
     def update_display(self) -> None:
         """Update the display with current focus."""
-        chapter = self.current_chapter
-        # Update description
-        description = self.query_one(f"#{chapter.title.lower().replace(' ', '-')}-description")
-        if description:
-            description.update(
-                f"Step {chapter.current_step_index + 1}/{len(chapter.steps)}\n"
-                f"{chapter.current_step.description}",
-            )
-        # Update code display
-        chapter.code_display.update_focuses(chapter.current_step.focuses)
-        chapter.code_display.refresh()
+        self.current_chapter.update_display()
 
     def action_next_focus(self) -> None:
         """Handle next focus action."""
