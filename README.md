@@ -202,11 +202,12 @@ Focus.literal("def", style=Style(bold=True, color="yellow"))
 
 ## ⌨️ Controls
 
-- `↑` Previous step
-- `↓` Next step
-- `r` Reset to first step
-- `→` Next chapter
-- `←` Previous chapter
+- `→` Next step in current chapter
+- `←` Previous step in current chapter
+- `tab` Next chapter
+- `shift+tab` Previous chapter
+- `r` Reset to first step of current chapter
+- `d` Toggle dim/bright background
 - `q` Quit tutorial
 
 ## 📖 Advanced Usage
