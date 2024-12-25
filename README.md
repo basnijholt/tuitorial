@@ -56,7 +56,8 @@ pip install tuitorial
 ## 🎮 Quick Start
 
 ```python
-from tuitorial import TutorialApp, Focus
+from tuitorial import Chapter, Step, TutorialApp, Focus
+from rich.style import Style
 
 # Your code to present
 code = '''
@@ -68,24 +69,75 @@ def main():
 '''
 
 # Define tutorial steps
-tutorial_steps = [
-    (
+steps = [
+    Step(
         "Function Definition",
         [Focus.regex(r"def hello.*:$", style="bold yellow")]
     ),
-    (
+    Step(
         "Return Statement",
         [Focus.literal('return f"Hello, {name}!"', style="bold green")]
     ),
-    (
+    Step(
         "Main Function",
         [Focus.range(code.find("def main"), len(code), style="bold blue")]
     ),
 ]
 
+# Create a chapter
+chapter = Chapter("Basic Example", code, steps)
+
 # Run the tutorial
-app = TutorialApp(code, tutorial_steps)
+app = TutorialApp([chapter])
 app.run()
+```
+
+## 📖 Advanced Usage
+
+### Multiple Chapters
+
+You can organize your tutorial into multiple chapters, each with its own code and steps:
+
+```python
+# First chapter
+chapter1_code = '''
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+'''
+chapter1_steps = [
+    Step("Greeting Function", [Focus.regex(r"def greet.*:$")]),
+    Step("Return Statement", [Focus.literal('return f"Hello, {name}!"')]),
+]
+chapter1 = Chapter("Greetings", chapter1_code, chapter1_steps)
+
+# Second chapter
+chapter2_code = '''
+def farewell(name: str) -> str:
+    return f"Goodbye, {name}!"
+'''
+chapter2_steps = [
+    Step("Farewell Function", [Focus.regex(r"def farewell.*:$")]),
+    Step("Return Statement", [Focus.literal('return f"Goodbye, {name}!"')]),
+]
+chapter2 = Chapter("Farewells", chapter2_code, chapter2_steps)
+
+# Run tutorial with multiple chapters
+app = TutorialApp([chapter1, chapter2])
+app.run()
+```
+
+### Steps
+
+Each step in a tutorial consists of a description and a list of focuses:
+
+```python
+Step(
+    "Step Description",  # Shown in the UI
+    [
+        Focus.literal("some text"),  # One or more Focus objects
+        Focus.regex(r"pattern.*"),   # Can combine different focus types
+    ]
+)
 ```
 
 ## 🎯 Focus Types
