@@ -21,8 +21,8 @@
   - [Regular Expression](#regular-expression)
   - [Line Number](#line-number)
   - [Range](#range)
-    - [Starts With](#starts-with)
-    - [Between](#between)
+  - [Starts With](#starts-with)
+  - [Between](#between)
 - [🎨 Styling](#-styling)
 - [⌨️ Controls](#-controls)
 - [📖 Advanced Usage](#-advanced-usage)
@@ -112,7 +112,7 @@ Focus.line(1, style="bold blue")  # Highlight first line
 Focus.range(0, 10, style="bold magenta")  # Highlight first 10 characters
 ```
 
-#### Starts With
+### Starts With
 
 Highlights lines starting with the specified text. Can be configured to match from the start of any line or only at the start of the line.
 
@@ -121,7 +121,7 @@ Focus.startswith("import", style="bold blue", from_start_of_line=True)
 Focus.startswith("from", style="bold blue", from_start_of_line=False)
 ```
 
-#### Between
+### Between
 
 Highlights text between two specified patterns. Supports inclusive or exclusive bounds, multiline matching, and greedy or non-greedy matching.
 
