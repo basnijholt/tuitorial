@@ -31,6 +31,8 @@
 - [📖 Advanced Usage](#-advanced-usage-1)
   - [Custom Highlighting Patterns](#custom-highlighting-patterns)
   - [Multiple Highlights per Step](#multiple-highlights-per-step)
+- [📖 Helper Functions](#-helper-functions)
+  - [`create_bullet_point_chapter`](#create_bullet_point_chapter)
 - [🧪 Development](#-development)
 - [🤝 Contributing](#-contributing)
 - [📝 License](#-license)
