@@ -202,9 +202,11 @@ Focus.literal("def", style=Style(bold=True, color="yellow"))
 
 ## ⌨️ Controls
 
-- `→` Next step
-- `←` Previous step
+- `↑` Previous step
+- `↓` Next step
 - `r` Reset to first step
+- `→` Next chapter
+- `←` Previous chapter
 - `q` Quit tutorial
 
 ## 📖 Advanced Usage
