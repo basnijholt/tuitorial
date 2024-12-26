@@ -90,7 +90,7 @@ def parse_yaml_config(yaml_file: str) -> list[Chapter]:
     return [_parse_chapter(chapter_data) for chapter_data in config["chapters"]]
 
 
-def run_tutorial_from_yaml(yaml_file: str) -> None:
+def run_from_yaml(yaml_file: str) -> None:
     """Parses a YAML config and runs the tutorial."""
     chapters = parse_yaml_config(yaml_file)
     app = TutorialApp(chapters)
@@ -104,4 +104,4 @@ def cli() -> None:
     parser = argparse.ArgumentParser(description="Run a tuitorial from a YAML file.")
     parser.add_argument("yaml_file", help="Path to the YAML configuration file.")
     args = parser.parse_args()
-    run_tutorial_from_yaml(args.yaml_file)
+    run_from_yaml(args.yaml_file)

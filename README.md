@@ -156,14 +156,14 @@ To run the YAML example:
 
 1. Save the YAML content as a `.yaml` file (e.g., `tutorial.yaml`).
 2. Either:
-    - Use the provided `tuitorial.run_tutorial_from_yaml` function:
+    - Use the provided `tuitorial.run_from_yaml` function:
     - Run `tuitorial tutorial.yaml` from the command line.
 
 ```python
 # In a separate Python file (e.g., run_yaml.py)
-from parse_yaml import run_tutorial_from_yaml  # Assuming parse_yaml.py is where you have the YAML parsing code
+from parse_yaml import run_from_yaml  # Assuming parse_yaml.py is where you have the YAML parsing code
 
-run_tutorial_from_yaml("tutorial.yaml")
+run_from_yaml("tutorial.yaml")
 ```
 
 </details>
