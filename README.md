@@ -240,9 +240,6 @@ Each step in a tutorial consists of a description and a list of focuses.
 
 #### Python
 
-<details>
-<summary><b>Python</b></summary>
-
 ```python
 Step(
     "Step Description",  # Shown in the UI
@@ -276,17 +273,11 @@ steps:
 
 #### Python
 
-<details>
-<summary><b>Python</b></summary>
-
 ```python
 Focus.literal("def", style="bold yellow")
 ```
 
-</details>
-
-<details>
-<summary><b>YAML</b></summary>
+#### YAML
 
 ```yaml
 focus:
@@ -301,17 +292,11 @@ focus:
 
 #### Python
 
-<details>
-<summary><b>Python</b></summary>
-
 ```python
 Focus.regex(r"def \w+\(.*\):", style="bold green")
 ```
 
-</details>
-
-<details>
-<summary><b>YAML</b></summary>
+#### YAML
 
 ```yaml
 focus:
@@ -326,17 +311,11 @@ focus:
 
 #### Python
 
-<details>
-<summary><b>Python</b></summary>
-
 ```python
 Focus.line(1, style="bold blue")  # Highlight first line
 ```
 
-</details>
-
-<details>
-<summary><b>YAML</b></summary>
+#### YAML
 
 ```yaml
 focus:
@@ -351,17 +330,11 @@ focus:
 
 #### Python
 
-<details>
-<summary><b>Python</b></summary>
-
 ```python
 Focus.range(0, 10, style="bold magenta")  # Highlight first 10 characters
 ```
 
-</details>
-
-<details>
-<summary><b>YAML</b></summary>
+#### YAML
 
 ```yaml
 focus:
@@ -379,18 +352,12 @@ Highlights lines starting with the specified text. Can be configured to match fr
 
 #### Python
 
-<details>
-<summary><b>Python</b></summary>
-
 ```python
 Focus.startswith("import", style="bold blue", from_start_of_line=True)
 Focus.startswith("from", style="bold blue", from_start_of_line=False)
 ```
 
-</details>
-
-<details>
-<summary><b>YAML</b></summary>
+#### YAML
 
 ```yaml
 focus:
@@ -412,17 +379,11 @@ Highlights text between two specified patterns. Supports inclusive or exclusive 
 
 #### Python
 
-<details>
-<summary><b>Python</b></summary>
-
 ```python
 Focus.between("start_function", "end_function", style="bold blue", inclusive=True, multiline=True)
 ```
 
-</details>
-
-<details>
-<summary><b>YAML</b></summary>
+#### YAML
 
 ```yaml
 focus:
@@ -442,9 +403,6 @@ Styles can be customized using Rich's style syntax:
 
 #### Python
 
-<details>
-<summary><b>Python</b></summary>
-
 ```python
 from rich.style import Style
 
@@ -455,10 +413,7 @@ Focus.literal("def", style="bold yellow")
 Focus.literal("def", style=Style(bold=True, color="yellow"))
 ```
 
-</details>
-
-<details>
-<summary><b>YAML</b></summary>
+#### YAML
 
 ```yaml
 focus:
