@@ -48,7 +48,7 @@
 ## 🎯 Features
 
 - 🎨 Rich syntax highlighting with customizable styles
-- 🔍 Multiple focus types: literal, regex, line, range, startswith, and between.
+- 🔍 Multiple focus types: literal, regex, line, range, startswith, between, line containing, and syntax highlighting
 - ⌨️ Interactive keyboard navigation
 - 📝 Step-by-step tutorial presentations
 - 🖼️ Beautiful TUI using [Textual](https://textual.textualize.io/)
