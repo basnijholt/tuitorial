@@ -1,7 +1,9 @@
 """App for presenting code tutorials."""
 
+from pathlib import Path
 from typing import ClassVar, NamedTuple
 
+from PIL import Image as PILImage
 from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -24,7 +26,7 @@ class ImageStep(NamedTuple):
     """A step that displays an image."""
 
     description: str
-    image_path: str
+    image: str | Path | PILImage.Image
 
 
 class Chapter:
@@ -68,7 +70,7 @@ class Chapter:
             # Remove the old image widget (if any) and add a new one
             for widget in self.image_container.walk_children():
                 widget.remove()
-            image_widget = Image(step.image_path)
+            image_widget = Image(step.image)
             if self.image_container.is_mounted:
                 self.image_container.mount(image_widget)
 

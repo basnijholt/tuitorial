@@ -166,7 +166,7 @@ def image_path(tmp_path: Path) -> Path:
 async def test_image_step(example_code, image_path: Path):
     """Test ImageStep functionality."""
     steps: list[ImageStep | Step] = [
-        ImageStep("Image Step", str(image_path)),
+        ImageStep("Image Step", image_path),
         Step("Code Step", [Focus.literal("def")]),
     ]
     chapter = Chapter("Test Chapter", example_code, steps)
@@ -195,7 +195,7 @@ async def test_image_step(example_code, image_path: Path):
 async def test_toggle_dim_image_step(example_code, image_path: Path):
     """Test that toggle_dim doesn't affect ImageStep."""
     steps: list[ImageStep | Step] = [
-        ImageStep("Image Step", str(image_path)),
+        ImageStep("Image Step", image_path),
         Step("Code Step", [Focus.literal("def")]),
     ]
     chapter = Chapter("Test Chapter", example_code, steps)

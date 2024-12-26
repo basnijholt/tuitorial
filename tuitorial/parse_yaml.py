@@ -68,10 +68,10 @@ def _parse_step(step_data: dict) -> Step | ImageStep:
     """Parses a single step from the YAML data."""
     description = step_data["description"]
 
-    if "image_path" in step_data:
+    if "image" in step_data:
         # It's an ImageStep
-        image_path = step_data["image_path"]
-        return ImageStep(description, image_path)
+        image = step_data["image"]
+        return ImageStep(description, image)
     # It's a regular Step
     focus_list = [_parse_focus(focus_data) for focus_data in step_data.get("focus", [])]
     return Step(description, focus_list)
