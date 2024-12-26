@@ -27,6 +27,7 @@
     - [Range](#range)
     - [Starts With](#starts-with)
     - [Between](#between)
+    - [Line Containing](#line-containing)
   - [🎨 Styling](#-styling)
   - [Custom Highlighting Patterns](#custom-highlighting-patterns)
   - [Multiple Highlights per Step](#multiple-highlights-per-step)
