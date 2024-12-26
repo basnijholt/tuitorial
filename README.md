@@ -63,6 +63,13 @@
 
 </details>
 
+## 🤨 Why?
+
+- Parametrize your presentations with code snippets and focus points
+- Version control your presentations
+- You don't like PowerPoint, Google Slides, or Beamer
+- You are a huge nerd
+
 ## 🎯 Features
 
 - 🎨 Rich syntax highlighting with customizable styles
@@ -418,18 +425,6 @@ focus:
 
 </details>
 
-## ⌨️ Controls
-
-- `→` Next step in current chapter
-- `←` Previous step in current chapter
-- `tab` Next chapter
-- `shift+tab` Previous chapter
-- `r` Reset to first step of current chapter
-- `d` Toggle dim/bright background
-- `q` Quit tutorial
-
-## 📖 Advanced Usage
-
 ### Custom Highlighting Patterns
 
 #### Python
@@ -627,6 +622,17 @@ chapters:
 ```
 
 </details>
+
+
+## ⌨️ Controls
+
+- `→` Next step in current chapter
+- `←` Previous step in current chapter
+- `tab` Next chapter
+- `shift+tab` Previous chapter
+- `r` Reset to first step of current chapter
+- `d` Toggle dim/bright background
+- `q` Quit tutorial
 
 ## 🧪 Development
 
