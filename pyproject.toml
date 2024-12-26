@@ -33,7 +33,11 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
-dependencies = ["rich", "textual"]
+dependencies = [
+    "pyyaml>=6.0.2",
+    "rich",
+    "textual",
+]
 
 [dependency-groups]
 dev = [
