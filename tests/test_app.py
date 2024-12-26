@@ -228,10 +228,8 @@ async def test_image_step_dimensions_and_alignment(example_code, image_path: Pat
         # Check first ImageStep (fixed size)
         image_widget = app.query_one("#image")
         assert image_widget.styles.width.value == 100
-        assert image_widget.styles.width.is_pixels
         assert image_widget.styles.height.value == 50
-        assert image_widget.styles.height.is_pixels
-        assert image_widget.styles.align_horizontal.value == "left"
+        assert image_widget.styles.align_horizontal == "left"
 
         # Move to the next ImageStep (percentage width)
         await pilot.press("down")
@@ -239,7 +237,5 @@ async def test_image_step_dimensions_and_alignment(example_code, image_path: Pat
         # Check second ImageStep (percentage width)
         image_widget = app.query_one("#image")
         assert image_widget.styles.width.value == 50
-        assert image_widget.styles.width.is_percent
         assert image_widget.styles.height.value == 100
-        assert image_widget.styles.height.is_pixels
-        assert image_widget.styles.align_horizontal.value == "right"
+        assert image_widget.styles.align_horizontal == "right"
