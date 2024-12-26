@@ -2,7 +2,7 @@
 
 from rich.style import Style
 
-from tuitorial import Chapter, Focus, Step, TutorialApp
+from tuitorial import Chapter, Focus, Step, TuitorialApp
 
 
 def main() -> None:
@@ -80,7 +80,7 @@ def combine(x: int, y: int) -> int:
     chapter_2 = Chapter("Chapter 2", example_code_chapter_2, tutorial_steps_chapter_2)  # type: ignore[arg-type]
 
     # Run the app with multiple chapters
-    app = TutorialApp([chapter_1, chapter_2])
+    app = TuitorialApp([chapter_1, chapter_2])
     app.run()
 
 

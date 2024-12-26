@@ -119,7 +119,7 @@ class Chapter(Container):
         yield Container(self.description, self.code_display, self.image_container)
 
 
-class TutorialApp(App):
+class TuitorialApp(App):
     """A Textual app for presenting code tutorials."""
 
     CSS = """

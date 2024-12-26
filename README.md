@@ -83,7 +83,7 @@ pip install tuitorial
 <summary><b>Python</b></summary>
 
 ```python
-from tuitorial import Chapter, Step, TutorialApp, Focus
+from tuitorial import Chapter, Step, TuitorialApp, Focus
 from rich.style import Style
 
 # Your code to present
@@ -115,7 +115,7 @@ steps = [
 chapter = Chapter("Basic Example", code, steps)
 
 # Run the tutorial
-app = TutorialApp([chapter])
+app = TuitorialApp([chapter])
 app.run()
 ```
 
@@ -206,7 +206,7 @@ chapter2_steps = [
 chapter2 = Chapter("Farewells", chapter2_code, chapter2_steps)
 
 # Run tutorial with multiple chapters
-app = TutorialApp([chapter1, chapter2])
+app = TuitorialApp([chapter1, chapter2])
 app.run()
 ```
 
@@ -515,7 +515,7 @@ focus:
 <summary><b>Python</b></summary>
 
 ```python
-from tuitorial import TutorialApp, Focus
+from tuitorial import TuitorialApp, Focus
 from rich.style import Style
 
 # Define custom styles
@@ -543,7 +543,7 @@ tutorial_steps = [
 chapter = Chapter("Custom Patterns", code, tutorial_steps)
 
 # Run the tutorial
-app = TutorialApp([chapter])
+app = TuitorialApp([chapter])
 app.run()
 ```
 
@@ -579,7 +579,7 @@ chapters:
 <summary><b>Python</b></summary>
 
 ```python
-from tuitorial import Chapter, Step, TutorialApp, Focus
+from tuitorial import Chapter, Step, TuitorialApp, Focus
 from rich.style import Style
 
 # Your code to present
@@ -610,7 +610,7 @@ tutorial_steps = [
 chapter = Chapter("Multiple Highlights", code, tutorial_steps)
 
 # Run the tutorial
-app = TutorialApp([chapter])
+app = TuitorialApp([chapter])
 app.run()
 ```
 
@@ -651,7 +651,7 @@ The `ImageStep` class takes the path to an image file (or a PIL Image object) an
 
 ```python
 from pathlib import Path
-from tuitorial import Chapter, ImageStep, TutorialApp
+from tuitorial import Chapter, ImageStep, TuitorialApp
 
 # Path to your image
 image_path = Path("path/to/your/image.png")
@@ -663,7 +663,7 @@ image_step = ImageStep("Displaying an example image", image_path)
 chapter = Chapter("Image Example", "", [image_step])
 
 # Run the tutorial
-app = TutorialApp([chapter])
+app = TuitorialApp([chapter])
 app.run()
 ```
 
@@ -686,7 +686,7 @@ You can control the size of the image using the `width` and `height` properties 
 ```python
 from pathlib import Path
 from textual_image.widget import Image
-from tuitorial import Chapter, ImageStep, TutorialApp
+from tuitorial import Chapter, ImageStep, TuitorialApp
 
 image_path = Path("path/to/your/image.png")
 
@@ -697,7 +697,7 @@ image_step_fixed = ImageStep("Fixed Size Image", image_path, width=300, height="
 image_step_percentage = ImageStep("Percentage Width Image", image_path, width="50%", height=200)
 
 chapter = Chapter("Image Examples", "", [image_step_fixed, image_step_percentage])
-app = TutorialApp([chapter])
+app = TuitorialApp([chapter])
 app.run()
 ```
 
@@ -750,7 +750,7 @@ It automatically generates the code content from the list of bullet points, and 
 
 ```python
 from rich.style import Style
-from tuitorial import TutorialApp
+from tuitorial import TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
 
 bullet_points = [
@@ -778,7 +778,7 @@ bullet_point_chapter_with_extras = create_bullet_point_chapter(
     style=Style(color="green", bold=True),
 )
 
-app = TutorialApp([bullet_point_chapter, bullet_point_chapter_with_extras])
+app = TuitorialApp([bullet_point_chapter, bullet_point_chapter_with_extras])
 app.run()
 ```
 

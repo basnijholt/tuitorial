@@ -4,7 +4,7 @@ from pathlib import Path
 import PIL
 import pytest
 
-from tuitorial.app import Chapter, ImageStep, Step, TutorialApp
+from tuitorial.app import Chapter, ImageStep, Step, TuitorialApp
 from tuitorial.highlighting import Focus
 
 
@@ -29,7 +29,7 @@ def chapter(example_code, tutorial_steps):
 @pytest.mark.asyncio
 async def test_app_init(chapter):
     """Test app initialization."""
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
     async with app.run_test():
         assert len(app.chapters) == 1
         assert app.chapters[0] == chapter
@@ -39,7 +39,7 @@ async def test_app_init(chapter):
 @pytest.mark.asyncio
 async def test_next_focus(chapter):
     """Test next focus action."""
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
     async with app.run_test() as pilot:
         # Initial state
         assert app.current_chapter.current_index == 0
@@ -52,7 +52,7 @@ async def test_next_focus(chapter):
 @pytest.mark.asyncio
 async def test_previous_focus(chapter):
     """Test previous focus action."""
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
     async with app.run_test() as pilot:
         # Initial state
         assert app.current_chapter.current_index == 0
@@ -69,7 +69,7 @@ async def test_previous_focus(chapter):
 @pytest.mark.asyncio
 async def test_reset_focus(chapter):
     """Test reset focus action."""
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
     async with app.run_test() as pilot:
         # Move to last step
         chapter.current_index = len(chapter.steps) - 1
@@ -82,7 +82,7 @@ async def test_reset_focus(chapter):
 @pytest.mark.asyncio
 async def test_quit():
     """Test quit action."""
-    app = TutorialApp([])
+    app = TuitorialApp([])
     async with app.run_test() as pilot:
         # Create a task to press 'q'
         async def press_q():
@@ -96,7 +96,7 @@ async def test_quit():
 @pytest.mark.asyncio
 async def test_update_display(chapter):
     """Test display updates."""
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
     async with app.run_test():
         initial_description = app.query_one("#description").render()
 
@@ -110,7 +110,7 @@ async def test_update_display(chapter):
 @pytest.mark.asyncio
 async def test_current_step(chapter):
     """Test current_step property."""
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
     async with app.run_test():
         assert chapter.current_step == chapter.steps[0]
 
@@ -118,7 +118,7 @@ async def test_current_step(chapter):
 @pytest.mark.asyncio
 async def test_current_description(chapter):
     """Test current_description property."""
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
     async with app.run_test():
         assert chapter.current_step.description == chapter.steps[0].description
 
@@ -131,7 +131,7 @@ async def test_switch_chapters(chapter, example_code):
         Step("Step 1 Chapter 2", [Focus.literal("test")]),
     ]
     chapter2 = Chapter("Test Chapter 2", example_code, chapter2_steps)
-    app = TutorialApp([chapter, chapter2])
+    app = TuitorialApp([chapter, chapter2])
 
     async with app.run_test() as pilot:
         # Ensure the tabs are mounted
@@ -146,7 +146,7 @@ async def test_switch_chapters(chapter, example_code):
 @pytest.mark.asyncio
 async def test_toggle_dim(chapter) -> None:
     """Test toggling dim."""
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
     async with app.run_test() as pilot:
         await pilot.press("d")
         assert not app.current_chapter.code_display.dim_background
@@ -170,7 +170,7 @@ async def test_image_step(example_code, image_path: Path):
         Step("Code Step", [Focus.literal("def")]),
     ]
     chapter = Chapter("Test Chapter", example_code, steps)
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
 
     async with app.run_test() as pilot:
         # Initial state should be ImageStep
@@ -199,7 +199,7 @@ async def test_toggle_dim_image_step(example_code, image_path: Path):
         Step("Code Step", [Focus.literal("def")]),
     ]
     chapter = Chapter("Test Chapter", example_code, steps)
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
 
     async with app.run_test() as pilot:
         # Initial state should be ImageStep
@@ -222,7 +222,7 @@ async def test_image_step_dimensions_and_alignment(example_code, image_path: Pat
         ImageStep("Percentage Width", image_path, width="50%", height=100, halign="right"),
     ]
     chapter = Chapter("Test Chapter", example_code, steps)
-    app = TutorialApp([chapter])
+    app = TuitorialApp([chapter])
 
     async with app.run_test() as pilot:
         # Check first ImageStep (fixed size)

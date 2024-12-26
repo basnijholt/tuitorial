@@ -5,7 +5,7 @@ import re
 import yaml
 from rich.style import Style
 
-from tuitorial import Chapter, Focus, ImageStep, Step, TutorialApp
+from tuitorial import Chapter, Focus, ImageStep, Step, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
 
 
@@ -119,7 +119,7 @@ def parse_yaml_config(yaml_file: str) -> list[Chapter]:
 def run_from_yaml(yaml_file: str) -> None:  # pragma: no cover
     """Parses a YAML config and runs the tutorial."""
     chapters = parse_yaml_config(yaml_file)
-    app = TutorialApp(chapters)
+    app = TuitorialApp(chapters)
     app.run()
 
 

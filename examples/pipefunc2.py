@@ -1,6 +1,6 @@
 from rich.style import Style
 
-from tuitorial import Chapter, Focus, Step, TutorialApp
+from tuitorial import Chapter, Focus, Step, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
 
 problem_statement, extras = zip(
@@ -156,5 +156,5 @@ chapters = [
     Chapter("Core Concepts", concepts_code, concepts_steps),  # type: ignore[arg-type]
 ]
 
-app = TutorialApp(chapters)
+app = TuitorialApp(chapters)
 app.run()
