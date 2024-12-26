@@ -38,6 +38,8 @@ class Chapter:
     @property
     def current_step(self) -> Step:
         """Get the current step."""
+        if not self.steps:
+            return Step("", [])  # Return an empty Step object
         return self.steps[self.current_index]
 
     def update_display(self) -> None:
