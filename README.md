@@ -8,8 +8,6 @@
 [![Coverage](https://codecov.io/gh/basnijholt/tuitorial/branch/main/graph/badge.svg)](https://codecov.io/gh/basnijholt/tuitorial)
 [![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-https://github.com/user-attachments/assets/cb913070-9d67-4aa9-b11d-050f41d0beac
-
 <details><summary><b><u>[ToC]</u></b> 📚</summary>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -66,6 +64,8 @@ https://github.com/user-attachments/assets/cb913070-9d67-4aa9-b11d-050f41d0beac
 - **Lightweight and Fast:** No more bloated presentation software.
 - **Perfect for Nerds:** Ideal for explaining code, technical workshops, interactive documentation, and anyone who loves the terminal.
 - **Parametrize:** Create dynamic tutorials driven by code snippets and focus points.
+
+https://github.com/user-attachments/assets/cb913070-9d67-4aa9-b11d-050f41d0beac
 
 ## 🚀 Installation
 
