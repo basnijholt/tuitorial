@@ -46,7 +46,6 @@ class Chapter(Container):
         # Create a container for the image widget instead of the Image itself
         # because of issue https://github.com/lnqs/textual-image/issues/43
         self.image_container = Container(id="image-container")
-        self.image_container.border_title = "width: auto; height: auto;"
         self.image_container.visible = False  # Hide the container initially
         self.description = Static("", id="description")
 
