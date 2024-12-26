@@ -212,3 +212,34 @@ async def test_toggle_dim_image_step(example_code, image_path: Path):
         # Ensure toggle_dim didn't affect ImageStep and code display is still not visible
         assert app.current_chapter.image_container.visible
         assert not app.current_chapter.code_display.visible
+
+
+@pytest.mark.asyncio
+async def test_image_step_dimensions_and_alignment(example_code, image_path: Path):
+    """Test setting width, height, and alignment for ImageStep."""
+    steps: list[ImageStep | Step] = [
+        ImageStep("Fixed Size", image_path, width=100, height=50, halign="left"),
+        ImageStep("Percentage Width", image_path, width="50%", height=100, halign="right"),
+    ]
+    chapter = Chapter("Test Chapter", example_code, steps)
+    app = TutorialApp([chapter])
+
+    async with app.run_test() as pilot:
+        # Check first ImageStep (fixed size)
+        image_widget = app.query_one("#image")
+        assert image_widget.styles.width.value == 100
+        assert image_widget.styles.width.is_pixels
+        assert image_widget.styles.height.value == 50
+        assert image_widget.styles.height.is_pixels
+        assert image_widget.styles.align_horizontal.value == "left"
+
+        # Move to the next ImageStep (percentage width)
+        await pilot.press("down")
+
+        # Check second ImageStep (percentage width)
+        image_widget = app.query_one("#image")
+        assert image_widget.styles.width.value == 50
+        assert image_widget.styles.width.is_percent
+        assert image_widget.styles.height.value == 100
+        assert image_widget.styles.height.is_pixels
+        assert image_widget.styles.align_horizontal.value == "right"

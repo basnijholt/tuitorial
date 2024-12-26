@@ -27,6 +27,9 @@ class ImageStep(NamedTuple):
 
     description: str
     image: str | Path | PILImage.Image
+    width: int | str | None = None
+    height: int | str | None = None
+    halign: str | None = None
 
 
 class Chapter:
@@ -70,9 +73,18 @@ class Chapter:
             # Remove the old image widget (if any) and add a new one
             for widget in self.image_container.walk_children():
                 widget.remove()
+
             image_widget = Image(step.image)
             if self.image_container.is_mounted:
                 self.image_container.mount(image_widget)
+
+            # Set the image size using styles
+            if step.width is not None:
+                image_widget.styles.width = step.width
+            if step.height is not None:
+                image_widget.styles.height = step.height
+            if step.halign is not None:
+                image_widget.styles.align_horizontal = step.halign
 
         self.description.update(
             f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
