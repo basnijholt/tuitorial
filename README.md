@@ -16,23 +16,49 @@
 - [🎯 Features](#-features)
 - [🚀 Installation](#-installation)
 - [🎮 Quick Start](#-quick-start)
+  - [Python](#python)
+  - [YAML](#yaml)
 - [📖 Advanced Usage](#-advanced-usage)
   - [Multiple Chapters](#multiple-chapters)
+    - [Python](#python-1)
+    - [YAML](#yaml-1)
   - [Steps](#steps)
+    - [Python](#python-2)
+    - [YAML](#yaml-2)
 - [🎯 Focus Types](#-focus-types)
   - [Literal Match](#literal-match)
+    - [Python](#python-3)
+    - [YAML](#yaml-3)
   - [Regular Expression](#regular-expression)
+    - [Python](#python-4)
+    - [YAML](#yaml-4)
   - [Line Number](#line-number)
+    - [Python](#python-5)
+    - [YAML](#yaml-5)
   - [Range](#range)
+    - [Python](#python-6)
+    - [YAML](#yaml-6)
   - [Starts With](#starts-with)
+    - [Python](#python-7)
+    - [YAML](#yaml-7)
   - [Between](#between)
+    - [Python](#python-8)
+    - [YAML](#yaml-8)
 - [🎨 Styling](#-styling)
-- [⌨️ Controls](#-controls)
-- [📖 Advanced Usage](#-advanced-usage-1)
+  - [Python](#python-9)
+  - [YAML](#yaml-9)
+- [⌨️ Controls](#️-controls)
+- [📖 Advanced Usage](#️-advanced-usage)
   - [Custom Highlighting Patterns](#custom-highlighting-patterns)
+    - [Python](#python-10)
+    - [YAML](#yaml-10)
   - [Multiple Highlights per Step](#multiple-highlights-per-step)
+    - [Python](#python-11)
+    - [YAML](#yaml-11)
 - [📖 Helper Functions](#-helper-functions)
   - [`create_bullet_point_chapter`](#create_bullet_point_chapter)
+    - [Python](#python-12)
+    - [YAML](#yaml-12)
 - [🧪 Development](#-development)
 - [🤝 Contributing](#-contributing)
 - [📝 License](#-license)
@@ -47,7 +73,7 @@
 ## 🎯 Features
 
 - 🎨 Rich syntax highlighting with customizable styles
-- 🔍 Multiple focus types: literal, regex, line, and range
+- 🔍 Multiple focus types: literal, regex, line, range, startswith, and between.
 - ⌨️ Interactive keyboard navigation
 - 📝 Step-by-step tutorial presentations
 - 🖼️ Beautiful TUI using [Textual](https://textual.textualize.io/)
@@ -59,6 +85,9 @@ pip install tuitorial
 ```
 
 ## 🎮 Quick Start
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 from tuitorial import Chapter, Step, TutorialApp, Focus
@@ -97,11 +126,61 @@ app = TutorialApp([chapter])
 app.run()
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+chapters:
+  - title: "Basic Example"
+    code: |
+      def hello(name: str) -> str:
+          return f"Hello, {name}!"
+
+      def main():
+          print(hello("World"))
+    steps:
+      - description: "Function Definition"
+        focus:
+          - type: regex
+            pattern: "def hello.*:$"
+            style: "bold yellow"
+      - description: "Return Statement"
+        focus:
+          - type: literal
+            pattern: 'return f"Hello, {name}!"'
+            style: "bold green"
+      - description: "Main Function"
+        focus:
+          - type: range
+            start: 26 #  Calculated index for "def main"
+            end: 53 #  Calculated length of the code
+            style: "bold blue"
+```
+
+To run the YAML example:
+
+1. Save the YAML content as a `.yaml` file (e.g., `tutorial.yaml`).
+2. Use the provided `run_tutorial_from_yaml` function:
+
+```python
+# In a separate Python file (e.g., run_yaml.py)
+from parse_yaml import run_tutorial_from_yaml  # Assuming parse_yaml.py is where you have the YAML parsing code
+
+run_tutorial_from_yaml("tutorial.yaml")
+```
+
+</details>
+
 ## 📖 Advanced Usage
 
 ### Multiple Chapters
 
-You can organize your tutorial into multiple chapters, each with its own code and steps:
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 # First chapter
@@ -131,9 +210,52 @@ app = TutorialApp([chapter1, chapter2])
 app.run()
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+chapters:
+  - title: "Greetings"
+    code: |
+      def greet(name: str) -> str:
+          return f"Hello, {name}!"
+    steps:
+      - description: "Greeting Function"
+        focus:
+          - type: regex
+            pattern: "def greet.*:$"
+      - description: "Return Statement"
+        focus:
+          - type: literal
+            pattern: 'return f"Hello, {name}!"'
+
+  - title: "Farewells"
+    code: |
+      def farewell(name: str) -> str:
+          return f"Goodbye, {name}!"
+    steps:
+      - description: "Farewell Function"
+        focus:
+          - type: regex
+            pattern: "def farewell.*:$"
+      - description: "Return Statement"
+        focus:
+          - type: literal
+            pattern: 'return f"Goodbye, {name}!"'
+```
+
+</details>
+
 ### Steps
 
-Each step in a tutorial consists of a description and a list of focuses:
+Each step in a tutorial consists of a description and a list of focuses.
+
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 Step(
@@ -145,52 +267,197 @@ Step(
 )
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+steps:
+  - description: "Step Description"
+    focus:
+      - type: literal
+        pattern: "some text"
+      - type: regex
+        pattern: "pattern.*"
+```
+
+</details>
+
 ## 🎯 Focus Types
 
 ### Literal Match
+
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 Focus.literal("def", style="bold yellow")
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+focus:
+  - type: literal
+    pattern: "def"
+    style: "bold yellow"
+```
+
+</details>
+
 ### Regular Expression
+
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 Focus.regex(r"def \w+\(.*\):", style="bold green")
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+focus:
+  - type: regex
+    pattern: "def \\w+\\(.*\\):"
+    style: "bold green"
+```
+
+</details>
+
 ### Line Number
+
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 Focus.line(1, style="bold blue")  # Highlight first line
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+focus:
+  - type: line
+    pattern: 1
+    style: "bold blue"
+```
+
+</details>
+
 ### Range
+
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 Focus.range(0, 10, style="bold magenta")  # Highlight first 10 characters
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+focus:
+  - type: range
+    start: 0
+    end: 10
+    style: "bold magenta"
+```
+
+</details>
+
 ### Starts With
 
 Highlights lines starting with the specified text. Can be configured to match from the start of any line or only at the start of the line.
+
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 Focus.startswith("import", style="bold blue", from_start_of_line=True)
 Focus.startswith("from", style="bold blue", from_start_of_line=False)
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+focus:
+  - type: startswith
+    pattern: "import"
+    style: "bold blue"
+    from_start_of_line: true
+  - type: startswith
+    pattern: "from"
+    style: "bold blue"
+    from_start_of_line: false
+```
+
+</details>
+
 ### Between
 
 Highlights text between two specified patterns. Supports inclusive or exclusive bounds, multiline matching, and greedy or non-greedy matching.
+
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 Focus.between("start_function", "end_function", style="bold blue", inclusive=True, multiline=True)
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+focus:
+  - type: between
+    start_pattern: "start_function"
+    end_pattern: "end_function"
+    style: "bold blue"
+    inclusive: true
+    multiline: true
+```
+
+</details>
+
 ## 🎨 Styling
 
 Styles can be customized using Rich's style syntax:
+
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 from rich.style import Style
@@ -201,6 +468,24 @@ Focus.literal("def", style="bold yellow")
 # Using Style object
 Focus.literal("def", style=Style(bold=True, color="yellow"))
 ```
+
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+focus:
+  - type: literal
+    pattern: "def"
+    style: "bold yellow" # Using string syntax
+
+  - type: literal
+    pattern: "def"
+    style: "bold color(yellow)" # Using Style object
+```
+
+</details>
 
 ## ⌨️ Controls
 
@@ -216,6 +501,11 @@ Focus.literal("def", style=Style(bold=True, color="yellow"))
 
 ### Custom Highlighting Patterns
 
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
+
 ```python
 from tuitorial import TutorialApp, Focus
 from rich.style import Style
@@ -223,6 +513,12 @@ from rich.style import Style
 # Define custom styles
 FUNCTION_STYLE = Style(color="bright_yellow", bold=True)
 ARGUMENT_STYLE = Style(color="bright_green", italic=True)
+
+# Your code to present
+code = '''
+def hello(name: str) -> str:
+    return f"Hello, {name}!"
+'''
 
 # Create focused patterns
 patterns = [
@@ -232,37 +528,110 @@ patterns = [
 
 # Create tutorial step
 tutorial_steps = [
-    ("Function Definition", patterns),
-    # ... more steps
+    Step("Function Definition", patterns),
 ]
 
-app = TutorialApp(code, tutorial_steps)
+# Create a chapter
+chapter = Chapter("Custom Patterns", code, tutorial_steps)
+
+# Run the tutorial
+app = TutorialApp([chapter])
 app.run()
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+chapters:
+  - title: "Custom Patterns"
+    code: |
+      def hello(name: str) -> str:
+          return f"Hello, {name}!"
+    steps:
+      - description: "Function Definition"
+        focus:
+          - type: regex
+            pattern: "def \\w+"
+            style: "bright_yellow bold"
+          - type: regex
+            pattern: "\\([^)]*\\)"
+            style: "bright_green italic"
+```
+
+</details>
+
 ### Multiple Highlights per Step
 
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
+
 ```python
+from tuitorial import Chapter, Step, TutorialApp, Focus
+from rich.style import Style
+
+# Your code to present
+code = '''
+def hello(name: str) -> str:
+    return f"Hello, {name}!"
+'''
+
 tutorial_steps = [
-    (
+    Step(
         "Input/Output",
         [
-            Focus.literal("input", style="bold cyan"),
-            Focus.literal("output", style="bold green"),
+            Focus.literal("name", style="bold cyan"),
             Focus.regex(r"->.*$", style="bold yellow"),
         ]
     ),
 ]
+
+# Create a chapter
+chapter = Chapter("Multiple Highlights", code, tutorial_steps)
+
+# Run the tutorial
+app = TutorialApp([chapter])
+app.run()
 ```
+
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+chapters:
+  - title: "Multiple Highlights"
+    code: |
+      def hello(name: str) -> str:
+          return f"Hello, {name}!"
+    steps:
+      - description: "Input/Output"
+        focus:
+          - type: literal
+            pattern: "name"
+            style: "bold cyan"
+          - type: regex
+            pattern: "->.*$"
+            style: "bold yellow"
+```
+
+</details>
 
 ## 📖 Helper Functions
 
 ### `create_bullet_point_chapter`
 
-This helper function simplifies the creation of chapters that present information in a bullet-point format.
-Each step in the generated chapter will highlight a different bullet point.
+This helper function simplifies the creation of chapters that present information in a bullet-point format. Each step in the generated chapter will highlight a different bullet point.
 
-**Usage:**
+#### Python
+
+<details>
+<summary><b>Python</b></summary>
 
 ```python
 from rich.style import Style
@@ -298,33 +667,63 @@ app = TutorialApp([bullet_point_chapter, bullet_point_chapter_with_extras])
 app.run()
 ```
 
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+chapters:
+  - title: "My Bullet Points"
+    type: bullet_points
+    bullet_points:
+      - "This is the first point."
+      - "Here is the second point."
+      - "And finally, the third point."
+    style: "magenta bold"
+
+  - title: "My Bullet Points with Extras"
+    type: bullet_points
+    bullet_points:
+      - "This is the first point."
+      - "Here is the second point."
+      - "And finally, the third point."
+    extras:
+      - "Extra info for point 1."
+      - "More details about point 2."
+      - "Final thoughts on point 3."
+    style: "green bold"
+```
+
+</details>
+
 ## 🧪 Development
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/basnijholt/tuitorial.git
-cd tuitorial
-```
+   ```bash
+   git clone https://github.com/basnijholt/tuitorial.git
+   cd tuitorial
+   ```
 
 2. Create a virtual environment:
 
-```bash
-python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
-```
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+   ```
 
 3. Install development dependencies:
 
-```bash
-pip install -e ".[test]"
-```
+   ```bash
+   pip install -e ".[test]"
+   ```
 
 4. Run tests:
 
-```bash
-pytest
-```
+   ```bash
+   pytest
+   ```
 
 ## 🤝 Contributing
 
