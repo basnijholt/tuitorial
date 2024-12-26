@@ -710,10 +710,10 @@ chapters:
 
 ## ⌨️ Controls
 
-- `→` Next step in current chapter
-- `←` Previous step in current chapter
-- `tab` Next chapter
-- `shift+tab` Previous chapter
+- `↑` Previous step in current chapter
+- `↓` Next step in current chapter
+- `→` Next chapter
+- `←` Previous chapter
 - `r` Reset to first step of current chapter
 - `d` Toggle dim/bright background
 - `q` Quit tutorial
