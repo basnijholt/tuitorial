@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from rich.style import Style
 
-from tuitorial import Focus
+from tuitorial import Focus, Step
 from tuitorial.parse_yaml import _parse_chapter, _parse_focus, _parse_step, parse_yaml_config
 from tuitorial.widgets import _BetweenTuple, _RangeTuple, _StartsWithTuple
 
@@ -160,6 +160,7 @@ def test_parse_step_with_multiple_focus() -> None:
         ],
     }
     step = _parse_step(step_data)
+    assert isinstance(step, Step)
     assert step.description == "Multiple Focus Step"
     assert len(step.focuses) == 2
     assert step.focuses[0].type == Focus.type.LITERAL

@@ -71,7 +71,10 @@ def _parse_step(step_data: dict) -> Step | ImageStep:
     if "image" in step_data:
         # It's an ImageStep
         image = step_data["image"]
-        return ImageStep(description, image)
+        width = step_data.get("width")
+        height = step_data.get("height")
+        halign = step_data.get("halign")
+        return ImageStep(description, image, width, height, halign)
     # It's a regular Step
     focus_list = [_parse_focus(focus_data) for focus_data in step_data.get("focus", [])]
     return Step(description, focus_list)

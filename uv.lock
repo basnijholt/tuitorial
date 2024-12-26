@@ -902,7 +902,7 @@ wheels = [
 
 [[package]]
 name = "tuitorial"
-version = "0.3.0.dev0+main.g47e09a4.dirty"
+version = "0.3.0.dev3+main.g0db0cfd.dirty"
 source = { editable = "." }
 dependencies = [
     { name = "pyyaml" },

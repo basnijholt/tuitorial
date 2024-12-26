@@ -48,8 +48,8 @@ problem_statement, extras = zip(
 # Create a chapter for the problem statement using the helper function
 problem_chapter = create_bullet_point_chapter(
     "Introduction",
-    problem_statement,
-    extras=extras,
+    list(problem_statement),
+    extras=list(extras),
     marker="1.",
     style=Style(color="bright_yellow", bold=True),
 )
@@ -152,8 +152,8 @@ concepts_steps = [
 # Create chapters and run the tutorial
 chapters = [
     problem_chapter,
-    Chapter("Introduction to pipefunc", intro_code, intro_steps),
-    Chapter("Core Concepts", concepts_code, concepts_steps),
+    Chapter("Introduction to pipefunc", intro_code, intro_steps),  # type: ignore[arg-type]
+    Chapter("Core Concepts", concepts_code, concepts_steps),  # type: ignore[arg-type]
 ]
 
 app = TutorialApp(chapters)

@@ -8,6 +8,7 @@ from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Container
+from textual.css.scalar import Scalar
 from textual.widgets import Footer, Header, Static, TabbedContent, TabPane, Tabs
 from textual_image.widget import Image
 
@@ -27,27 +28,27 @@ class ImageStep(NamedTuple):
 
     description: str
     image: str | Path | PILImage.Image
+    width: int | str | None = None
+    height: int | str | None = None
+    halign: str | None = None
 
 
-class Chapter:
+class Chapter(Container):
     """A chapter of a tutorial, containing multiple steps."""
 
     def __init__(self, title: str, code: str, steps: list[Step | ImageStep]) -> None:
+        super().__init__()
         self.title = title or f"Untitled {id(self)}"
         self.code = code
         self.steps = steps
         self.current_index = 0
-        self.code_display = CodeDisplay(
-            self.code,
-            [],  # Initialize with empty focuses
-            dim_background=True,
-        )
+        self.code_display = CodeDisplay(self.code, [], dim_background=True)
         # Create a container for the image widget instead of the Image itself
         # because of issue https://github.com/lnqs/textual-image/issues/43
-        self.image_container = Container()
+        self.image_container = Container(id="image-container")
+        self.image_container.border_title = "width: auto; height: auto;"
         self.image_container.visible = False  # Hide the container initially
         self.description = Static("", id="description")
-        self.update_display()
 
     @property
     def current_step(self) -> Step | ImageStep:
@@ -56,7 +57,11 @@ class Chapter:
             return Step("", [])  # Return an empty Step object if no steps
         return self.steps[self.current_index]
 
-    def update_display(self) -> None:
+    async def on_mount(self) -> None:
+        """Mount the chapter."""
+        await self.update_display()
+
+    async def update_display(self) -> None:
         """Update the display with current focus or image."""
         step = self.current_step
         if isinstance(step, Step):
@@ -68,37 +73,46 @@ class Chapter:
             self.image_container.visible = True
 
             # Remove the old image widget (if any) and add a new one
-            for widget in self.image_container.walk_children():
-                widget.remove()
-            image_widget = Image(step.image)
+            await self.image_container.remove_children()
+            image_widget = Image(step.image, id="image")
             if self.image_container.is_mounted:
-                self.image_container.mount(image_widget)
+                await self.image_container.mount(image_widget)
+
+            # Set the image size using styles
+            if step.width is not None:
+                width = f"{step.width}" if isinstance(step.width, int) else step.width
+                image_widget.styles.width = Scalar.parse(width)
+            if step.height is not None:
+                height = f"{step.height}" if isinstance(step.height, int) else step.height
+                image_widget.styles.height = Scalar.parse(height)
+            if step.halign is not None:
+                image_widget.styles.align_horizontal = step.halign
 
         self.description.update(
             f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
         )
 
-    def next_step(self) -> None:
+    async def next_step(self) -> None:
         """Handle next focus action."""
         self.current_index = (self.current_index + 1) % len(self.steps)
-        self.update_display()
+        await self.update_display()
 
-    def previous_step(self) -> None:
+    async def previous_step(self) -> None:
         """Handle previous focus action."""
         self.current_index = (self.current_index - 1) % len(self.steps)
-        self.update_display()
+        await self.update_display()
 
-    def reset_step(self) -> None:
+    async def reset_step(self) -> None:
         """Reset to first focus pattern."""
         self.current_index = 0
-        self.update_display()
+        await self.update_display()
 
-    def toggle_dim(self) -> None:
+    async def toggle_dim(self) -> None:
         """Toggle dim background."""
         if isinstance(self.current_step, Step):
             self.code_display.dim_background = not self.code_display.dim_background
             self.code_display.refresh()
-            self.update_display()
+            await self.update_display()
 
     def compose(self) -> ComposeResult:
         """Compose the chapter display."""
@@ -138,6 +152,15 @@ class TutorialApp(App):
     TabbedContent {
         height: 1fr;
     }
+
+    #image-container {
+        align: center middle;
+    }
+
+    #image {
+        width: auto;
+        height: auto;
+    }
     """
 
     BINDINGS: ClassVar[list[Binding]] = [
@@ -159,7 +182,7 @@ class TutorialApp(App):
         with TabbedContent():
             for i, chapter in enumerate(self.chapters):
                 with TabPane(chapter.title, id=f"chapter_{i}"):
-                    yield from chapter.compose()
+                    yield chapter
         yield Footer()
 
     @property
@@ -176,26 +199,26 @@ class TutorialApp(App):
         index = tab_id.split("_")[-1]
         self.current_chapter_index = int(index)
 
-    def update_display(self) -> None:
+    async def update_display(self) -> None:
         """Update the display with current focus."""
-        self.current_chapter.update_display()
+        await self.current_chapter.update_display()
 
-    def action_next_focus(self) -> None:
+    async def action_next_focus(self) -> None:
         """Handle next focus action."""
-        self.current_chapter.next_step()
-        self.update_display()
+        await self.current_chapter.next_step()
+        await self.update_display()
 
-    def action_previous_focus(self) -> None:
+    async def action_previous_focus(self) -> None:
         """Handle previous focus action."""
-        self.current_chapter.previous_step()
-        self.update_display()
+        await self.current_chapter.previous_step()
+        await self.update_display()
 
-    def action_reset_focus(self) -> None:
+    async def action_reset_focus(self) -> None:
         """Reset to first focus pattern."""
-        self.current_chapter.reset_step()
-        self.update_display()
+        await self.current_chapter.reset_step()
+        await self.update_display()
 
-    def action_toggle_dim(self) -> None:
+    async def action_toggle_dim(self) -> None:
         """Toggle dim background."""
-        self.current_chapter.toggle_dim()
-        self.update_display()
+        await self.current_chapter.toggle_dim()
+        await self.update_display()
