@@ -63,7 +63,6 @@
 - **Perfect for Nerds:** Ideal for explaining code, technical workshops, interactive documentation, and anyone who loves the terminal.
 - **Parametrize:** Create dynamic tutorials driven by code snippets and focus points.
 
-
 ## 🚀 Installation
 
 ```bash
@@ -390,6 +389,54 @@ focus:
     match_index: 0 # Only highlight the first match (0-based)
     greedy: true # Use greedy matching (longest possible match)
 ```
+
+#### Line Containing
+
+Highlights entire lines that contain a specified pattern, with optional inclusion of surrounding lines.
+Can match either literal text or regular expressions, and can select specific matches.
+
+**Python:**
+
+```python
+# Highlight all lines containing "def"
+Focus.line_containing("def", style="bold yellow")
+
+# Include surrounding lines
+Focus.line_containing(
+    "def",
+    style="bold yellow",
+    lines_before=1,
+    lines_after=1,
+)
+
+# Use regex and only highlight second match
+Focus.line_containing(
+    r"def \w+",
+    style="bold blue",
+    regex=True,
+    match_index=1,
+)
+```
+
+**YAML:**
+
+```yaml
+focus:
+  - type: line_containing
+    pattern: "def"
+    style: "bold yellow"
+    lines_before: 1 # optional: include line before match
+    lines_after: 1 # optional: include line after match
+    regex: false # optional: treat pattern as regex
+    match_index: 0 # optional: only highlight first match (0-based)
+```
+
+The `line_containing` focus type is particularly useful for:
+
+- Highlighting function definitions and their body
+- Showing imports and their surrounding context
+- Focusing on specific sections of code while maintaining readability
+- Matching patterns across multiple lines with surrounding context
 
 ### 🎨 Styling
 
