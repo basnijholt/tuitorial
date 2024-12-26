@@ -121,7 +121,7 @@ async def test_current_description(chapter):
 
 
 @pytest.mark.asyncio
-async def test_switch_chapters(chapter, example_code, tutorial_steps):
+async def test_switch_chapters(chapter, example_code):
     """Test switching between chapters."""
     # Create a second chapter
     chapter2_steps = [
@@ -138,3 +138,14 @@ async def test_switch_chapters(chapter, example_code, tutorial_steps):
         await pilot.press("right")
         assert app.current_chapter.title == chapter.title
         assert app.current_chapter_index == 0
+
+
+@pytest.mark.asyncio
+async def test_toggle_dim(chapter) -> None:
+    """Test toggling dim."""
+    app = TutorialApp([chapter])
+    async with app.run_test() as pilot:
+        await pilot.press("d")
+        assert not app.current_chapter.code_display.dim_background
+        await pilot.press("d")
+        assert app.current_chapter.code_display.dim_background
