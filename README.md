@@ -690,15 +690,11 @@ from tuitorial import Chapter, ImageStep, TutorialApp
 
 image_path = Path("path/to/your/image.png")
 
-# Set fixed width and height in pixels
-image_step_fixed = ImageStep("Fixed Size Image", image_path)
-# Inside the `ImageStep` class, you would modify the `Image` creation like this:
-# image_widget = Image(image_path, width=300, height=200)
+# Set fixed width in cells and auto height
+image_step_fixed = ImageStep("Fixed Size Image", image_path, width=300, height="auto")
 
-# Set width as a percentage of the container, and height in pixels
-image_step_percentage = ImageStep("Percentage Width Image", image_path)
-# Inside the `ImageStep` class:
-# image_widget = Image(image_path, width="50%", height=200)
+# Set width as a percentage of the container and height in cells
+image_step_percentage = ImageStep("Percentage Width Image", image_path, width="50%", height=200)
 
 chapter = Chapter("Image Examples", "", [image_step_fixed, image_step_percentage])
 app = TutorialApp([chapter])
@@ -713,12 +709,12 @@ chapters:
     steps:
       - description: "Fixed Size Image"
         image: "path/to/your/image.png"
-        width: 300 # Fixed width in pixels
-        height: 200 # Fixed height in pixels
+        width: 300 # Fixed width in cells
+        height: "auto" # Auto height
       - description: "Percentage Width Image"
         image: "path/to/your/image.png"
         width: "50%" # Width as a percentage
-        height: 200 # Fixed height in pixels
+        height: 200 # Fixed height in cells
 ```
 
 #### Alignment
