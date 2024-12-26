@@ -634,6 +634,110 @@ chapters:
 
 </details>
 
+### 🖼️ Displaying Images
+
+`tuitorial` supports displaying images within your tutorials using the `ImageStep` class.
+This allows you to incorporate visual aids, diagrams, or any other images to enhance your presentations.
+
+#### ImageStep
+
+The `ImageStep` class takes the path to an image file (or a PIL Image object) and a description as input.
+
+**Python:**
+
+```python
+from pathlib import Path
+from tuitorial import Chapter, ImageStep, TutorialApp
+
+# Path to your image
+image_path = Path("path/to/your/image.png")
+
+# Define an ImageStep
+image_step = ImageStep("Displaying an example image", image_path)
+
+# Create a chapter with the image step
+chapter = Chapter("Image Example", "", [image_step])
+
+# Run the tutorial
+app = TutorialApp([chapter])
+app.run()
+```
+
+**YAML:**
+
+```yaml
+chapters:
+  - title: "Image Example"
+    steps:
+      - description: "Displaying an example image"
+        image: "path/to/your/image.png"
+```
+
+#### Image Positioning and Sizing
+
+You can control the size of the image using the `width` and `height` properties when creating the `Image` widget within the `ImageStep`. These properties accept either integer values (for pixel dimensions) or strings representing percentages (relative to the container's size).
+
+**Python:**
+
+```python
+from pathlib import Path
+from textual_image.widget import Image
+from tuitorial import Chapter, ImageStep, TutorialApp
+
+image_path = Path("path/to/your/image.png")
+
+# Set fixed width and height in pixels
+image_step_fixed = ImageStep("Fixed Size Image", image_path)
+# Inside the `ImageStep` class, you would modify the `Image` creation like this:
+# image_widget = Image(image_path, width=300, height=200)
+
+# Set width as a percentage of the container, and height in pixels
+image_step_percentage = ImageStep("Percentage Width Image", image_path)
+# Inside the `ImageStep` class:
+# image_widget = Image(image_path, width="50%", height=200)
+
+chapter = Chapter("Image Examples", "", [image_step_fixed, image_step_percentage])
+app = TutorialApp([chapter])
+app.run()
+```
+
+**YAML:**
+
+```yaml
+chapters:
+  - title: "Image Examples"
+    steps:
+      - description: "Fixed Size Image"
+        image: "path/to/your/image.png"
+        width: 300 # Fixed width in pixels
+        height: 200 # Fixed height in pixels
+      - description: "Percentage Width Image"
+        image: "path/to/your/image.png"
+        width: "50%" # Width as a percentage
+        height: 200 # Fixed height in pixels
+```
+
+#### Alignment
+
+By default, images are aligned to the center.
+You can align images to the left or right by setting `halign` to `"left"` or `"right"` respectively when creating the `Image` widget.
+
+```python
+image_widget = Image(image_path, halign="left")
+```
+
+```yaml
+chapters:
+  - title: "Image Alignment"
+    steps:
+      - description: "Left Aligned Image"
+        image: "path/to/your/image.png"
+        halign: "left"
+      - description: "Right Aligned Image"
+        image: "path/to/your/image.png"
+        halign: "right"
+```
+
 ### 📖 Helper Functions
 
 #### `create_bullet_point_chapter`
