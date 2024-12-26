@@ -13,6 +13,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [🤨 Why?](#-why)
 - [🎯 Features](#-features)
 - [🚀 Installation](#-installation)
 - [🎮 Quick Start](#-quick-start)
@@ -43,8 +44,6 @@
 - [🎨 Styling](#-styling)
     - [Python](#python-7)
     - [YAML](#yaml-7)
-- [⌨️ Controls](#-controls)
-- [📖 Advanced Usage](#-advanced-usage-1)
   - [Custom Highlighting Patterns](#custom-highlighting-patterns)
     - [Python](#python-8)
   - [Multiple Highlights per Step](#multiple-highlights-per-step)
@@ -52,6 +51,7 @@
 - [📖 Helper Functions](#-helper-functions)
   - [`create_bullet_point_chapter`](#create_bullet_point_chapter)
     - [Python](#python-10)
+- [⌨️ Controls](#-controls)
 - [🧪 Development](#-development)
 - [🤝 Contributing](#-contributing)
 - [📝 License](#-license)
