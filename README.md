@@ -154,6 +154,7 @@ To run the YAML example:
    - Run `tuitorial tutorial.yaml` from the command line.
 
 ```bash
+# From the command line
 tuitorial tutorial.yaml
 ```
 
