@@ -1,0 +1,109 @@
+chapters:
+  - title: "Introduction"
+    type: bullet_points
+    bullet_points:
+      - "Scientists and engineers often work with complex simulation workflows."
+      - "Core logic is often encapsulated in functions that depend on each other."
+      - "Managing complex computational workflows can be challenging."
+      - "Keeping track of dependencies between functions requires a lot of bookkeeping."
+      - "Once you have a working pipeline, you may want to run it with different parameters."
+      - "Running on laptop usually requires vastly different code than in parallel on a cluster."
+      - "Reproducibility and maintainability are crucial in scientific computing."
+      - "Ideally, we focus on the science and not the plumbing."
+      - "What if we could automate the creation, execution, and management of function pipelines?"
+    extras:
+      - "These workflows involve multiple steps, such as data preprocessing, model execution, and analysis."
+      - "For example, [bold blue]calculate_fidelity(...)[/] might depend on the output of [bold blue]create_circuit(...)[/], which also depends on other inputs."
+      - "As the number of steps and dependencies increases, it becomes harder to keep track of the flow of data and ensure correct execution."
+      - "Manually managing inputs and outputs for each function can be error-prone and time-consuming."
+      - "This usually involves writing boilerplate code with loops over the parameters, executing the functions, and collecting the results."
+      - "Adapting code for different execution environments often involves significant code duplication and platform-specific logic."
+      - "It's essential to be able to rerun experiments with the same results and easily update or extend the workflow."
+      - "Scientists should spend more time on the problem and less time on writing execution details and boilerplate code."
+      - "Not wasting time on plumbing and gathering results!"
+    marker: "1."
+    style: "bright_yellow bold"
+
+  - title: "Anatomy of a Pipeline"
+    code: |
+      from pipefunc import PipeFunc, Pipeline, pipefunc
+
+      @pipefunc(output_name="c")
+      def f(a, b):
+          return a + b
+
+      @pipefunc(output_name="d")
+      def g(b, c, x=1):
+          return b * c * x
+
+      @pipefunc(output_name="e")
+      def h(c, d, x=1):
+          return c * d * x
+
+      pipeline = Pipeline(
+          [f, g, h],
+          debug=True,  # optionally print debug information
+          profile=True,  # optionally profile the pipeline
+          cache_type="hybrid",  # optionally cache the pipeline
+      )
+
+      # Let's execute the pipeline
+      result = pipeline(a=1, b=2)  # returns 12
+      print(f"Default output is: {result}")
+      print(f"`e` is:", pipeline("e", a=1, b=2))  # returns 12
+      print(f"`d` is:", pipeline("d", a=1, b=2))  # returns 6
+    steps:
+      - description: "Structure of the Pipeline\nLet's break down the code into its components"
+        focus:
+          - type: syntax
+            theme: monokai
+
+      - description: "Function Definitions\nThese are the core building blocks of the pipeline"
+        focus:
+          - type: line_containing
+            pattern: "def"
+            style: "bright_yellow bold"
+            lines_after: 1
+
+      - description: "Pipeline Decorators\nEach function is decorated with [bold blue]@pipefunc[/] to specify its output"
+        focus:
+          - type: regex
+            pattern: "@pipefunc\\(.*?\\)"
+            style: "bright_blue bold"
+
+      - description: "Output Names and Dependencies\nEach function specifies its [bold blue]output_name[/] and can use outputs from previous functions"
+        focus:
+          - type: regex
+            pattern: 'output_name="\\w+"'
+            style: "bright_green bold"
+          - type: literal
+            pattern: "c"
+            style: "bright_green"
+            word_boundary: true
+          - type: literal
+            pattern: "d"
+            style: "bright_cyan"
+            word_boundary: true
+          - type: literal
+            pattern: "e"
+            style: "bright_magenta"
+            word_boundary: true
+
+      - description: "Pipeline Construction\nFunctions are combined into a pipeline (the order doesn't matter!)"
+        focus:
+          - type: regex
+            pattern: "\\[f, g, h\\]"
+            style: "bright_yellow bold"
+
+      - description: "Pipeline Options\nOptional settings for debugging, profiling, and caching"
+        focus:
+          - type: line_containing
+            pattern: debug=True
+            lines_after: 2
+            style: "bright_blue bold"
+
+      - description: "Pipeline Execution\nThe pipeline can be called with different outputs"
+        focus:
+          - type: regex
+            pattern: "pipeline\\(.*\\).*# returns.*$"
+            style: "bright_magenta bold"
