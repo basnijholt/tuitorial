@@ -8,6 +8,7 @@ from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Container
+from textual.css.scalar import Scalar
 from textual.widgets import Footer, Header, Static, TabbedContent, TabPane, Tabs
 from textual_image.widget import Image
 
@@ -73,16 +74,17 @@ class Chapter(Container):
 
             # Remove the old image widget (if any) and add a new one
             await self.image_container.remove_children()
-
-            image_widget = Image(step.image, id="image")  # Add id to image
+            image_widget = Image(step.image, id="image")
             if self.image_container.is_mounted:
-                self.image_container.mount(image_widget)
+                await self.image_container.mount(image_widget)
 
             # Set the image size using styles
             if step.width is not None:
-                image_widget.styles.width = step.width
+                width = f"{step.width}" if isinstance(step.width, int) else step.width
+                image_widget.styles.width = Scalar.parse(width)
             if step.height is not None:
-                image_widget.styles.height = step.height
+                height = f"{step.height}" if isinstance(step.height, int) else step.height
+                image_widget.styles.height = Scalar.parse(height)
             if step.halign is not None:
                 image_widget.styles.align_horizontal = step.halign
 
