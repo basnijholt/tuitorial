@@ -61,7 +61,7 @@
 - **Interactive and Engaging:** Step-by-step walkthroughs with interactive navigation.
 - **Reproducible and Versionable:** Define tutorials in code (Python or YAML) for easy tracking and updates.
 - **Lightweight and Fast:** No more bloated presentation software.
-- **Perfect for Nerds:** Ideal for live coding, technical workshops, interactive documentation, and anyone who loves the terminal.
+- **Perfect for Nerds:** Ideal for explaining code, technical workshops, interactive documentation, and anyone who loves the terminal.
 - **Parametrize:** Create dynamic tutorials driven by code snippets and focus points.
 
 
