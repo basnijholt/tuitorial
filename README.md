@@ -716,7 +716,7 @@ chapters:
 - `←` Previous chapter
 - `r` Reset to first step of current chapter
 - `d` Toggle dim/bright background
-- `q` Quit tutorial
+- `q` Quit `tuitorial`
 
 ## 🧪 Development
 
