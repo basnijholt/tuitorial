@@ -40,8 +40,10 @@ class Chapter:
             [],  # Initialize with empty focuses
             dim_background=True,
         )
-        self.image_display = Image()  # Widget to display images
-        self.image_display.visible = False  # Initially hide the image widget
+        # Create a container for the image widget instead of the Image itself
+        # because of issue https://github.com/lnqs/textual-image/issues/43
+        self.image_container = Container()
+        self.image_container.visible = False  # Hide the container initially
         self.description = Static("", id="description")
         self.update_display()
 
@@ -57,13 +59,18 @@ class Chapter:
         step = self.current_step
         if isinstance(step, Step):
             self.code_display.visible = True
-            self.image_display.visible = False
+            self.image_container.visible = False
             self.code_display.update_focuses(step.focuses)
         elif isinstance(step, ImageStep):
             self.code_display.visible = False
-            self.image_display.visible = True
-            self.image_display.image = step.image_path
-            # No focuses to update for ImageStep
+            self.image_container.visible = True
+
+            # Remove the old image widget (if any) and add a new one
+            for widget in self.image_container.walk_children():
+                widget.remove()
+            image_widget = Image(step.image_path)
+            if self.image_container.is_mounted:
+                self.image_container.mount(image_widget)
 
         self.description.update(
             f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
@@ -93,7 +100,7 @@ class Chapter:
 
     def compose(self) -> ComposeResult:
         """Compose the chapter display."""
-        yield Container(self.description, self.code_display, self.image_display)
+        yield Container(self.description, self.code_display, self.image_container)
 
 
 class TutorialApp(App):
