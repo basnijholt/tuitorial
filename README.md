@@ -63,13 +63,6 @@
 
 </details>
 
-## 🤨 Why?
-
-- Parametrize your presentations with code snippets and focus points
-- Version control your presentations
-- You don't like PowerPoint, Google Slides, or Beamer
-- You are a huge nerd
-
 ## 🎯 Features
 
 - 🎨 Rich syntax highlighting with customizable styles
@@ -77,6 +70,19 @@
 - ⌨️ Interactive keyboard navigation
 - 📝 Step-by-step tutorial presentations
 - 🖼️ Beautiful TUI using [Textual](https://textual.textualize.io/)
+
+## 🤨 Why?
+
+99.9% shouldn't use `tuitorial`. But those 0.1% that should, will love it.
+
+- **Escape the Tyranny of Slide Decks:** Ditch PowerPoint, Google Slides, and Beamer. Embrace the terminal.
+- **Code is King:** Keep the focus on your code, where it belongs.
+- **Interactive and Engaging:** Step-by-step walkthroughs with interactive navigation.
+- **Reproducible and Versionable:** Define tutorials in code (Python or YAML) for easy tracking and updates.
+- **Lightweight and Fast:** No more bloated presentation software.
+- **Perfect for Nerds:** Ideal for live coding, technical workshops, interactive documentation, and anyone who loves the terminal.
+- **Parametrize:** Create dynamic tutorials driven by code snippets and focus points.
+
 
 ## 🚀 Installation
 
@@ -163,19 +169,25 @@ To run the YAML example:
 
 1. Save the YAML content as a `.yaml` file (e.g., `tutorial.yaml`).
 2. Either:
-    - Use the provided `tuitorial.run_from_yaml` function:
-    - Run `tuitorial tutorial.yaml` from the command line.
+   - Use the provided `tuitorial.run_from_yaml(...)` function:
+   - Run `tuitorial tutorial.yaml` from the command line.
+
+```bash
+tuitorial tutorial.yaml
+```
+
+or
 
 ```python
 # In a separate Python file (e.g., run_yaml.py)
-from parse_yaml import run_from_yaml  # Assuming parse_yaml.py is where you have the YAML parsing code
+from tuitorial.parse_yaml import run_from_yaml
 
 run_from_yaml("tutorial.yaml")
 ```
 
 </details>
 
-## 📖 Advanced Usage
+## 📖 Usage
 
 ### Multiple Chapters
 
@@ -252,7 +264,7 @@ chapters:
 
 Each step in a tutorial consists of a description and a list of focuses.
 
-#### Python
+**Python:**
 
 ```python
 Step(
@@ -264,7 +276,7 @@ Step(
 )
 ```
 
-#### YAML
+**YAML:**
 
 ```yaml
 steps:
@@ -276,17 +288,17 @@ steps:
         pattern: "pattern.*"
 ```
 
-## 🎯 Focus Types
+### 🎯 Focus Types
 
-### Literal Match
+#### Literal Match
 
-#### Python
+**Python:**
 
 ```python
 Focus.literal("def", style="bold yellow")
 ```
 
-#### YAML
+**YAML:**
 
 ```yaml
 focus:
@@ -295,15 +307,15 @@ focus:
     style: "bold yellow"
 ```
 
-### Regular Expression
+#### Regular Expression
 
-#### Python
+**Python:**
 
 ```python
 Focus.regex(r"def \w+\(.*\):", style="bold green")
 ```
 
-#### YAML
+**YAML:**
 
 ```yaml
 focus:
@@ -312,15 +324,15 @@ focus:
     style: "bold green"
 ```
 
-### Line Number
+#### Line Number
 
-#### Python
+**Python:**
 
 ```python
 Focus.line(1, style="bold blue")  # Highlight first line
 ```
 
-#### YAML
+**YAML:**
 
 ```yaml
 focus:
@@ -329,15 +341,15 @@ focus:
     style: "bold blue"
 ```
 
-### Range
+#### Range
 
-#### Python
+**Python:**
 
 ```python
 Focus.range(0, 10, style="bold magenta")  # Highlight first 10 characters
 ```
 
-#### YAML
+**YAML:**
 
 ```yaml
 focus:
@@ -347,18 +359,18 @@ focus:
     style: "bold magenta"
 ```
 
-### Starts With
+#### Starts With
 
 Highlights lines starting with the specified text. Can be configured to match from the start of any line or only at the start of the line.
 
-#### Python
+**Python:**
 
 ```python
 Focus.startswith("import", style="bold blue", from_start_of_line=True)
 Focus.startswith("from", style="bold blue", from_start_of_line=False)
 ```
 
-#### YAML
+**YAML:**
 
 ```yaml
 focus:
@@ -372,17 +384,17 @@ focus:
     from_start_of_line: false
 ```
 
-### Between
+#### Between
 
 Highlights text between two specified patterns. Supports inclusive or exclusive bounds, multiline matching, and greedy or non-greedy matching.
 
-#### Python
+**Python:**
 
 ```python
 Focus.between("start_function", "end_function", style="bold blue", inclusive=True, multiline=True)
 ```
 
-#### YAML
+**YAML:**
 
 ```yaml
 focus:
@@ -394,11 +406,11 @@ focus:
     multiline: true
 ```
 
-## 🎨 Styling
+### 🎨 Styling
 
 Styles can be customized using Rich's style syntax:
 
-#### Python
+**Python:**
 
 ```python
 from rich.style import Style
@@ -410,7 +422,7 @@ Focus.literal("def", style="bold yellow")
 Focus.literal("def", style=Style(bold=True, color="yellow"))
 ```
 
-#### YAML
+**YAML:**
 
 ```yaml
 focus:
@@ -427,7 +439,7 @@ focus:
 
 ### Custom Highlighting Patterns
 
-#### Python
+**Python:**
 
 <details>
 <summary><b>Python</b></summary>
@@ -491,7 +503,7 @@ chapters:
 
 ### Multiple Highlights per Step
 
-#### Python
+**Python:**
 
 <details>
 <summary><b>Python</b></summary>
@@ -548,13 +560,13 @@ chapters:
 
 </details>
 
-## 📖 Helper Functions
+### 📖 Helper Functions
 
-### `create_bullet_point_chapter`
+#### `create_bullet_point_chapter`
 
 This helper function simplifies the creation of chapters that present information in a bullet-point format. Each step in the generated chapter will highlight a different bullet point.
 
-#### Python
+**Python:**
 
 <details>
 <summary><b>Python</b></summary>
@@ -622,7 +634,6 @@ chapters:
 ```
 
 </details>
-
 
 ## ⌨️ Controls
 
