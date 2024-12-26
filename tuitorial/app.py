@@ -172,8 +172,9 @@ class TuitorialApp(App):
 
     def __init__(self, chapters: list[Chapter]) -> None:
         super().__init__()
-        self.chapters = chapters
-        self.current_chapter_index = 0
+        self.chapters: list[Chapter] = chapters
+        self.current_chapter_index: int = 0
+        self.max_description_height: int = 0
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -188,6 +189,24 @@ class TuitorialApp(App):
     def current_chapter(self) -> Chapter:
         """Get the current chapter."""
         return self.chapters[self.current_chapter_index]
+
+    async def on_mount(self) -> None:
+        """Called when the app is mounted to the DOM."""
+        for chapter in self.chapters:
+            for step in chapter.steps:
+                if isinstance(step, Step):
+                    chapter.description.update(step.description)
+                    self.max_description_height = max(
+                        self.max_description_height,
+                        chapter.description.size.height,
+                    )
+        assert self.max_description_height > 0, chapter.description.size.height
+        # Update all chapter description heights after all have been measured
+        for chapter in self.chapters:
+            chapter.description.styles.height = Scalar.from_number(self.max_description_height)
+
+        # Go to first step
+        await self.chapters[0].update_display()
 
     @on(TabbedContent.TabActivated)
     @on(Tabs.TabActivated)
