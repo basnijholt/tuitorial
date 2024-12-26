@@ -125,7 +125,20 @@ def _collect_highlight_ranges(
                 ranges.update(_collect_startswith_ranges(code, focus))
             case FocusType.BETWEEN:
                 ranges.update(_collect_between_ranges(code, focus))
-
+            case FocusType.LINE_CONTAINING | FocusType.LINE_CONTAINING_REGEX:
+                assert isinstance(focus.extra, dict)
+                matches = _get_line_containing_matches(
+                    code,
+                    str(focus.pattern),
+                    lines_before=focus.extra.get("lines_before", 0),
+                    lines_after=focus.extra.get("lines_after", 0),
+                    regex=focus.type == FocusType.LINE_CONTAINING_REGEX,
+                    match_index=focus.extra.get("match_index"),
+                )
+                ranges.update((start, end, focus.style) for start, end in matches)
+            case _:
+                msg = f"Unsupported focus type: {focus.type}"
+                raise ValueError(msg)
     return ranges
 
 
@@ -284,3 +297,59 @@ def _collect_between_ranges(code: str, focus: Focus) -> set[tuple[int, int, Styl
                 ranges.add((match.start(1), match.end(1), focus.style))
 
     return ranges
+
+
+def _get_line_containing_matches(
+    text: str,
+    pattern: str,
+    *,
+    lines_before: int = 0,
+    lines_after: int = 0,
+    regex: bool = False,
+    match_index: int | None = None,
+) -> list[tuple[int, int]]:
+    """Get the start and end positions of lines containing pattern.
+
+    Parameters
+    ----------
+    text
+        The text to search in
+    pattern
+        The pattern to search for
+    lines_before
+        Number of lines to include before the matched line
+    lines_after
+        Number of lines to include after the matched line
+    regex
+        If True, treat pattern as a regular expression
+    match_index
+        If provided, only return the nth match (0-based).
+        If None, return all matches.
+
+    """
+    lines = text.splitlines(keepends=True)
+    matches = []
+
+    # Find all matches first
+    for i, line in enumerate(lines):
+        if regex:
+            if re.search(pattern, line):
+                start_idx = max(0, i - lines_before)
+                end_idx = min(len(lines), i + lines_after + 1)
+                start_pos = sum(len(l) for l in lines[:start_idx])
+                end_pos = sum(len(l) for l in lines[:end_idx])
+                matches.append((start_pos, end_pos))
+        elif pattern in line:
+            start_idx = max(0, i - lines_before)
+            end_idx = min(len(lines), i + lines_after + 1)
+            start_pos = sum(len(l) for l in lines[:start_idx])
+            end_pos = sum(len(l) for l in lines[:end_idx])
+            matches.append((start_pos, end_pos))
+
+    # Return specific match if match_index is provided
+    if match_index is not None:
+        if 0 <= match_index < len(matches):
+            return [matches[match_index]]
+        return []
+
+    return matches

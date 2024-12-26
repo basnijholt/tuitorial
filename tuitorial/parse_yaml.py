@@ -9,7 +9,7 @@ from tuitorial import Chapter, Focus, Step, TutorialApp
 from tuitorial.helpers import create_bullet_point_chapter
 
 
-def _parse_focus(focus_data: dict) -> Focus:
+def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
     """Parses a single focus item from the YAML data."""
     focus_type = focus_data["type"]
     style = Style.parse(focus_data.get("style", "yellow bold"))
@@ -41,6 +41,15 @@ def _parse_focus(focus_data: dict) -> Focus:
                 multiline=focus_data.get("multiline", True),
                 match_index=focus_data.get("match_index"),
                 greedy=focus_data.get("greedy", False),
+            )
+        case "line_containing":
+            return Focus.line_containing(
+                focus_data["pattern"],
+                style=style,
+                lines_before=focus_data.get("lines_before", 0),
+                lines_after=focus_data.get("lines_after", 0),
+                regex=focus_data.get("regex", False),
+                match_index=focus_data.get("match_index"),
             )
         case _:
             msg = f"Unknown focus type: {focus_type}"

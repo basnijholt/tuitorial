@@ -20,6 +20,8 @@ class FocusType(Enum):
     RANGE = auto()
     STARTSWITH = auto()
     BETWEEN = auto()
+    LINE_CONTAINING = auto()
+    LINE_CONTAINING_REGEX = auto()
 
 
 @dataclass
@@ -29,6 +31,7 @@ class Focus:
     pattern: str | Pattern | tuple[int, int] | int | tuple[str, bool] | _BetweenTuple
     style: Style = Style(color="yellow", bold=True)  # noqa: RUF009
     type: FocusType = FocusType.LITERAL
+    extra: dict | None = None
 
     @classmethod
     def literal(
@@ -145,6 +148,50 @@ class Focus:
             _BetweenTuple(start_pattern, end_pattern, inclusive, multiline, match_index, greedy),
             style,
             FocusType.BETWEEN,
+        )
+
+    @classmethod
+    def line_containing(
+        cls,
+        pattern: str,
+        style: Style | str = Style(color="yellow", bold=True),  # noqa: B008
+        *,
+        lines_before: int = 0,
+        lines_after: int = 0,
+        regex: bool = False,
+        match_index: int | None = None,
+    ) -> Focus:
+        """Select the entire line containing a pattern and optionally surrounding lines.
+
+        Parameters
+        ----------
+        pattern
+            The text pattern to search for.
+        style
+            The style to apply to the matched lines.
+        lines_before
+            Number of lines to include before the matched line.
+        lines_after
+            Number of lines to include after the matched line.
+        regex
+            If True, treat pattern as a regular expression.
+        match_index
+            If provided, only highlight the nth match (0-based).
+            If None, highlight all matches.
+
+        """
+        if isinstance(style, str):
+            style = Style.parse(style)
+
+        return cls(
+            pattern=pattern,
+            style=style,
+            type=FocusType.LINE_CONTAINING_REGEX if regex else FocusType.LINE_CONTAINING,
+            extra={
+                "lines_before": lines_before,
+                "lines_after": lines_after,
+                "match_index": match_index,
+            },
         )
 
 
