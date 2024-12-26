@@ -439,6 +439,36 @@ The `line_containing` focus type is particularly useful for:
 - Focusing on specific sections of code while maintaining readability
 - Matching patterns across multiple lines with surrounding context
 
+#### Syntax Highlighting
+
+Uses Rich's built-in syntax highlighting for the entire code or specific lines.
+
+**Python:**
+
+```python
+# Highlight all code
+Focus.syntax(theme="monokai", line_numbers=True)
+
+# Highlight specific lines
+Focus.syntax(
+    theme="monokai",
+    start_line=0,
+    end_line=3,
+)
+```
+
+**YAML:**
+
+```yaml
+focus:
+  - type: syntax
+    lexer: "python" # optional: language to highlight (default: python)
+    theme: "monokai" # optional: color theme
+    line_numbers: true # optional: show line numbers
+    start_line: 0 # optional: first line to highlight
+    end_line: 3 # optional: last line to highlight
+```
+
 ### 🎨 Styling
 
 Styles can be customized using Rich's style syntax:

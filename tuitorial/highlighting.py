@@ -22,6 +22,7 @@ class FocusType(Enum):
     BETWEEN = auto()
     LINE_CONTAINING = auto()
     LINE_CONTAINING_REGEX = auto()
+    SYNTAX = auto()
 
 
 @dataclass
@@ -191,6 +192,45 @@ class Focus:
                 "lines_before": lines_before,
                 "lines_after": lines_after,
                 "match_index": match_index,
+            },
+        )
+
+    @classmethod
+    def syntax(
+        cls,
+        lexer: str = "python",
+        *,
+        theme: str | None = None,
+        line_numbers: bool = False,
+        start_line: int | None = None,
+        end_line: int | None = None,
+    ) -> Focus:
+        """Use Rich's syntax highlighting.
+
+        Parameters
+        ----------
+        lexer
+            The language to use for syntax highlighting (default: "python")
+        theme
+            The color theme to use (default: None, uses terminal colors)
+        line_numbers
+            Whether to show line numbers
+        start_line
+            First line to highlight (0-based), if None highlight from start
+        end_line
+            Last line to highlight (0-based), if None highlight until end
+
+        """
+        return cls(
+            pattern="",  # Not used
+            style="",  # Not used
+            type=FocusType.SYNTAX,
+            extra={
+                "lexer": lexer,
+                "theme": theme,
+                "line_numbers": line_numbers,
+                "start_line": start_line,
+                "end_line": end_line,
             },
         )
 

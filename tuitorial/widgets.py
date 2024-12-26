@@ -4,6 +4,7 @@ import re
 from re import Pattern
 
 from rich.style import Style
+from rich.syntax import Syntax
 from rich.text import Text
 from textual.widgets import Static
 
@@ -43,15 +44,14 @@ class CodeDisplay(Static):
 
     def highlight_code(self) -> Text:
         """Apply highlighting to the code."""
+        # Check if we have a syntax focus
+        syntax_focuses = [f for f in self.focuses if f.type == FocusType.SYNTAX]
+        if syntax_focuses:
+            return _highlight_with_syntax(self.code, syntax_focuses[0])
         text = Text(self.code)
-
-        # Collect and sort ranges
         ranges = _collect_highlight_ranges(self.code, self.focuses)
         sorted_ranges = _sort_ranges(ranges)
-
-        # Apply highlights
         _apply_highlights(text, self.code, sorted_ranges, self.dim_background)
-
         return text
 
     def render(self) -> Text:
@@ -136,7 +136,7 @@ def _collect_highlight_ranges(
                     match_index=focus.extra.get("match_index"),
                 )
                 ranges.update((start, end, focus.style) for start, end in matches)
-            case _:
+            case _:  # pragma: no cover
                 msg = f"Unsupported focus type: {focus.type}"
                 raise ValueError(msg)
     return ranges
@@ -353,3 +353,33 @@ def _get_line_containing_matches(
         return []
 
     return matches
+
+
+def _highlight_with_syntax(code: str, focus: Focus) -> Text:
+    """Apply syntax highlighting using Rich's Syntax class.
+
+    Parameters
+    ----------
+    code
+        The code to highlight
+    focus
+        The syntax focus object containing highlighting options
+
+    """
+    assert isinstance(focus.extra, dict)
+
+    # Get the line range
+    start_line = focus.extra.get("start_line")
+    end_line = focus.extra.get("end_line")
+    if start_line is not None or end_line is not None:
+        lines = code.splitlines()
+        code = "\n".join(lines[start_line:end_line])
+
+    # Create syntax object and get Text
+    syntax = Syntax(
+        code,
+        lexer=focus.extra.get("lexer", "python"),
+        theme="default" if focus.extra.get("theme") is None else focus.extra["theme"],
+        line_numbers=focus.extra.get("line_numbers", False),
+    )
+    return syntax.highlight(code)

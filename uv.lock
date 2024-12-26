@@ -817,7 +817,7 @@ wheels = [
 
 [[package]]
 name = "tuitorial"
-version = "0.2.0.dev10+main.gee292a3.dirty"
+version = "0.2.0.dev14+main.ge171ec7.dirty"
 source = { editable = "." }
 dependencies = [
     { name = "pyyaml" },

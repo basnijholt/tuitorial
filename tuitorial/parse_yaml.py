@@ -51,6 +51,14 @@ def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
                 regex=focus_data.get("regex", False),
                 match_index=focus_data.get("match_index"),
             )
+        case "syntax":
+            return Focus.syntax(
+                lexer=focus_data.get("lexer", "python"),
+                theme=focus_data.get("theme"),
+                line_numbers=focus_data.get("line_numbers", False),
+                start_line=focus_data.get("start_line"),
+                end_line=focus_data.get("end_line"),
+            )
         case _:
             msg = f"Unknown focus type: {focus_type}"
             raise ValueError(msg)
@@ -99,14 +107,14 @@ def parse_yaml_config(yaml_file: str) -> list[Chapter]:
     return [_parse_chapter(chapter_data) for chapter_data in config["chapters"]]
 
 
-def run_from_yaml(yaml_file: str) -> None:
+def run_from_yaml(yaml_file: str) -> None:  # pragma: no cover
     """Parses a YAML config and runs the tutorial."""
     chapters = parse_yaml_config(yaml_file)
     app = TutorialApp(chapters)
     app.run()
 
 
-def cli() -> None:
+def cli() -> None:  # pragma: no cover
     """Run the tutorial from a YAML file."""
     import argparse
 
