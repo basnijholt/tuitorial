@@ -101,7 +101,7 @@ async def test_update_display(chapter):
         initial_description = app.query_one("#description").render()
 
         # Move to next step
-        chapter.next_step()
+        await chapter.next_step()
         new_description = app.query_one("#description").render()
 
         assert initial_description != new_description

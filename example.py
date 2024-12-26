@@ -76,8 +76,8 @@ def combine(x: int, y: int) -> int:
     ]
 
     # Create chapters
-    chapter_1 = Chapter("Chapter 1", example_code_chapter_1, tutorial_steps_chapter_1)
-    chapter_2 = Chapter("Chapter 2", example_code_chapter_2, tutorial_steps_chapter_2)
+    chapter_1 = Chapter("Chapter 1", example_code_chapter_1, tutorial_steps_chapter_1)  # type: ignore[arg-type]
+    chapter_2 = Chapter("Chapter 2", example_code_chapter_2, tutorial_steps_chapter_2)  # type: ignore[arg-type]
 
     # Run the app with multiple chapters
     app = TutorialApp([chapter_1, chapter_2])
