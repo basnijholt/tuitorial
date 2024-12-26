@@ -1,7 +1,10 @@
 # tests/test_app.py
+from pathlib import Path
+
+import PIL
 import pytest
 
-from tuitorial.app import Chapter, Step, TutorialApp
+from tuitorial.app import Chapter, ImageStep, Step, TutorialApp
 from tuitorial.highlighting import Focus
 
 
@@ -149,3 +152,63 @@ async def test_toggle_dim(chapter) -> None:
         assert not app.current_chapter.code_display.dim_background
         await pilot.press("d")
         assert app.current_chapter.code_display.dim_background
+
+
+@pytest.fixture
+def image_path(tmp_path: Path) -> Path:
+    im = PIL.Image.new(mode="RGB", size=(200, 200))
+    filename = tmp_path / "test_image.png"
+    im.save(filename)
+    return filename
+
+
+@pytest.mark.asyncio
+async def test_image_step(example_code, image_path: Path):
+    """Test ImageStep functionality."""
+    steps: list[ImageStep | Step] = [
+        ImageStep("Image Step", str(image_path)),
+        Step("Code Step", [Focus.literal("def")]),
+    ]
+    chapter = Chapter("Test Chapter", example_code, steps)
+    app = TutorialApp([chapter])
+
+    async with app.run_test() as pilot:
+        # Initial state should be ImageStep
+        assert isinstance(app.current_chapter.current_step, ImageStep)
+        assert app.current_chapter.image_display.visible
+        assert not app.current_chapter.code_display.visible
+
+        # Move to next step (Code Step)
+        await pilot.press("down")
+        assert isinstance(app.current_chapter.current_step, Step)
+        assert not app.current_chapter.image_display.visible
+        assert app.current_chapter.code_display.visible
+
+        # Move back to ImageStep
+        await pilot.press("up")
+        assert isinstance(app.current_chapter.current_step, ImageStep)
+        assert app.current_chapter.image_display.visible
+        assert not app.current_chapter.code_display.visible
+
+
+@pytest.mark.asyncio
+async def test_toggle_dim_image_step(example_code, image_path: Path):
+    """Test that toggle_dim doesn't affect ImageStep."""
+    steps: list[ImageStep | Step] = [
+        ImageStep("Image Step", str(image_path)),
+        Step("Code Step", [Focus.literal("def")]),
+    ]
+    chapter = Chapter("Test Chapter", example_code, steps)
+    app = TutorialApp([chapter])
+
+    async with app.run_test() as pilot:
+        # Initial state should be ImageStep
+        assert app.current_chapter.image_display.visible
+        assert not app.current_chapter.code_display.visible
+
+        # Press toggle_dim key
+        await pilot.press("d")
+
+        # Ensure toggle_dim didn't affect ImageStep and code display is still not visible
+        assert app.current_chapter.image_display.visible
+        assert not app.current_chapter.code_display.visible

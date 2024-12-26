@@ -7,6 +7,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Container
 from textual.widgets import Footer, Header, Static, TabbedContent, TabPane, Tabs
+from textual_image.widget import Image
 
 from .highlighting import Focus
 from .widgets import CodeDisplay
@@ -19,34 +20,53 @@ class Step(NamedTuple):
     focuses: list[Focus]
 
 
+class ImageStep(NamedTuple):
+    """A step that displays an image."""
+
+    description: str
+    image_path: str
+
+
 class Chapter:
     """A chapter of a tutorial, containing multiple steps."""
 
-    def __init__(self, title: str, code: str, steps: list[Step]) -> None:
+    def __init__(self, title: str, code: str, steps: list[Step | ImageStep]) -> None:
         self.title = title or f"Untitled {id(self)}"
         self.code = code
         self.steps = steps
         self.current_index = 0
         self.code_display = CodeDisplay(
             self.code,
-            self.current_step.focuses,
+            [],  # Initialize with empty focuses
             dim_background=True,
         )
+        self.image_display = Image()  # Widget to display images
+        self.image_display.visible = False  # Initially hide the image widget
         self.description = Static("", id="description")
         self.update_display()
 
     @property
-    def current_step(self) -> Step:
+    def current_step(self) -> Step | ImageStep:
         """Get the current step."""
         if not self.steps:
-            return Step("", [])  # Return an empty Step object
+            return Step("", [])  # Return an empty Step object if no steps
         return self.steps[self.current_index]
 
     def update_display(self) -> None:
-        """Update the display with current focus."""
-        self.code_display.update_focuses(self.current_step.focuses)
+        """Update the display with current focus or image."""
+        step = self.current_step
+        if isinstance(step, Step):
+            self.code_display.visible = True
+            self.image_display.visible = False
+            self.code_display.update_focuses(step.focuses)
+        elif isinstance(step, ImageStep):
+            self.code_display.visible = False
+            self.image_display.visible = True
+            self.image_display.image = step.image_path
+            # No focuses to update for ImageStep
+
         self.description.update(
-            f"Step {self.current_index + 1}/{len(self.steps)}\n{self.current_step.description}",
+            f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
         )
 
     def next_step(self) -> None:
@@ -66,13 +86,14 @@ class Chapter:
 
     def toggle_dim(self) -> None:
         """Toggle dim background."""
-        self.code_display.dim_background = not self.code_display.dim_background
-        self.code_display.refresh()
-        self.update_display()
+        if isinstance(self.current_step, Step):
+            self.code_display.dim_background = not self.code_display.dim_background
+            self.code_display.refresh()
+            self.update_display()
 
     def compose(self) -> ComposeResult:
         """Compose the chapter display."""
-        yield Container(self.description, self.code_display)
+        yield Container(self.description, self.code_display, self.image_display)
 
 
 class TutorialApp(App):

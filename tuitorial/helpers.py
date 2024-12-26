@@ -53,4 +53,8 @@ def create_bullet_point_chapter(
     # Create steps, each highlighting one bullet point
     steps = [Step(extra, [Focus.line(i, style=style)]) for i, extra in enumerate(extras)]
 
-    return Chapter(title, code, steps)
+    return Chapter(
+        title,
+        code,
+        steps,  # type: ignore[arg-type]
+    )
