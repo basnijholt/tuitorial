@@ -156,7 +156,9 @@ chapters:
 To run the YAML example:
 
 1. Save the YAML content as a `.yaml` file (e.g., `tutorial.yaml`).
-2. Use the provided `run_tutorial_from_yaml` function:
+2. Either:
+    - Use the provided `tuitorial.run_tutorial_from_yaml` function:
+    - Run `tuitorial tutorial.yaml` from the command line.
 
 ```python
 # In a separate Python file (e.g., run_yaml.py)
@@ -170,8 +172,6 @@ run_tutorial_from_yaml("tutorial.yaml")
 ## 📖 Advanced Usage
 
 ### Multiple Chapters
-
-#### Python
 
 <details>
 <summary><b>Python</b></summary>
