@@ -48,10 +48,9 @@ chapters:
       )
 
       # Let's execute the pipeline
-      result = pipeline(a=1, b=2)  # returns 12
-      print(f"Default output is: {result}")
-      print(f"`e` is:", pipeline("e", a=1, b=2))  # returns 12
-      print(f"`d` is:", pipeline("d", a=1, b=2))  # returns 6
+      pipeline(a=1, b=2)  # returns 12
+      pipeline("d", a=1, b=2)  # returns 6
+      pipeline("e", a=1, b=2)  # returns 12
     steps:
       - description: "Structure of the Pipeline\nLet's break down the code into its components"
         focus:
@@ -102,8 +101,23 @@ chapters:
             lines_after: 2
             style: "bright_blue bold"
 
-      - description: "Pipeline Execution\nThe pipeline can be called with different outputs"
+      - description: "Pipeline Execution\nCall the pipeline with inputs and get the result"
         focus:
-          - type: regex
-            pattern: "pipeline\\(.*\\).*# returns.*$"
+          - type: line_containing
+            pattern: pipeline(a=1, b=2)
             style: "bright_magenta bold"
+
+      - description: "Pipeline Execution\nSpecify the [bold blue]output_name[/] to get the result of a specific function"
+        focus:
+          - type: line_containing
+            pattern: pipeline("d
+            style: "bright_magenta bold"
+          - type: line_containing
+            pattern: output_name="d"
+            style: "bright_magenta bold"
+          - type: line_containing
+            pattern: pipeline("e
+            style: "cyan bold"
+          - type: line_containing
+            pattern: output_name="e"
+            style: "cyan bold"
