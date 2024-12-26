@@ -324,6 +324,8 @@ focus:
 
 #### Range
 
+Highlights a specific range of characters within the code based on their indices (0-based).
+
 **Python:**
 
 ```python
@@ -385,6 +387,8 @@ focus:
     style: "bold blue"
     inclusive: true
     multiline: true
+    match_index: 0 # Only highlight the first match (0-based)
+    greedy: true # Use greedy matching (longest possible match)
 ```
 
 ### 🎨 Styling
@@ -507,6 +511,14 @@ tutorial_steps = [
             Focus.regex(r"->.*$", style="bold yellow"),
         ]
     ),
+    Step(
+        "Complex Example",
+        [
+            Focus.literal("def", style="bold yellow"),
+            Focus.regex(r"\(.*\)", style="italic green"),  # Highlight function arguments
+            Focus.line(2, style="underline blue"),  # Highlight the second line
+        ],
+    ),
 ]
 
 # Create a chapter
@@ -545,7 +557,8 @@ chapters:
 
 #### `create_bullet_point_chapter`
 
-This helper function simplifies the creation of chapters that present information in a bullet-point format. Each step in the generated chapter will highlight a different bullet point.
+This helper function simplifies the creation of chapters that present information in a bullet-point format.
+It automatically generates the code content from the list of bullet points, and each step in the generated chapter will highlight a different bullet point.
 
 <details>
 <summary><b>Python</b></summary>
@@ -646,7 +659,13 @@ chapters:
    pip install -e ".[test]"
    ```
 
-4. Run tests:
+4. Enable pre-commit hooks:
+
+   ```bash
+   pre-commit install
+   ```
+
+5. Run tests:
 
    ```bash
    pytest
