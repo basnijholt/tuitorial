@@ -257,10 +257,7 @@ Step(
 )
 ```
 
-</details>
-
-<details>
-<summary><b>YAML</b></summary>
+#### YAML
 
 ```yaml
 steps:
@@ -271,8 +268,6 @@ steps:
       - type: regex
         pattern: "pattern.*"
 ```
-
-</details>
 
 ## 🎯 Focus Types
 
@@ -293,8 +288,6 @@ focus:
     style: "bold yellow"
 ```
 
-</details>
-
 ### Regular Expression
 
 #### Python
@@ -311,8 +304,6 @@ focus:
     pattern: "def \\w+\\(.*\\):"
     style: "bold green"
 ```
-
-</details>
 
 ### Line Number
 
@@ -331,8 +322,6 @@ focus:
     style: "bold blue"
 ```
 
-</details>
-
 ### Range
 
 #### Python
@@ -350,8 +339,6 @@ focus:
     end: 10
     style: "bold magenta"
 ```
-
-</details>
 
 ### Starts With
 
@@ -378,8 +365,6 @@ focus:
     from_start_of_line: false
 ```
 
-</details>
-
 ### Between
 
 Highlights text between two specified patterns. Supports inclusive or exclusive bounds, multiline matching, and greedy or non-greedy matching.
@@ -401,8 +386,6 @@ focus:
     inclusive: true
     multiline: true
 ```
-
-</details>
 
 ## 🎨 Styling
 
