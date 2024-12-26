@@ -95,3 +95,13 @@ def run_tutorial_from_yaml(yaml_file: str) -> None:
     chapters = parse_yaml_config(yaml_file)
     app = TutorialApp(chapters)
     app.run()
+
+
+def cli() -> None:
+    """Run the tutorial from a YAML file."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run a tuitorial from a YAML file.")
+    parser.add_argument("yaml_file", help="Path to the YAML configuration file.")
+    args = parser.parse_args()
+    run_tutorial_from_yaml(args.yaml_file)

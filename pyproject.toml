@@ -58,6 +58,9 @@ repository = "https://github.com/basnijholt/tuitorial"
 content-type = "text/markdown"
 file = "README.md"
 
+[project.scripts]
+tuitorial = "tuitorial:parse_yaml.cli"
+
 [tool.hatch.version]
 source = "versioningit"
 
