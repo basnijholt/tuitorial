@@ -672,11 +672,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Textual](https://textual.textualize.io/) for the amazing TUI framework
 - [Rich](https://rich.readthedocs.io/) for beautiful terminal formatting
 
-## 📚 Similar Projects
-
-- [Rich-CLI](https://github.com/Textualize/rich-cli)
-- [asciinema](https://github.com/asciinema/asciinema)
-
 ## 🐛 Troubleshooting
 
 **Q: The colors don't show up correctly in my terminal.**
