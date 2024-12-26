@@ -548,8 +548,6 @@ chapters:
 
 This helper function simplifies the creation of chapters that present information in a bullet-point format. Each step in the generated chapter will highlight a different bullet point.
 
-**Python:**
-
 <details>
 <summary><b>Python</b></summary>
 
