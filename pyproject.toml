@@ -132,6 +132,7 @@ ignore = [
     "E501",    # Line too long
     "D107",    # Missing docstring in `__init__`
     "B905",    # `zip()` without an explicit `strict=` parameter
+    "E741",    # Do not use variables named `l`, `O`, or `I`
 ]
 
 [tool.ruff.lint.per-file-ignores]
