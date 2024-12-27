@@ -176,19 +176,19 @@ async def test_image_step(example_code, image_path: Path):
         # Initial state should be ImageStep
         assert isinstance(app.current_chapter.current_step, ImageStep)
         assert app.current_chapter.image_container.styles.display == "block"
-        assert app.current_chapter.content.code_display.styles.display == "none"
+        assert app.current_chapter.content.styles.display == "none"
 
         # Move to next step (Code Step)
         await pilot.press("down")
         assert isinstance(app.current_chapter.current_step, Step)
         assert app.current_chapter.image_container.styles.display == "none"
-        assert app.current_chapter.content.code_display.styles.display == "block"
+        assert app.current_chapter.content.styles.display == "block"
 
         # Move back to ImageStep
         await pilot.press("up")
         assert isinstance(app.current_chapter.current_step, ImageStep)
         assert app.current_chapter.image_container.styles.display == "block"
-        assert app.current_chapter.content.code_display.styles.display == "none"
+        assert app.current_chapter.content.styles.display == "none"
 
 
 @pytest.mark.asyncio
@@ -204,14 +204,14 @@ async def test_toggle_dim_image_step(example_code: str, image_path: Path):
     async with app.run_test() as pilot:
         # Initial state should be ImageStep
         assert app.current_chapter.image_container.styles.display == "block"
-        assert app.current_chapter.content.code_display.styles.display == "none"
+        assert app.current_chapter.content.styles.display == "none"
 
         # Press toggle_dim key
         await pilot.press("d")
 
         # Ensure toggle_dim didn't affect ImageStep and code display is still not visible
         assert app.current_chapter.image_container.styles.display == "block"
-        assert app.current_chapter.content.code_display.styles.display == "none"
+        assert app.current_chapter.content.styles.display == "none"
 
 
 @pytest.mark.asyncio
