@@ -1,142 +1,13 @@
 """App for presenting code tutorials."""
 
-import shutil
-from pathlib import Path
-from typing import ClassVar, Literal, NamedTuple
+from typing import ClassVar
 
-import rich
-from PIL import Image as PILImage
-from rich.text import Text
 from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.containers import Container
-from textual.css.scalar import Scalar
-from textual.widgets import Footer, Header, Static, TabbedContent, TabPane, Tabs
-from textual_image.widget import Image
+from textual.widgets import Footer, Header, TabbedContent, TabPane, Tabs
 
-from .highlighting import Focus
-from .widgets import ContentContainer
-
-
-class Step(NamedTuple):
-    """A single step in a tutorial, containing a description and focus patterns."""
-
-    description: str
-    focuses: list[Focus]
-
-
-class ImageStep(NamedTuple):
-    """A step that displays an image."""
-
-    description: str
-    image: str | Path | PILImage.Image
-    width: int | str | None = None
-    height: int | str | None = None
-    halign: Literal["left", "center", "right"] | None = None
-
-
-class Chapter(Container):
-    """A chapter of a tutorial, containing multiple steps."""
-
-    def __init__(self, title: str, code: str, steps: list[Step | ImageStep]) -> None:
-        super().__init__()
-        self.title = title or f"Untitled {id(self)}"
-        self.code = code
-        self.steps = steps
-        self.current_index = 0
-        self.content = ContentContainer(self.code)
-        # Create a container for the image widget instead of the Image itself
-        # because of issue https://github.com/lnqs/textual-image/issues/43
-        self.image_container = Container(id="image-container")
-        self.image_container.styles.display = "none"
-        self.description = Static("", id="description")
-
-    @property
-    def current_step(self) -> Step | ImageStep:
-        """Get the current step."""
-        if not self.steps:
-            return Step("", [])  # Return an empty Step object if no steps
-        return self.steps[self.current_index]
-
-    async def on_mount(self) -> None:
-        """Mount the chapter."""
-        await self.update_display()
-
-    async def on_resize(self) -> None:
-        """Called when the app is resized."""
-        await self.update_display()
-
-    def _set_description_height(self) -> None:
-        """Set the height of the description."""
-        padding_and_counter = 5  # 4 for padding and 1 for the step counter
-        height_description = _calculate_height(self.steps, self.description.size.width)
-        max_description_height = height_description + padding_and_counter
-        self.description.styles.height = Scalar.from_number(max_description_height)
-
-    async def update_display(self) -> None:
-        """Update the display with current focus or image."""
-        step = self.current_step
-
-        if isinstance(step, Step):
-            self.content.styles.display = "block"
-            self.image_container.styles.display = "none"
-            await self.content.update_display(step.focuses)
-        elif isinstance(step, ImageStep):
-            self.content.styles.display = "none"
-            self.image_container.styles.display = "block"
-
-            # Remove the old image widget (if any) and add a new one
-            await self.image_container.remove_children()
-            image_widget = Image(step.image, id="image")
-            if self.image_container.is_mounted:
-                await self.image_container.mount(image_widget)
-
-            # Set the image size using styles
-            if step.width is not None:
-                width = f"{step.width}" if isinstance(step.width, int) else step.width
-                image_widget.styles.width = Scalar.parse(width)
-            if step.height is not None:
-                height = f"{step.height}" if isinstance(step.height, int) else step.height
-                image_widget.styles.height = Scalar.parse(height)
-            if step.halign is not None:
-                image_widget.styles.align_horizontal = step.halign
-
-        self.description.update(
-            f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
-        )
-        self._set_description_height()
-
-    async def next_step(self) -> None:
-        """Handle next focus action."""
-        self.current_index = (self.current_index + 1) % len(self.steps)
-        await self.update_display()
-
-    async def previous_step(self) -> None:
-        """Handle previous focus action."""
-        self.current_index = (self.current_index - 1) % len(self.steps)
-        await self.update_display()
-
-    async def reset_step(self) -> None:
-        """Reset to first focus pattern."""
-        self.current_index = 0
-        await self.update_display()
-
-    async def toggle_dim(self) -> None:
-        """Toggle dim background."""
-        if isinstance(self.current_step, Step):
-            code_display = self.content.code_display
-            code_display.dim_background = not code_display.dim_background
-            code_display.refresh()
-            await self.update_display()
-
-    def compose(self) -> ComposeResult:
-        """Compose the chapter display."""
-        yield Container(
-            self.description,
-            self.image_container,
-            self.content,
-        )
+from .widgets import Chapter
 
 
 class TuitorialApp(App):
@@ -250,20 +121,3 @@ class TuitorialApp(App):
         """Toggle dim background."""
         await self.current_chapter.toggle_dim()
         await self.update_display()
-
-
-def _calculate_height(
-    steps: list[Step | ImageStep],
-    width: int | None = None,
-) -> int:
-    """Calculate the height of the chapter."""
-    if width is None or width == 0:
-        width = shutil.get_terminal_size().columns - 8
-    n_lines = 0
-    console = rich.get_console()
-    for step in steps:
-        if isinstance(step, Step):
-            rich_text = Text.from_markup(step.description)
-            lines = rich_text.wrap(console, width=width)
-            n_lines = max(n_lines, len(lines))
-    return n_lines

@@ -1,50 +1,180 @@
 """Custom widgets for the Tuitorial application."""
 
 import re
+import shutil
+from pathlib import Path
 from re import Pattern
+from typing import Literal, NamedTuple
 
+import rich
+from PIL import Image as PILImage
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 from textual.app import ComposeResult
 from textual.containers import Container
+from textual.css.scalar import Scalar
 from textual.widgets import Markdown, Static
+from textual_image.widget import Image
 
 from .highlighting import Focus, FocusType, _BetweenTuple, _RangeTuple, _StartsWithTuple
 
 
+class Step(NamedTuple):
+    """A single step in a tutorial, containing a description and focus patterns."""
+
+    description: str
+    focuses: list[Focus]
+
+
+class ImageStep(NamedTuple):
+    """A step that displays an image."""
+
+    description: str
+    image: str | Path | PILImage.Image
+    width: int | str | None = None
+    height: int | str | None = None
+    halign: Literal["left", "center", "right"] | None = None
+
+
+class Chapter(Container):
+    """A chapter of a tutorial, containing multiple steps."""
+
+    def __init__(self, title: str, code: str, steps: list[Step | ImageStep]) -> None:
+        super().__init__()
+        self.title = title or f"Untitled {id(self)}"
+        self.code = code
+        self.steps = steps
+        self.current_index = 0
+        self.content = ContentContainer(self.code)
+        self.description = Static("", id="description")
+
+    @property
+    def current_step(self) -> Step | ImageStep:
+        """Get the current step."""
+        if not self.steps:
+            return Step("", [])  # Return an empty Step object if no steps
+        return self.steps[self.current_index]
+
+    async def on_mount(self) -> None:
+        """Mount the chapter."""
+        await self.update_display()
+
+    async def on_resize(self) -> None:
+        """Called when the app is resized."""
+        await self.update_display()
+
+    def _set_description_height(self) -> None:
+        """Set the height of the description."""
+        padding_and_counter = 5  # 4 for padding and 1 for the step counter
+        height_description = _calculate_height(self.steps, self.description.size.width)
+        max_description_height = height_description + padding_and_counter
+        self.description.styles.height = Scalar.from_number(max_description_height)
+
+    async def update_display(self) -> None:
+        """Update the display with current focus or image."""
+        step = self.current_step
+        await self.content.update_display(step)
+        self.description.update(
+            f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
+        )
+        self._set_description_height()
+
+    async def next_step(self) -> None:
+        """Handle next focus action."""
+        self.current_index = (self.current_index + 1) % len(self.steps)
+        await self.update_display()
+
+    async def previous_step(self) -> None:
+        """Handle previous focus action."""
+        self.current_index = (self.current_index - 1) % len(self.steps)
+        await self.update_display()
+
+    async def reset_step(self) -> None:
+        """Reset to first focus pattern."""
+        self.current_index = 0
+        await self.update_display()
+
+    async def toggle_dim(self) -> None:
+        """Toggle dim background."""
+        if isinstance(self.current_step, Step):
+            code_display = self.content.code_display
+            code_display.dim_background = not code_display.dim_background
+            code_display.refresh()
+            await self.update_display()
+
+    def compose(self) -> ComposeResult:
+        """Compose the chapter display."""
+        yield Container(self.description, self.content)
+
+
 class ContentContainer(Container):
-    """A container that can display either code or markdown content."""
+    """A container that can display either code, markdown, or image content."""
 
     def __init__(self, code: str) -> None:
         """Initialize the container with a code display widget."""
         super().__init__()
         self.code_display = CodeDisplay(code, [], dim_background=True)
         self.markdown = Markdown(code, id="markdown")
+        # Create a container for the image widget instead of the Image itself
+        # because of issue https://github.com/lnqs/textual-image/issues/43
+        self.image_container = Container(id="image-container")
 
     def compose(self) -> ComposeResult:
         """Compose the container with both widgets."""
         yield self.code_display
         yield self.markdown
+        yield self.image_container
 
     async def show_code(self, focuses: list[Focus]) -> None:
         """Show code content."""
         self.code_display.styles.display = "block"
         self.markdown.styles.display = "none"
+        self.image_container.styles.display = "none"
         self.code_display.update_focuses(focuses)
 
     async def show_markdown(self) -> None:
         """Show markdown content."""
         self.code_display.styles.display = "none"
         self.markdown.styles.display = "block"
+        self.image_container.styles.display = "none"
 
-    async def update_display(self, focuses: list[Focus]) -> None:
+    async def show_image(self, step: ImageStep) -> None:
+        """Show image content."""
+        self.code_display.styles.display = "none"
+        self.markdown.styles.display = "none"
+        self.image_container.styles.display = "block"
+        # TODO: Change when https://github.com/lnqs/textual-image/issues/43 is fixed
+        # Remove the old image widget (if any) and add a new one
+        await self.image_container.remove_children()
+        image_widget = Image(step.image, id="image")
+        assert self.is_mounted
+        assert self.image_container.is_mounted
+        if self.image_container.is_mounted:
+            await self.image_container.mount(image_widget)
+
+        # Set the image size using styles
+        if step.width is not None:
+            width = f"{step.width}" if isinstance(step.width, int) else step.width
+            image_widget.styles.width = Scalar.parse(width)
+        if step.height is not None:
+            height = f"{step.height}" if isinstance(step.height, int) else step.height
+            image_widget.styles.height = Scalar.parse(height)
+        if step.halign is not None:
+            image_widget.styles.align_horizontal = step.halign
+
+    async def update_display(self, step: Step | ImageStep) -> None:
         """Update the display based on the step type."""
-        markdown = any(f.type == FocusType.MARKDOWN for f in focuses)
-        if markdown:  # It's a markdown step
+        if isinstance(step, ImageStep):
+            await self.show_image(step)
+            return
+
+        assert isinstance(step, Step)
+        markdown = any(f.type == FocusType.MARKDOWN for f in step.focuses)
+        if markdown:
             await self.show_markdown()
-        else:  # It's a code step
-            await self.show_code(focuses)
+        else:
+            await self.show_code(step.focuses)
 
 
 class CodeDisplay(Static):
@@ -420,3 +550,20 @@ def _highlight_with_syntax(code: str, focus: Focus) -> Text:
         line_numbers=focus.extra.get("line_numbers", False),
     )
     return syntax.highlight(code)
+
+
+def _calculate_height(
+    steps: list[Step | ImageStep],
+    width: int | None = None,
+) -> int:
+    """Calculate the height of the chapter."""
+    if width is None or width == 0:
+        width = shutil.get_terminal_size().columns - 8
+    n_lines = 0
+    console = rich.get_console()
+    for step in steps:
+        if isinstance(step, Step):
+            rich_text = Text.from_markup(step.description)
+            lines = rich_text.wrap(console, width=width)
+            n_lines = max(n_lines, len(lines))
+    return n_lines
