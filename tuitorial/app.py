@@ -241,7 +241,7 @@ class TuitorialApp(App):
 def _calculate_height(steps: list[Step | ImageStep], width: int | None = None) -> int:
     """Calculate the height of the chapter."""
     if width is None or width == 0:
-        width = shutil.get_terminal_size().columns - 6
+        width = shutil.get_terminal_size().columns - 8
     n_lines = 0
     console = rich.get_console()
     for step in steps:
