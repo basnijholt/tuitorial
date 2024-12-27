@@ -1,9 +1,12 @@
 """App for presenting code tutorials."""
 
+import shutil
 from pathlib import Path
 from typing import ClassVar, NamedTuple
 
+import rich
 from PIL import Image as PILImage
+from rich.text import Text
 from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -59,6 +62,21 @@ class Chapter(Container):
     async def on_mount(self) -> None:
         """Mount the chapter."""
         await self.update_display()
+
+    async def on_ready(self) -> None:
+        """Called when the app is resized."""
+        self._set_description_height()
+        await self.update_display()
+
+    async def on_resize(self) -> None:
+        """Called when the app is resized."""
+        self._set_description_height()
+        await self.update_display()
+
+    def _set_description_height(self) -> None:
+        """Set the height of the description."""
+        max_description_height = _calculate_height(self.steps, self.size.width) + 6
+        self.description.styles.height = Scalar.from_number(max_description_height)
 
     async def update_display(self) -> None:
         """Update the display with current focus or image."""
@@ -174,7 +192,6 @@ class TuitorialApp(App):
         super().__init__()
         self.chapters: list[Chapter] = chapters
         self.current_chapter_index: int = 0
-        self.max_description_height: int = 0
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -189,24 +206,6 @@ class TuitorialApp(App):
     def current_chapter(self) -> Chapter:
         """Get the current chapter."""
         return self.chapters[self.current_chapter_index]
-
-    async def on_mount(self) -> None:
-        """Called when the app is mounted to the DOM."""
-        for chapter in self.chapters:
-            for step in chapter.steps:
-                if isinstance(step, Step):
-                    chapter.description.update(step.description)
-                    self.max_description_height = max(
-                        self.max_description_height,
-                        chapter.description.size.height,
-                    )
-        assert self.max_description_height > 0, chapter.description.size.height
-        # Update all chapter description heights after all have been measured
-        for chapter in self.chapters:
-            chapter.description.styles.height = Scalar.from_number(self.max_description_height)
-
-        # Go to first step
-        await self.chapters[0].update_display()
 
     @on(TabbedContent.TabActivated)
     @on(Tabs.TabActivated)
@@ -240,3 +239,17 @@ class TuitorialApp(App):
         """Toggle dim background."""
         await self.current_chapter.toggle_dim()
         await self.update_display()
+
+
+def _calculate_height(steps: list[Step | ImageStep], width: int | None = None) -> int:
+    """Calculate the height of the chapter."""
+    if width is None or width == 0:
+        width = shutil.get_terminal_size().columns - 6
+    n_lines = 0
+    console = rich.get_console()
+    for step in steps:
+        if isinstance(step, Step):
+            rich_text = Text.from_markup(step.description)
+            lines = rich_text.wrap(console, width=width)
+            n_lines = max(n_lines, len(lines))
+    return n_lines
