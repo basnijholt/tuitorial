@@ -1,6 +1,8 @@
 title_slide:
   title: PipeFunc
-  subtitle: "Structure, Automate, and Simplify Your Computational Workflows"
+  subtitle: |
+    Structure, Automate, and Simplify Your Computational Workflows
+    - by Bas Nijholt <bas@nijho.lt>
 chapters:
   - title: "Introduction"
     type: bullet_points

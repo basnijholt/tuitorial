@@ -50,9 +50,7 @@ class TitleSlide(Container):
 
     def compose(self) -> ComposeResult:
         """Compose the title slide."""
-        from textual.widgets import RichLog
-
-        yield Container(RichLog(id="title-log"), Static(self.subtitle, id="subtitle"))
+        yield RichLog(id="title-log")
 
     def on_mount(self) -> None:
         """Create and display the ASCII art."""
@@ -79,9 +77,10 @@ class TitleSlide(Container):
 
         # Center the subtitle
         if self.subtitle:
-            subtitle_widget = self.query_one("#subtitle", Static)
-            subtitle_widget.styles.text_align = "center"
-            subtitle_widget.styles.width = "100%"
+            rich_log.write("\n")  # Add some spacing
+            rich_log.write(self.subtitle)
+            rich_log.styles.text_align = "center"
+            rich_log.styles.width = "100%"
 
 
 class Chapter(Container):
