@@ -29,7 +29,7 @@ class FocusType(Enum):
 class Focus:
     """A pattern to focus on with its style."""
 
-    pattern: str | Pattern | tuple[int, int] | int | tuple[str, bool] | _BetweenTuple
+    pattern: str | Pattern | _RangeTuple | int | _StartsWithTuple | _BetweenTuple
     style: Style = Style(color="yellow", bold=True)  # noqa: RUF009
     type: FocusType = FocusType.LITERAL
     extra: dict | None = None

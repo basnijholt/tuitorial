@@ -32,7 +32,7 @@ class CodeDisplay(Static):
         *,
         dim_background: bool = True,
     ) -> None:
-        super().__init__()
+        super().__init__(id="code-display")
         self.code = code
         self.focuses = focuses or []
         self.dim_background = dim_background
@@ -48,6 +48,7 @@ class CodeDisplay(Static):
         syntax_focuses = [f for f in self.focuses if f.type == FocusType.SYNTAX]
         if syntax_focuses:
             return _highlight_with_syntax(self.code, syntax_focuses[0])
+
         text = Text(self.code)
         ranges = _collect_highlight_ranges(self.code, self.focuses)
         sorted_ranges = _sort_ranges(ranges)

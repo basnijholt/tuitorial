@@ -12,7 +12,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Container
 from textual.css.scalar import Scalar
-from textual.widgets import Footer, Header, Static, TabbedContent, TabPane, Tabs
+from textual.widgets import Footer, Header, Markdown, Static, TabbedContent, TabPane, Tabs
 from textual_image.widget import Image
 
 from .highlighting import Focus
@@ -36,24 +36,33 @@ class ImageStep(NamedTuple):
     halign: Literal["left", "center", "right"] | None = None
 
 
+class MarkdownStep(NamedTuple):
+    """A step that displays a markdown string."""
+
+    description: str
+    markdown: str
+
+
 class Chapter(Container):
     """A chapter of a tutorial, containing multiple steps."""
 
-    def __init__(self, title: str, code: str, steps: list[Step | ImageStep]) -> None:
+    def __init__(self, title: str, code: str, steps: list[Step | ImageStep | MarkdownStep]) -> None:
         super().__init__()
         self.title = title or f"Untitled {id(self)}"
         self.code = code
         self.steps = steps
         self.current_index = 0
         self.code_display = CodeDisplay(self.code, [], dim_background=True)
+        self.markdown_container = Container(Markdown(id="markdown"), id="markdown-container")
         # Create a container for the image widget instead of the Image itself
         # because of issue https://github.com/lnqs/textual-image/issues/43
         self.image_container = Container(id="image-container")
         self.image_container.visible = False  # Hide the container initially
+        self.markdown_container.visible = False
         self.description = Static("", id="description")
 
     @property
-    def current_step(self) -> Step | ImageStep:
+    def current_step(self) -> Step | ImageStep | MarkdownStep:
         """Get the current step."""
         if not self.steps:
             return Step("", [])  # Return an empty Step object if no steps
@@ -80,9 +89,17 @@ class Chapter(Container):
         if isinstance(step, Step):
             self.code_display.visible = True
             self.image_container.visible = False
+            self.markdown_container.visible = False
             self.code_display.update_focuses(step.focuses)
+        elif isinstance(step, MarkdownStep):
+            self.code_display.visible = False
+            self.image_container.visible = False
+            self.markdown_container.visible = True
+            markdown_widget = self.query_one("#markdown", Markdown)
+            await markdown_widget.update(step.markdown)
         elif isinstance(step, ImageStep):
             self.code_display.visible = False
+            self.markdown_container.visible = False
             self.image_container.visible = True
 
             # Remove the old image widget (if any) and add a new one
@@ -130,7 +147,12 @@ class Chapter(Container):
 
     def compose(self) -> ComposeResult:
         """Compose the chapter display."""
-        yield Container(self.description, self.code_display, self.image_container)
+        yield Container(
+            self.description,
+            self.image_container,
+            self.code_display,
+            self.markdown_container,
+        )
 
 
 class TuitorialApp(App):
@@ -174,6 +196,10 @@ class TuitorialApp(App):
     #image {
         width: auto;
         height: auto;
+    }
+
+    #markdown-container {
+        height: 1fr;
     }
     """
 
@@ -238,7 +264,10 @@ class TuitorialApp(App):
         await self.update_display()
 
 
-def _calculate_height(steps: list[Step | ImageStep], width: int | None = None) -> int:
+def _calculate_height(
+    steps: list[Step | ImageStep | MarkdownStep],
+    width: int | None = None,
+) -> int:
     """Calculate the height of the chapter."""
     if width is None or width == 0:
         width = shutil.get_terminal_size().columns - 8

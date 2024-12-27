@@ -7,7 +7,7 @@ from pathlib import Path
 import yaml
 from rich.style import Style
 
-from tuitorial import Chapter, Focus, ImageStep, Step, TuitorialApp
+from tuitorial import Chapter, Focus, ImageStep, MarkdownStep, Step, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
 
 
@@ -66,7 +66,7 @@ def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
             raise ValueError(msg)
 
 
-def _parse_step(step_data: dict) -> Step | ImageStep:
+def _parse_step(step_data: dict) -> Step | ImageStep | MarkdownStep:
     """Parses a single step from the YAML data."""
     description = step_data["description"]
 
@@ -77,6 +77,10 @@ def _parse_step(step_data: dict) -> Step | ImageStep:
         height = step_data.get("height")
         halign = step_data.get("halign")
         return ImageStep(description, image, width, height, halign)
+    if "markdown" in step_data:
+        # It's a MarkdownStep
+        markdown = step_data["markdown"]
+        return MarkdownStep(description, markdown)
     # It's a regular Step
     focus_list = [_parse_focus(focus_data) for focus_data in step_data.get("focus", [])]
     return Step(description, focus_list)
