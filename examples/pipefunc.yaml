@@ -1,3 +1,6 @@
+title_slide:
+  title: PipeFunc
+  subtitle: "Structure, Automate, and Simplify Your Computational Workflows"
 chapters:
   - title: "Introduction"
     type: bullet_points

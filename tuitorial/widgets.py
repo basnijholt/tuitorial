@@ -1,5 +1,6 @@
 """Custom widgets for the Tuitorial application."""
 
+import itertools
 import re
 import shutil
 from pathlib import Path
@@ -8,13 +9,14 @@ from typing import Literal, NamedTuple
 
 import rich
 from PIL import Image as PILImage
+from pyfiglet import Figlet
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 from textual.app import ComposeResult
 from textual.containers import Container
 from textual.css.scalar import Scalar
-from textual.widgets import Markdown, Static
+from textual.widgets import Markdown, RichLog, Static
 from textual_image.widget import Image
 
 from .highlighting import Focus, FocusType, _BetweenTuple, _RangeTuple, _StartsWithTuple
@@ -35,6 +37,51 @@ class ImageStep(NamedTuple):
     width: int | str | None = None
     height: int | str | None = None
     halign: Literal["left", "center", "right"] | None = None
+
+
+class TitleSlide(Container):
+    """A title slide with ASCII art and centered text."""
+
+    def __init__(self, title: str, subtitle: str | None = None, font: str = "ansi_shadow") -> None:
+        super().__init__()
+        self.title = title
+        self.subtitle = subtitle or ""
+        self.font = font
+
+    def compose(self) -> ComposeResult:
+        """Compose the title slide."""
+        from textual.widgets import RichLog
+
+        yield Container(RichLog(id="title-log"), Static(self.subtitle, id="subtitle"))
+
+    def on_mount(self) -> None:
+        """Create and display the ASCII art."""
+        # Create ASCII art
+        f = Figlet(font=self.font)
+        ascii_text = f.renderText(self.title)
+
+        # Define gradient colors (blue to pink)
+        gradient = [
+            "#FF4500",  # Red-orange
+            "#FF6B00",  # Orange
+            "#FF8C00",  # Dark orange
+            "#FFA500",  # Orange
+            "#FF4500",  # Back to red-orange
+        ]
+
+        # Split into lines and print with gradient
+        lines = ascii_text.rstrip().split("\n")
+        rich_log = self.query_one("#title-log", RichLog)
+
+        for line, color in zip(lines, itertools.cycle(gradient)):
+            text = Text.from_markup(f"[{color}]{line}[/]")
+            rich_log.write(text)
+
+        # Center the subtitle
+        if self.subtitle:
+            subtitle_widget = self.query_one("#subtitle", Static)
+            subtitle_widget.styles.text_align = "center"
+            subtitle_widget.styles.width = "100%"
 
 
 class Chapter(Container):

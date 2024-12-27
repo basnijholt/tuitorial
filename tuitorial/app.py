@@ -7,7 +7,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.widgets import Footer, Header, TabbedContent, TabPane, Tabs
 
-from .widgets import Chapter
+from .widgets import Chapter, TitleSlide
 
 
 class TuitorialApp(App):
@@ -70,15 +70,19 @@ class TuitorialApp(App):
         ("r", "reset_focus", "Reset Focus"),
     ]
 
-    def __init__(self, chapters: list[Chapter]) -> None:
+    def __init__(self, chapters: list[Chapter], title_slide: TitleSlide | None = None) -> None:
         super().__init__()
         self.chapters: list[Chapter] = chapters
         self.current_chapter_index: int = 0
+        self.title_slide = title_slide
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Header(show_clock=True)
         with TabbedContent():
+            if self.title_slide:
+                with TabPane("Title Slide", id="title_slide"):
+                    yield self.title_slide
             for i, chapter in enumerate(self.chapters):
                 with TabPane(chapter.title, id=f"chapter_{i}"):
                     yield chapter
@@ -94,6 +98,9 @@ class TuitorialApp(App):
     def on_change(self, event: TabbedContent.TabActivated | Tabs.TabActivated) -> None:
         """Handle tab change event."""
         tab_id = event.pane.id
+        if tab_id == "title_slide":
+            self.current_chapter_index = -1
+            return
         assert tab_id.startswith("chapter_")
         index = tab_id.split("_")[-1]
         self.current_chapter_index = int(index)
