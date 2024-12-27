@@ -74,8 +74,6 @@ class Chapter(Container):
     async def update_display(self) -> None:
         """Update the display with current focus or image."""
         step = self.current_step
-
-        self.content.styles.display = "block"
         await self.content.update_display(step)
         self.description.update(
             f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
@@ -120,37 +118,40 @@ class ContentContainer(Container):
         self.markdown = Markdown(code, id="markdown")
         # Create a container for the image widget instead of the Image itself
         # because of issue https://github.com/lnqs/textual-image/issues/43
-        self.image = Container(id="image-container")
+        self.image_container = Container(id="image-container")
 
     def compose(self) -> ComposeResult:
         """Compose the container with both widgets."""
         yield self.code_display
         yield self.markdown
+        yield self.image_container
 
     async def show_code(self, focuses: list[Focus]) -> None:
         """Show code content."""
         self.code_display.styles.display = "block"
         self.markdown.styles.display = "none"
-        self.image.styles.display = "none"
+        self.image_container.styles.display = "none"
         self.code_display.update_focuses(focuses)
 
     async def show_markdown(self) -> None:
         """Show markdown content."""
         self.code_display.styles.display = "none"
         self.markdown.styles.display = "block"
-        self.image.styles.display = "none"
+        self.image_container.styles.display = "none"
 
     async def show_image(self, step: ImageStep) -> None:
         """Show image content."""
         self.code_display.styles.display = "none"
         self.markdown.styles.display = "none"
-        self.image.styles.display = "block"
+        self.image_container.styles.display = "block"
         # TODO: Change when https://github.com/lnqs/textual-image/issues/43 is fixed
         # Remove the old image widget (if any) and add a new one
-        await self.image.remove_children()
+        await self.image_container.remove_children()
         image_widget = Image(step.image, id="image")
-        if self.image.is_mounted:
-            await self.image.mount(image_widget)
+        assert self.is_mounted
+        assert self.image_container.is_mounted
+        if self.image_container.is_mounted:
+            await self.image_container.mount(image_widget)
 
         # Set the image size using styles
         if step.width is not None:
