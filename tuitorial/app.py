@@ -75,7 +75,7 @@ class Chapter(Container):
 
     def _set_description_height(self) -> None:
         """Set the height of the description."""
-        max_description_height = _calculate_height(self.steps, self.size.width) + 6
+        max_description_height = _calculate_height(self.steps, self.description.size.width) + 6
         self.description.styles.height = Scalar.from_number(max_description_height)
 
     async def update_display(self) -> None:
