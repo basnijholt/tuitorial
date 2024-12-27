@@ -23,6 +23,7 @@ class FocusType(Enum):
     LINE_CONTAINING = auto()
     LINE_CONTAINING_REGEX = auto()
     SYNTAX = auto()
+    MARKDOWN = auto()
 
 
 @dataclass
@@ -232,6 +233,15 @@ class Focus:
                 "start_line": start_line,
                 "end_line": end_line,
             },
+        )
+
+    @classmethod
+    def markdown(cls) -> Focus:
+        """Create a focus for a Markdown block."""
+        return cls(
+            pattern="",  # Not used
+            style="",  # Not used
+            type=FocusType.MARKDOWN,
         )
 
 

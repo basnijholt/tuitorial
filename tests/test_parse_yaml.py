@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from rich.style import Style
 
-from tuitorial import Focus, MarkdownStep, Step
+from tuitorial import Focus, Step
 from tuitorial.parse_yaml import _parse_chapter, _parse_focus, _parse_step, parse_yaml_config
 from tuitorial.widgets import _BetweenTuple, _RangeTuple, _StartsWithTuple
 
@@ -205,39 +205,3 @@ def test_parse_bullet_point_chapter():
     assert len(chapter.steps) == 2
     assert chapter.steps[0].description == "Extra 1"
     assert chapter.steps[1].description == "Extra 2"
-
-
-def test_parse_markdown_step():
-    """Test parsing a Markdown step."""
-    step_data = {
-        "description": "Markdown Step",
-        "markdown": "# Header\nContent",
-    }
-    step = _parse_step(step_data)
-    assert isinstance(step, MarkdownStep)
-    assert step.description == "Markdown Step"
-    assert step.markdown == "# Header\nContent"
-
-
-def test_parse_chapter_with_markdown_step(tmp_path):
-    """Test parsing a chapter with a Markdown step from a YAML file."""
-    yaml_content = """
-    chapters:
-      - title: "Markdown Chapter"
-        code: |
-          def test():
-              pass
-        steps:
-          - description: "Markdown Step"
-            markdown: "# Example Header\nSome **bold** text."
-    """
-    yaml_file = tmp_path / "markdown_chapter.yaml"
-    yaml_file.write_text(yaml_content)
-
-    chapters = parse_yaml_config(str(yaml_file))
-    assert len(chapters) == 1
-    assert chapters[0].title == "Markdown Chapter"
-    assert len(chapters[0].steps) == 1
-    assert isinstance(chapters[0].steps[0], MarkdownStep)
-    assert chapters[0].steps[0].description == "Markdown Step"
-    assert chapters[0].steps[0].markdown == "# Example Header Some **bold** text."

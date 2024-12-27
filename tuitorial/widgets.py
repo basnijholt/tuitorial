@@ -6,9 +6,45 @@ from re import Pattern
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
-from textual.widgets import Static
+from textual.app import ComposeResult
+from textual.containers import Container
+from textual.widgets import Markdown, Static
 
 from .highlighting import Focus, FocusType, _BetweenTuple, _RangeTuple, _StartsWithTuple
+
+
+class ContentContainer(Container):
+    """A container that can display either code or markdown content."""
+
+    def __init__(self, code: str) -> None:
+        """Initialize the container with a code display widget."""
+        super().__init__()
+        self.code_display = CodeDisplay(code, [], dim_background=True)
+        self.markdown = Markdown(code, id="markdown")
+
+    def compose(self) -> ComposeResult:
+        """Compose the container with both widgets."""
+        yield self.code_display
+        yield self.markdown
+
+    async def show_code(self, focuses: list[Focus]) -> None:
+        """Show code content."""
+        self.code_display.styles.display = "block"
+        self.markdown.styles.display = "none"
+        self.code_display.update_focuses(focuses)
+
+    async def show_markdown(self) -> None:
+        """Show markdown content."""
+        self.code_display.styles.display = "none"
+        self.markdown.styles.display = "block"
+
+    async def update_display(self, focuses: list[Focus]) -> None:
+        """Update the display based on the step type."""
+        markdown = any(f.type == FocusType.MARKDOWN for f in focuses)
+        if markdown:  # It's a markdown step
+            await self.show_markdown()
+        else:  # It's a code step
+            await self.show_code(focuses)
 
 
 class CodeDisplay(Static):
