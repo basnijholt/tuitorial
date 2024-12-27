@@ -2,7 +2,7 @@
 
 import shutil
 from pathlib import Path
-from typing import ClassVar, NamedTuple
+from typing import ClassVar, Literal, NamedTuple
 
 import rich
 from PIL import Image as PILImage
@@ -33,7 +33,7 @@ class ImageStep(NamedTuple):
     image: str | Path | PILImage.Image
     width: int | str | None = None
     height: int | str | None = None
-    halign: str | None = None
+    halign: Literal["left", "center", "right"] | None = None
 
 
 class Chapter(Container):
