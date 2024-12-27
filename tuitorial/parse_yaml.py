@@ -1,6 +1,8 @@
 """Module for parsing a YAML configuration file to run a tuitorial."""
 
+import os
 import re
+from pathlib import Path
 
 import yaml
 from rich.style import Style
@@ -108,7 +110,7 @@ def _parse_chapter(chapter_data: dict) -> Chapter:
     return Chapter(title, code, steps)
 
 
-def parse_yaml_config(yaml_file: str) -> list[Chapter]:
+def parse_yaml_config(yaml_file: str | Path) -> list[Chapter]:
     """Parses a YAML configuration file and returns a list of Chapter objects."""
     with open(yaml_file) as f:  # noqa: PTH123
         config = yaml.safe_load(f)
@@ -116,7 +118,7 @@ def parse_yaml_config(yaml_file: str) -> list[Chapter]:
     return [_parse_chapter(chapter_data) for chapter_data in config["chapters"]]
 
 
-def run_from_yaml(yaml_file: str) -> None:  # pragma: no cover
+def run_from_yaml(yaml_file: str | Path) -> None:  # pragma: no cover
     """Parses a YAML config and runs the tutorial."""
     chapters = parse_yaml_config(yaml_file)
     app = TuitorialApp(chapters)
@@ -128,6 +130,7 @@ def cli() -> None:  # pragma: no cover
     import argparse
 
     parser = argparse.ArgumentParser(description="Run a tuitorial from a YAML file.")
-    parser.add_argument("yaml_file", help="Path to the YAML configuration file.")
+    parser.add_argument("yaml_file", help="Path to the YAML configuration file.", type=Path)
     args = parser.parse_args()
-    run_from_yaml(args.yaml_file)
+    os.chdir(args.yaml_file.parent)
+    run_from_yaml(args.yaml_file.name)
