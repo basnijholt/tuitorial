@@ -23,13 +23,14 @@ class FocusType(Enum):
     LINE_CONTAINING = auto()
     LINE_CONTAINING_REGEX = auto()
     SYNTAX = auto()
+    MARKDOWN = auto()
 
 
 @dataclass
 class Focus:
     """A pattern to focus on with its style."""
 
-    pattern: str | Pattern | tuple[int, int] | int | tuple[str, bool] | _BetweenTuple
+    pattern: str | Pattern | _RangeTuple | int | _StartsWithTuple | _BetweenTuple
     style: Style = Style(color="yellow", bold=True)  # noqa: RUF009
     type: FocusType = FocusType.LITERAL
     extra: dict | None = None
@@ -232,6 +233,15 @@ class Focus:
                 "start_line": start_line,
                 "end_line": end_line,
             },
+        )
+
+    @classmethod
+    def markdown(cls) -> Focus:
+        """Create a focus for a Markdown block."""
+        return cls(
+            pattern="",  # Not used
+            style="",  # Not used
+            type=FocusType.MARKDOWN,
         )
 
 

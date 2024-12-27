@@ -149,9 +149,9 @@ async def test_toggle_dim(chapter) -> None:
     app = TuitorialApp([chapter])
     async with app.run_test() as pilot:
         await pilot.press("d")
-        assert not app.current_chapter.code_display.dim_background
+        assert not app.current_chapter.content.code_display.dim_background
         await pilot.press("d")
-        assert app.current_chapter.code_display.dim_background
+        assert app.current_chapter.content.code_display.dim_background
 
 
 @pytest.fixture
@@ -175,24 +175,24 @@ async def test_image_step(example_code, image_path: Path):
     async with app.run_test() as pilot:
         # Initial state should be ImageStep
         assert isinstance(app.current_chapter.current_step, ImageStep)
-        assert app.current_chapter.image_container.visible
-        assert not app.current_chapter.code_display.visible
+        assert app.current_chapter.image_container.styles.display == "block"
+        assert app.current_chapter.content.styles.display == "none"
 
         # Move to next step (Code Step)
         await pilot.press("down")
         assert isinstance(app.current_chapter.current_step, Step)
-        assert not app.current_chapter.image_container.visible
-        assert app.current_chapter.code_display.visible
+        assert app.current_chapter.image_container.styles.display == "none"
+        assert app.current_chapter.content.styles.display == "block"
 
         # Move back to ImageStep
         await pilot.press("up")
         assert isinstance(app.current_chapter.current_step, ImageStep)
-        assert app.current_chapter.image_container.visible
-        assert not app.current_chapter.code_display.visible
+        assert app.current_chapter.image_container.styles.display == "block"
+        assert app.current_chapter.content.styles.display == "none"
 
 
 @pytest.mark.asyncio
-async def test_toggle_dim_image_step(example_code, image_path: Path):
+async def test_toggle_dim_image_step(example_code: str, image_path: Path):
     """Test that toggle_dim doesn't affect ImageStep."""
     steps: list[ImageStep | Step] = [
         ImageStep("Image Step", image_path),
@@ -203,15 +203,15 @@ async def test_toggle_dim_image_step(example_code, image_path: Path):
 
     async with app.run_test() as pilot:
         # Initial state should be ImageStep
-        assert app.current_chapter.image_container.visible
-        assert not app.current_chapter.code_display.visible
+        assert app.current_chapter.image_container.styles.display == "block"
+        assert app.current_chapter.content.styles.display == "none"
 
         # Press toggle_dim key
         await pilot.press("d")
 
         # Ensure toggle_dim didn't affect ImageStep and code display is still not visible
-        assert app.current_chapter.image_container.visible
-        assert not app.current_chapter.code_display.visible
+        assert app.current_chapter.image_container.styles.display == "block"
+        assert app.current_chapter.content.styles.display == "none"
 
 
 @pytest.mark.asyncio

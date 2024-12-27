@@ -61,6 +61,8 @@ def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
                 start_line=focus_data.get("start_line"),
                 end_line=focus_data.get("end_line"),
             )
+        case "markdown":
+            return Focus.markdown()
         case _:
             msg = f"Unknown focus type: {focus_type}"
             raise ValueError(msg)

@@ -16,7 +16,7 @@ from textual.widgets import Footer, Header, Static, TabbedContent, TabPane, Tabs
 from textual_image.widget import Image
 
 from .highlighting import Focus
-from .widgets import CodeDisplay
+from .widgets import ContentContainer
 
 
 class Step(NamedTuple):
@@ -45,11 +45,11 @@ class Chapter(Container):
         self.code = code
         self.steps = steps
         self.current_index = 0
-        self.code_display = CodeDisplay(self.code, [], dim_background=True)
+        self.content = ContentContainer(self.code)
         # Create a container for the image widget instead of the Image itself
         # because of issue https://github.com/lnqs/textual-image/issues/43
         self.image_container = Container(id="image-container")
-        self.image_container.visible = False  # Hide the container initially
+        self.image_container.styles.display = "none"
         self.description = Static("", id="description")
 
     @property
@@ -77,13 +77,14 @@ class Chapter(Container):
     async def update_display(self) -> None:
         """Update the display with current focus or image."""
         step = self.current_step
+
         if isinstance(step, Step):
-            self.code_display.visible = True
-            self.image_container.visible = False
-            self.code_display.update_focuses(step.focuses)
+            self.content.styles.display = "block"
+            self.image_container.styles.display = "none"
+            await self.content.update_display(step.focuses)
         elif isinstance(step, ImageStep):
-            self.code_display.visible = False
-            self.image_container.visible = True
+            self.content.styles.display = "none"
+            self.image_container.styles.display = "block"
 
             # Remove the old image widget (if any) and add a new one
             await self.image_container.remove_children()
@@ -124,13 +125,18 @@ class Chapter(Container):
     async def toggle_dim(self) -> None:
         """Toggle dim background."""
         if isinstance(self.current_step, Step):
-            self.code_display.dim_background = not self.code_display.dim_background
-            self.code_display.refresh()
+            code_display = self.content.code_display
+            code_display.dim_background = not code_display.dim_background
+            code_display.refresh()
             await self.update_display()
 
     def compose(self) -> ComposeResult:
         """Compose the chapter display."""
-        yield Container(self.description, self.code_display, self.image_container)
+        yield Container(
+            self.description,
+            self.image_container,
+            self.content,
+        )
 
 
 class TuitorialApp(App):
@@ -167,6 +173,10 @@ class TuitorialApp(App):
         height: 1fr;
     }
 
+    ContentContainer {
+        height: auto;
+    }
+
     #image-container {
         align: center middle;
     }
@@ -174,6 +184,10 @@ class TuitorialApp(App):
     #image {
         width: auto;
         height: auto;
+    }
+
+    #markdown-container {
+        height: 1fr;
     }
     """
 
@@ -238,7 +252,10 @@ class TuitorialApp(App):
         await self.update_display()
 
 
-def _calculate_height(steps: list[Step | ImageStep], width: int | None = None) -> int:
+def _calculate_height(
+    steps: list[Step | ImageStep],
+    width: int | None = None,
+) -> int:
     """Calculate the height of the chapter."""
     if width is None or width == 0:
         width = shutil.get_terminal_size().columns - 8
