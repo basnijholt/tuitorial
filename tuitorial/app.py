@@ -63,19 +63,13 @@ class Chapter(Container):
         """Mount the chapter."""
         await self.update_display()
 
-    async def on_ready(self) -> None:
-        """Called when the app is resized."""
-        self._set_description_height()
-        await self.update_display()
-
     async def on_resize(self) -> None:
         """Called when the app is resized."""
-        self._set_description_height()
         await self.update_display()
 
     def _set_description_height(self) -> None:
         """Set the height of the description."""
-        max_description_height = _calculate_height(self.steps, self.description.size.width) + 6
+        max_description_height = _calculate_height(self.steps, self.description.size.width) + 5
         self.description.styles.height = Scalar.from_number(max_description_height)
 
     async def update_display(self) -> None:
@@ -108,6 +102,7 @@ class Chapter(Container):
         self.description.update(
             f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
         )
+        self._set_description_height()
 
     async def next_step(self) -> None:
         """Handle next focus action."""
