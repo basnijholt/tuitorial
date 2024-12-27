@@ -1,9 +1,12 @@
 """App for presenting code tutorials."""
 
+import shutil
 from pathlib import Path
 from typing import ClassVar, NamedTuple
 
+import rich
 from PIL import Image as PILImage
+from rich.text import Text
 from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -60,6 +63,17 @@ class Chapter(Container):
         """Mount the chapter."""
         await self.update_display()
 
+    async def on_resize(self) -> None:
+        """Called when the app is resized."""
+        await self.update_display()
+
+    def _set_description_height(self) -> None:
+        """Set the height of the description."""
+        padding_and_counter = 5  # 4 for padding and 1 for the step counter
+        height_description = _calculate_height(self.steps, self.description.size.width)
+        max_description_height = height_description + padding_and_counter
+        self.description.styles.height = Scalar.from_number(max_description_height)
+
     async def update_display(self) -> None:
         """Update the display with current focus or image."""
         step = self.current_step
@@ -90,6 +104,7 @@ class Chapter(Container):
         self.description.update(
             f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
         )
+        self._set_description_height()
 
     async def next_step(self) -> None:
         """Handle next focus action."""
@@ -172,8 +187,8 @@ class TuitorialApp(App):
 
     def __init__(self, chapters: list[Chapter]) -> None:
         super().__init__()
-        self.chapters = chapters
-        self.current_chapter_index = 0
+        self.chapters: list[Chapter] = chapters
+        self.current_chapter_index: int = 0
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -221,3 +236,17 @@ class TuitorialApp(App):
         """Toggle dim background."""
         await self.current_chapter.toggle_dim()
         await self.update_display()
+
+
+def _calculate_height(steps: list[Step | ImageStep], width: int | None = None) -> int:
+    """Calculate the height of the chapter."""
+    if width is None or width == 0:
+        width = shutil.get_terminal_size().columns - 6
+    n_lines = 0
+    console = rich.get_console()
+    for step in steps:
+        if isinstance(step, Step):
+            rich_text = Text.from_markup(step.description)
+            lines = rich_text.wrap(console, width=width)
+            n_lines = max(n_lines, len(lines))
+    return n_lines
