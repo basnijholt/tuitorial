@@ -310,3 +310,37 @@ def test_startswith_focus_anywhere_multiple():
         pos = match_pos + 1
 
     assert highlights == expected
+
+
+def test_validate_valid_focuses():
+    """Test that Focus.validate does not raise error with valid focuses."""
+    focuses = [
+        Focus.literal("test"),
+        Focus.regex(r"\w+"),
+        Focus.line(1),
+        Focus.range(0, 10),
+        Focus.syntax(),
+        Focus.markdown(),
+    ]
+    for focus in focuses:
+        focus.validate(focuses)  # Should not raise error
+
+
+def test_validate_multiple_markdown_focuses():
+    """Test that Focus.validate raises error with multiple markdown focuses."""
+    focuses = [
+        Focus.markdown(),
+        Focus.markdown(),
+    ]
+    with pytest.raises(ValueError, match="Only one markdown focus is allowed"):
+        focuses[0].validate(focuses)
+
+
+def test_validate_multiple_syntax_focuses():
+    """Test that Focus.validate raises error with multiple syntax focuses."""
+    focuses = [
+        Focus.syntax(),
+        Focus.syntax(),
+    ]
+    with pytest.raises(ValueError, match="Only one syntax focus is allowed"):
+        focuses[0].validate(focuses)

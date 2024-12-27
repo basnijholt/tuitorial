@@ -244,6 +244,17 @@ class Focus:
             type=FocusType.MARKDOWN,
         )
 
+    def validate(self, focuses: list[Focus]) -> None:
+        """Validate that there's at most one markdown or syntax focus."""
+        if self.type == FocusType.MARKDOWN:
+            if len([f for f in focuses if f.type == FocusType.MARKDOWN]) > 1:
+                msg = "Only one markdown focus is allowed per step."
+                raise ValueError(msg)
+        elif self.type == FocusType.SYNTAX:  # noqa: SIM102
+            if len([f for f in focuses if f.type == FocusType.SYNTAX]) > 1:
+                msg = "Only one syntax focus is allowed per step."
+                raise ValueError(msg)
+
 
 class _BetweenTuple(NamedTuple):
     start_pattern: str

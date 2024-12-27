@@ -446,9 +446,26 @@ The `line_containing` focus type is particularly useful for:
 - Focusing on specific sections of code while maintaining readability
 - Matching patterns across multiple lines with surrounding context
 
+#### Markdown
+
+Displays the content as Markdown instead of code, using Textual's built-in `Markdown` widget. Only one `markdown` focus is allowed per step, and it will take precedence over any other focus types.
+
+**Python:**
+
+```python
+Focus.markdown()
+```
+
+**YAML:**
+
+```yaml
+focus:
+  - type: markdown
+```
+
 #### Syntax Highlighting
 
-Uses Rich's built-in syntax highlighting for the entire code or specific lines.
+Uses Rich's built-in syntax highlighting for the entire code or specific lines. Only one `syntax` focus is allowed per step, and it will take precedence over any other focus types besides `markdown`.
 
 **Python:**
 
