@@ -60,6 +60,16 @@ class TuitorialApp(App):
     #markdown-container {
         height: 1fr;
     }
+
+    TitleSlide {
+        align: center middle;
+        width: 100%;
+        background: black 0%;
+    }
+
+    #title-container {
+        align: center middle;
+    }
     """
 
     BINDINGS: ClassVar[list[Binding]] = [
@@ -67,8 +77,6 @@ class TuitorialApp(App):
         Binding("down", "next_focus", "Next Focus"),
         Binding("up", "previous_focus", "Previous Focus"),
         Binding("d", "toggle_dim", "Toggle Dim"),
-        Binding("scroll_down", "next_focus", "Next Focus"),
-        Binding("scroll_up", "previous_focus", "Previous Focus"),
         ("r", "reset_focus", "Reset Focus"),
     ]
 
@@ -83,12 +91,19 @@ class TuitorialApp(App):
         yield Header(show_clock=True)
         with TabbedContent():
             if self.title_slide:
-                with TabPane("Title Slide", id="title_slide"):
+                with TabPane("Title Slide", id="title-slide-tab"):
                     yield self.title_slide
             for i, chapter in enumerate(self.chapters):
                 with TabPane(chapter.title, id=f"chapter_{i}"):
                     yield chapter
         yield Footer()
+
+    def on_mount(self) -> None:
+        """Handle mount event."""
+        title_slide = self.query_one("#title-slide-tab")
+        title_slide.styles.align_horizontal = "center"
+        title_slide.styles.align_vertical = "middle"
+        title_slide.styles.background = "black 0%"
 
     @property
     def current_chapter(self) -> Chapter:
@@ -100,7 +115,7 @@ class TuitorialApp(App):
     def on_change(self, event: TabbedContent.TabActivated | Tabs.TabActivated) -> None:
         """Handle tab change event."""
         tab_id = event.pane.id
-        if tab_id == "title_slide":
+        if tab_id == "title-slide-tab":
             self.current_chapter_index = -1
             return
         assert tab_id.startswith("chapter_")

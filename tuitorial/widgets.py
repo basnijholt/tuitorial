@@ -71,8 +71,8 @@ class TitleSlide(Container):
         if self.subtitle:
             rich_log.write("\n")  # Add some spacing
             rich_log.write(self.subtitle)
-            rich_log.styles.text_align = "center"
-            rich_log.styles.width = "100%"
+            rich_log.styles.max_height = "40%"
+            rich_log.styles.background = "red 0%"
 
 
 def _ascii_art(text: str, font: str) -> tuple[list[str], list[str]]:
