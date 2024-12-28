@@ -71,7 +71,7 @@
 - **Perfect for Nerds:** Ideal for explaining code, technical workshops, interactive documentation, and anyone who loves the terminal.
 - **Parametrize:** Create dynamic tutorials driven by code snippets and focus points.
 
-https://github.com/user-attachments/assets/cb913070-9d67-4aa9-b11d-050f41d0beac
+https://github.com/user-attachments/assets/53a0cdff-ed1b-479f-b94c-6a7b113bd8b3
 
 ## 🚀 Installation
 
