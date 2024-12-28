@@ -3,8 +3,10 @@ from pathlib import Path
 
 import PIL
 import pytest
+from pyfiglet import Figlet
+from rich.text import Text
 
-from tuitorial import Chapter, ImageStep, Step, TuitorialApp
+from tuitorial import Chapter, ImageStep, Step, TitleSlide, TuitorialApp
 from tuitorial.highlighting import Focus
 
 
@@ -243,3 +245,52 @@ async def test_image_step_dimensions_and_alignment(example_code, image_path: Pat
         assert image_widget.styles.width.value == 50
         assert image_widget.styles.height.value == 100
         assert image_widget.styles.align_horizontal == "right"
+
+
+@pytest.mark.asyncio
+async def test_title_slide_dimensions():
+    """Test that the TitleSlide sets the correct dimensions."""
+    title = "My Title"
+    subtitle = "My Subtitle"
+    font = "slant"  # Use a known, standard font
+    app = TuitorialApp([], title_slide=TitleSlide(title, subtitle, font=font))
+
+    async with app.run_test():
+        title_slide = app.query_one("#title-slide", TitleSlide)
+
+        # Calculate expected dimensions based on content and font
+        f = Figlet(font=font)
+        ascii_art = f.renderText(title).splitlines()
+        max_line_length = max(len(line) for line in ascii_art)
+        width = max_line_length + 10  # Add padding
+        height = len(ascii_art) + 2  # Add lines for spacing and subtitle (if present)
+
+        # Check if subtitle adds to height
+        if subtitle:
+            console = title_slide.app.console
+            subtitle_text = Text.from_markup(subtitle)
+            wrapped_subtitle = subtitle_text.wrap(console, width=width)
+            height += len(wrapped_subtitle) + 1  # Extra line for spacing
+
+        # Check if the calculated dimensions match the actual dimensions
+        assert title_slide.styles.width.value == pytest.approx(width, 1)
+        assert title_slide.styles.height.value == pytest.approx(height, 1)
+
+
+@pytest.mark.asyncio
+async def test_switch_from_title_slide():
+    """Test switching from the title slide to a chapter."""
+    title_slide = TitleSlide("Title", "Subtitle")
+    chapter = Chapter("Chapter 1", "code", [Step("Step 1", [Focus.literal("code")])])
+    app = TuitorialApp([chapter], title_slide=title_slide)
+
+    async with app.run_test() as pilot:
+        # Initially, the title slide should be active
+        assert app.current_chapter_index == -1
+
+        # Switch to the next tab (chapter)
+        await pilot.press("right")
+
+        # Check that the chapter is now active
+        assert app.current_chapter_index == 0
+        assert app.current_chapter.title == "Chapter 1"

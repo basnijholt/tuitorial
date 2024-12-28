@@ -1,5 +1,6 @@
 """Custom widgets for the Tuitorial application."""
 
+import itertools
 import re
 import shutil
 from pathlib import Path
@@ -8,13 +9,14 @@ from typing import Literal, NamedTuple
 
 import rich
 from PIL import Image as PILImage
+from pyfiglet import Figlet
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 from textual.app import ComposeResult
 from textual.containers import Container
 from textual.css.scalar import Scalar
-from textual.widgets import Markdown, Static
+from textual.widgets import Markdown, RichLog, Static
 from textual_image.widget import Image
 
 from .highlighting import Focus, FocusType, _BetweenTuple, _RangeTuple, _StartsWithTuple
@@ -35,6 +37,70 @@ class ImageStep(NamedTuple):
     width: int | str | None = None
     height: int | str | None = None
     halign: Literal["left", "center", "right"] | None = None
+
+
+class TitleSlide(Container):
+    """A title slide with ASCII art and centered text."""
+
+    def __init__(self, title: str, subtitle: str | None = None, font: str = "ansi_shadow") -> None:
+        super().__init__(id="title-slide")
+        self.title = title
+        self.subtitle = subtitle or ""
+        self.font = font
+        self.ascii_art, self.gradient = _ascii_art(self.title, self.font)
+
+    def compose(self) -> ComposeResult:
+        """Compose the title slide."""
+        yield Container(RichLog(id="title-rich-log"), id="title-container")
+
+    def on_mount(self) -> None:
+        """Create and display the ASCII art."""
+        # Create ASCII art
+        lines, gradient = _ascii_art(self.title, self.font)
+        rich_log = self.query_one("#title-rich-log", RichLog)
+
+        for line, color in zip(lines, itertools.cycle(gradient)):
+            text = Text.from_markup(f"[{color}]{line}[/]")
+            rich_log.write(text)
+
+        # Center the subtitle
+        if self.subtitle:
+            rich_log.write("\n")  # Add some spacing
+            rich_log.write(self.subtitle)
+        self._set_width_and_height()
+        self.refresh()
+
+    def _set_width_and_height(self) -> None:
+        """Set the height of the description."""
+        max_length = max(len(line) for line in self.ascii_art)
+        width_padding = 10
+        width = max_length + width_padding
+        width = max(width, 40)  # Minimum width
+
+        asciii_art_height = len(self.ascii_art)
+        heigh_subtitle = _calculate_height(self.subtitle, width)
+        height = heigh_subtitle + asciii_art_height + 2
+
+        self.styles.height = Scalar.from_number(height)
+        self.styles.width = Scalar.from_number(width)
+
+
+def _ascii_art(text: str, font: str) -> tuple[list[str], list[str]]:
+    f = Figlet(font=font)
+    ascii_text = f.renderText(text)
+
+    # Define gradient colors (blue to pink)
+    gradient = [
+        "#FF4500",  # Red-orange
+        "#FF6B00",  # Orange
+        "#FF8C00",  # Dark orange
+        "#FFA500",  # Orange
+        "#FF4500",  # Back to red-orange
+    ]
+
+    # Split into lines and print with gradient
+    lines = ascii_text.rstrip().split("\n")
+    return lines, gradient
 
 
 class Chapter(Container):
@@ -67,7 +133,7 @@ class Chapter(Container):
     def _set_description_height(self) -> None:
         """Set the height of the description."""
         padding_and_counter = 5  # 4 for padding and 1 for the step counter
-        height_description = _calculate_height(self.steps, self.description.size.width)
+        height_description = _calculate_heights_of_steps(self.steps, self.description.size.width)
         max_description_height = height_description + padding_and_counter
         self.description.styles.height = Scalar.from_number(max_description_height)
 
@@ -553,17 +619,26 @@ def _highlight_with_syntax(code: str, focus: Focus) -> Text:
 
 
 def _calculate_height(
-    steps: list[Step | ImageStep],
+    text: str,
     width: int | None = None,
 ) -> int:
     """Calculate the height of the chapter."""
     if width is None or width == 0:
         width = shutil.get_terminal_size().columns - 8
-    n_lines = 0
     console = rich.get_console()
+    rich_text = Text.from_markup(text)
+    lines = rich_text.wrap(console, width=width)
+    return len(lines)
+
+
+def _calculate_heights_of_steps(
+    steps: list[Step | ImageStep],
+    width: int | None = None,
+) -> int:
+    """Calculate the height of each step."""
+    height = 0
     for step in steps:
         if isinstance(step, Step):
-            rich_text = Text.from_markup(step.description)
-            lines = rich_text.wrap(console, width=width)
-            n_lines = max(n_lines, len(lines))
-    return n_lines
+            h_step = _calculate_height(step.description, width)
+            height = max(height, h_step)
+    return height

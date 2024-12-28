@@ -7,7 +7,7 @@ from pathlib import Path
 import yaml
 from rich.style import Style
 
-from tuitorial import Chapter, Focus, ImageStep, Step, TuitorialApp
+from tuitorial import Chapter, Focus, ImageStep, Step, TitleSlide, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
 
 
@@ -112,18 +112,20 @@ def _parse_chapter(chapter_data: dict) -> Chapter:
     return Chapter(title, code, steps)
 
 
-def parse_yaml_config(yaml_file: str | Path) -> list[Chapter]:
+def parse_yaml_config(yaml_file: str | Path) -> tuple[list[Chapter], TitleSlide | None]:
     """Parses a YAML configuration file and returns a list of Chapter objects."""
     with open(yaml_file) as f:  # noqa: PTH123
         config = yaml.safe_load(f)
 
-    return [_parse_chapter(chapter_data) for chapter_data in config["chapters"]]
+    chapters = [_parse_chapter(chapter_data) for chapter_data in config["chapters"]]
+    title_slide = TitleSlide(**config["title_slide"]) if "title_slide" in config else None
+    return chapters, title_slide
 
 
 def run_from_yaml(yaml_file: str | Path) -> None:  # pragma: no cover
     """Parses a YAML config and runs the tutorial."""
-    chapters = parse_yaml_config(yaml_file)
-    app = TuitorialApp(chapters)
+    chapters, title_slide = parse_yaml_config(yaml_file)
+    app = TuitorialApp(chapters, title_slide)
     app.run()
 
 

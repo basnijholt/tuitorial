@@ -198,7 +198,7 @@ def test_line_containing_with_yaml_parsing(tmp_path):
     yaml_file = tmp_path / "test.yaml"
     yaml_file.write_text(yaml_content)
 
-    chapters = parse_yaml_config(str(yaml_file))
+    chapters, _ = parse_yaml_config(str(yaml_file))
     assert len(chapters) == 1
     assert len(chapters[0].steps) == 1
 

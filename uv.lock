@@ -554,6 +554,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pyfiglet"
+version = "1.0.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a0/f2/2649b2acace54f861eccd4ab163bfd914236fc93ddb1df02dad2a2552b14/pyfiglet-1.0.2.tar.gz", hash = "sha256:758788018ab8faaddc0984e1ea05ff330d3c64be663c513cc1f105f6a3066dab", size = 832345 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1a/03/bef6fff907e212d67a0003f8ea4819307bba91b2856074a0763dd483ccc4/pyfiglet-1.0.2-py3-none-any.whl", hash = "sha256:889b351d79c99e50a3f619c8f8e6ffdb27fd8c939fc43ecbd7559bd57d5f93ea", size = 1085824 },
+]
+
+[[package]]
 name = "pygments"
 version = "2.18.0"
 source = { registry = "https://pypi.org/simple" }
@@ -902,9 +911,10 @@ wheels = [
 
 [[package]]
 name = "tuitorial"
-version = "0.3.0.dev3+main.g0db0cfd.dirty"
+version = "0.3.0.dev25+main.gc75e96d.dirty"
 source = { editable = "." }
 dependencies = [
+    { name = "pyfiglet" },
     { name = "pyyaml" },
     { name = "rich" },
     { name = "textual" },
@@ -923,6 +933,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "pyfiglet", specifier = ">=1.0.2" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "rich" },
     { name = "textual" },
