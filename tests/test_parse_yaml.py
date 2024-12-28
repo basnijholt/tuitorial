@@ -54,7 +54,7 @@ def test_parse_valid_yaml_config(valid_yaml_config, tmp_path):
     yaml_file = tmp_path / "config.yaml"
     yaml_file.write_text(valid_yaml_config)
 
-    chapters = parse_yaml_config(str(yaml_file))
+    chapters, _ = parse_yaml_config(str(yaml_file))
 
     assert len(chapters) == 2
     assert chapters[0].title == "Chapter 1"

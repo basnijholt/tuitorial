@@ -123,7 +123,7 @@ class Chapter(Container):
     def _set_description_height(self) -> None:
         """Set the height of the description."""
         padding_and_counter = 5  # 4 for padding and 1 for the step counter
-        height_description = _calculate_height(self.steps, self.description.size.width)
+        height_description = _calculate_heights_of_steps(self.steps, self.description.size.width)
         max_description_height = height_description + padding_and_counter
         self.description.styles.height = Scalar.from_number(max_description_height)
 
@@ -609,17 +609,26 @@ def _highlight_with_syntax(code: str, focus: Focus) -> Text:
 
 
 def _calculate_height(
-    steps: list[Step | ImageStep],
+    text: str,
     width: int | None = None,
 ) -> int:
     """Calculate the height of the chapter."""
     if width is None or width == 0:
         width = shutil.get_terminal_size().columns - 8
-    n_lines = 0
     console = rich.get_console()
+    rich_text = Text.from_markup(text)
+    lines = rich_text.wrap(console, width=width)
+    return len(lines)
+
+
+def _calculate_heights_of_steps(
+    steps: list[Step | ImageStep],
+    width: int | None = None,
+) -> int:
+    """Calculate the height of each step."""
+    height = 0
     for step in steps:
         if isinstance(step, Step):
-            rich_text = Text.from_markup(step.description)
-            lines = rich_text.wrap(console, width=width)
-            n_lines = max(n_lines, len(lines))
-    return n_lines
+            h_step = _calculate_height(step.description, width)
+            height = max(height, h_step)
+    return height

@@ -100,10 +100,11 @@ class TuitorialApp(App):
 
     def on_mount(self) -> None:
         """Handle mount event."""
-        title_slide = self.query_one("#title-slide-tab")
-        title_slide.styles.align_horizontal = "center"
-        title_slide.styles.align_vertical = "middle"
-        title_slide.styles.background = "black 0%"
+        if self.title_slide:
+            title_slide = self.query_one("#title-slide-tab")
+            title_slide.styles.align_horizontal = "center"
+            title_slide.styles.align_vertical = "middle"
+            title_slide.styles.background = "black 0%"
 
     @property
     def current_chapter(self) -> Chapter:
