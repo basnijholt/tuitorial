@@ -827,15 +827,15 @@ wheels = [
 
 [[package]]
 name = "textual-image"
-version = "0.6.6"
+version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pillow" },
     { name = "rich" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/af/c4/6ae0bcd2cba883a3e54e15746f8c85e0b803adede4fc59d7693107c16197/textual_image-0.6.6.tar.gz", hash = "sha256:df4a64955268f02fb12420952bae30ac0da1d7c6c1bb3d92ade611a4a16f06d9", size = 107700 }
+sdist = { url = "https://files.pythonhosted.org/packages/62/81/ca6f886d489c94ed5cf9f4c4b178828e3d30fb12276338e641691fad9eb8/textual_image-0.7.0.tar.gz", hash = "sha256:5cd4a0808c3455afeb836a62443bc292723576a96346ef7a06666f1b2b8752e0", size = 107720 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c8/bd/362db64ce8be6179a5a6010e54769b3441654a2b45ad9cdcfa0832b15a30/textual_image-0.6.6-py3-none-any.whl", hash = "sha256:7683a71c294ac4081d30296182d43ff73bf4d57c0657e7e8cf1aa93911909f6f", size = 108425 },
+    { url = "https://files.pythonhosted.org/packages/25/62/da4f7d1a078ceb4eecf90102b255b5e47c07c69d17a3fd28b8deac57c356/textual_image-0.7.0-py3-none-any.whl", hash = "sha256:920ca6ae67fae015136896aaa3641033ac1ccc86e9313a430f01ceec4455384f", size = 108443 },
 ]
 
 [package.optional-dependencies]
@@ -911,7 +911,7 @@ wheels = [
 
 [[package]]
 name = "tuitorial"
-version = "0.3.0.dev25+main.gc75e96d.dirty"
+version = "0.3.0.dev27+fix.image.g0e8abe3.dirty"
 source = { editable = "." }
 dependencies = [
     { name = "pyfiglet" },
@@ -937,7 +937,7 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "rich" },
     { name = "textual" },
-    { name = "textual-image", extras = ["textual"], specifier = ">=0.6.6" },
+    { name = "textual-image", extras = ["textual"], specifier = ">=0.7.0" },
 ]
 
 [package.metadata.requires-dev]

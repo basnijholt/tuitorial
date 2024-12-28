@@ -182,9 +182,7 @@ class ContentContainer(Container):
         super().__init__()
         self.code_display = CodeDisplay(code, [], dim_background=True)
         self.markdown = Markdown(code, id="markdown")
-        # Create a container for the image widget instead of the Image itself
-        # because of issue https://github.com/lnqs/textual-image/issues/43
-        self.image_container = Container(id="image-container")
+        self.image_container = Container(Image(id="image"), id="image-container")
 
     def compose(self) -> ComposeResult:
         """Compose the container with both widgets."""
@@ -210,14 +208,9 @@ class ContentContainer(Container):
         self.code_display.styles.display = "none"
         self.markdown.styles.display = "none"
         self.image_container.styles.display = "block"
-        # TODO: Change when https://github.com/lnqs/textual-image/issues/43 is fixed
-        # Remove the old image widget (if any) and add a new one
-        await self.image_container.remove_children()
-        image_widget = Image(step.image, id="image")
-        assert self.is_mounted
-        assert self.image_container.is_mounted
-        if self.image_container.is_mounted:
-            await self.image_container.mount(image_widget)
+
+        image_widget = self.query_one("#image", Image)
+        image_widget.image = step.image
 
         # Set the image size using styles
         if step.width is not None:
