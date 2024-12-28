@@ -62,13 +62,6 @@ class TuitorialApp(App):
         height: 1fr;
     }
 
-    TitleSlide {
-        align: center middle;
-        width: 100%;
-        background: black 0%;
-        overflow-y: auto;
-    }
-
     #title-rich-log {
         overflow-y: auto;
         background: black 0%;
