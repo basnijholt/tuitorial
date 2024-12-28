@@ -53,37 +53,15 @@
 
 ## 🎯 Features
 
-- 🎨 **Rich Syntax Highlighting:**
-  - Customizable styles for visually appealing code.
-  - Supports a wide range of programming languages.
-- 🔍 **Versatile Focus Types:**
-  - **Literal:** Highlight specific words or phrases.
-  - **Regex:** Use regular expressions for powerful pattern matching.
-  - **Line:** Focus on entire lines of code.
-  - **Range:** Highlight specific character ranges.
-  - **Startswith:** Highlight lines starting with a specific pattern.
-  - **Between:** Highlight text between two delimiters.
-  - **Line Containing:** Highlight lines containing a pattern, with optional context lines.
-  - **Syntax Highlighting:** Apply full syntax highlighting to code blocks, with optional line numbers.
-- 📝 **Step-by-Step Tutorials:**
-  - Guide users through complex concepts with interactive, sequential steps.
-  - Clear descriptions for each step.
-- 🖼️ **Multimedia Support:**
-  - **Markdown Rendering:** Display richly formatted text, lists, tables, and more using Markdown.
-  - **Image Embedding:** Include images to visually illustrate concepts or provide additional context.
-- ⌨️ **Interactive Keyboard Navigation:**
-  - Intuitive controls for moving between steps and chapters.
-  - Reset to the beginning of a chapter.
-  - Toggle to dim the background for focused reading.
-- 🖥️ **Beautiful Terminal UI:**
-  - Leverages the power of [Textual](https://textual.textualize.io/) for a polished and responsive user interface.
-- 🚀 **Customizable and Extensible:**
-  - Define tutorials in either Python code or YAML files for flexibility.
-  - Easily create custom highlighting patterns using regular expressions.
-- 🎓 **Beginner Friendly**
-  - Simple API for creating tutorials without needing to know Textual.
-- ⚡ **Title Slide:**
-  - Start your tutorials with an eye-catching title slide using ASCII art.
+- 🎨 **Rich Syntax Highlighting:** Customizable styles, wide language support.
+- 🔍 **Multiple Focus Types:** Literal, regex, line, range, startswith, between, line containing, and syntax highlighting.
+- 📝 **Step-by-Step Tutorials:** Interactive, sequential steps with clear descriptions.
+- 🖼️ **Multimedia:** Markdown rendering and image embedding.
+- ⌨️ **Interactive Navigation:** Intuitive keyboard controls.
+- 🖥️ **Beautiful Terminal UI:** Powered by [Textual](https://textual.textualize.io/).
+- 🚀 **Customizable:** Python or YAML configuration, custom highlighting.
+- 🎓 **Beginner Friendly:** Simple API, no Textual knowledge required.
+- ⚡ **Title Slide:** Eye-catching ASCII art title slides.
 
 ## 🤨 Why?
 
