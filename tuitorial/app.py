@@ -5,6 +5,7 @@ from typing import ClassVar
 from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
+from textual.css.scalar import Scalar
 from textual.widgets import Footer, Header, TabbedContent, TabPane, Tabs
 
 from .widgets import Chapter, TitleSlide
@@ -65,9 +66,15 @@ class TuitorialApp(App):
         align: center middle;
         width: 100%;
         background: black 0%;
+        overflow-y: auto;
     }
 
-    #title-container {
+    #title-rich-log {
+        overflow-y: auto;
+        background: black 0%;
+    }
+
+    #title-slide-tab {
         align: center middle;
     }
     """
@@ -98,13 +105,14 @@ class TuitorialApp(App):
                     yield chapter
         yield Footer()
 
-    def on_mount(self) -> None:
-        """Handle mount event."""
+    def on_ready(self) -> None:
+        """Handle on ready event."""
         if self.title_slide:
-            title_slide = self.query_one("#title-slide-tab")
-            title_slide.styles.align_horizontal = "center"
-            title_slide.styles.align_vertical = "middle"
-            title_slide.styles.background = "black 0%"
+            # Set the height of the tab to match the height of the title slide
+            # to make the title slide appear in the middle of the screen.
+            tab = self.query_one("#title-slide-tab")
+            tabbed = self.query_one(TabbedContent)
+            tab.styles.height = Scalar.from_number(tabbed.size.height)
 
     @property
     def current_chapter(self) -> Chapter:

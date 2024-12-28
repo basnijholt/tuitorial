@@ -43,25 +43,21 @@ class TitleSlide(Container):
     """A title slide with ASCII art and centered text."""
 
     def __init__(self, title: str, subtitle: str | None = None, font: str = "ansi_shadow") -> None:
-        super().__init__()
+        super().__init__(id="title-slide")
         self.title = title
         self.subtitle = subtitle or ""
         self.font = font
+        self.ascii_art, self.gradient = _ascii_art(self.title, self.font)
 
     def compose(self) -> ComposeResult:
         """Compose the title slide."""
-        lines, _ = _ascii_art(self.title, self.font)
-        max_length = max(len(line) for line in lines)
-        width = max_length + 10
-        self.styles.width = Scalar.from_number(width)
-        self.styles.align_horizontal = "center"
-        yield Container(RichLog(id="title-log"), id="title-container")
+        yield Container(RichLog(id="title-rich-log"), id="title-container")
 
     def on_mount(self) -> None:
         """Create and display the ASCII art."""
         # Create ASCII art
         lines, gradient = _ascii_art(self.title, self.font)
-        rich_log = self.query_one("#title-log", RichLog)
+        rich_log = self.query_one("#title-rich-log", RichLog)
 
         for line, color in zip(lines, itertools.cycle(gradient)):
             text = Text.from_markup(f"[{color}]{line}[/]")
@@ -71,8 +67,22 @@ class TitleSlide(Container):
         if self.subtitle:
             rich_log.write("\n")  # Add some spacing
             rich_log.write(self.subtitle)
-            rich_log.styles.max_height = "40%"
-            rich_log.styles.background = "red 0%"
+        self._set_width_and_height()
+        self.refresh()
+
+    def _set_width_and_height(self) -> None:
+        """Set the height of the description."""
+        max_length = max(len(line) for line in self.ascii_art)
+        width_padding = 10
+        width = max_length + width_padding
+        width = max(width, 40)  # Minimum width
+
+        asciii_art_height = len(self.ascii_art)
+        heigh_subtitle = _calculate_height(self.subtitle, width)
+        height = heigh_subtitle + asciii_art_height + 2
+
+        self.styles.height = Scalar.from_number(height)
+        self.styles.width = Scalar.from_number(width)
 
 
 def _ascii_art(text: str, font: str) -> tuple[list[str], list[str]]:
