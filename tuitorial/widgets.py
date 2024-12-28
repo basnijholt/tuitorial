@@ -50,25 +50,17 @@ class TitleSlide(Container):
 
     def compose(self) -> ComposeResult:
         """Compose the title slide."""
-        yield RichLog(id="title-log")
+        lines, _ = _ascii_art(self.title, self.font)
+        max_length = max(len(line) for line in lines)
+        width = max_length + 10
+        self.styles.width = Scalar.from_number(width)
+        self.styles.align_horizontal = "center"
+        yield Container(RichLog(id="title-log"), id="title-container")
 
     def on_mount(self) -> None:
         """Create and display the ASCII art."""
         # Create ASCII art
-        f = Figlet(font=self.font)
-        ascii_text = f.renderText(self.title)
-
-        # Define gradient colors (blue to pink)
-        gradient = [
-            "#FF4500",  # Red-orange
-            "#FF6B00",  # Orange
-            "#FF8C00",  # Dark orange
-            "#FFA500",  # Orange
-            "#FF4500",  # Back to red-orange
-        ]
-
-        # Split into lines and print with gradient
-        lines = ascii_text.rstrip().split("\n")
+        lines, gradient = _ascii_art(self.title, self.font)
         rich_log = self.query_one("#title-log", RichLog)
 
         for line, color in zip(lines, itertools.cycle(gradient)):
@@ -81,6 +73,24 @@ class TitleSlide(Container):
             rich_log.write(self.subtitle)
             rich_log.styles.text_align = "center"
             rich_log.styles.width = "100%"
+
+
+def _ascii_art(text: str, font: str) -> tuple[list[str], list[str]]:
+    f = Figlet(font=font)
+    ascii_text = f.renderText(text)
+
+    # Define gradient colors (blue to pink)
+    gradient = [
+        "#FF4500",  # Red-orange
+        "#FF6B00",  # Orange
+        "#FF8C00",  # Dark orange
+        "#FFA500",  # Orange
+        "#FF4500",  # Back to red-orange
+    ]
+
+    # Split into lines and print with gradient
+    lines = ascii_text.rstrip().split("\n")
+    return lines, gradient
 
 
 class Chapter(Container):

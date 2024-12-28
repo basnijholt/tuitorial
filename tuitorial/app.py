@@ -67,6 +67,8 @@ class TuitorialApp(App):
         Binding("down", "next_focus", "Next Focus"),
         Binding("up", "previous_focus", "Previous Focus"),
         Binding("d", "toggle_dim", "Toggle Dim"),
+        Binding("scroll_down", "next_focus", "Next Focus"),
+        Binding("scroll_up", "previous_focus", "Previous Focus"),
         ("r", "reset_focus", "Reset Focus"),
     ]
 
