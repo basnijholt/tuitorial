@@ -37,6 +37,7 @@
     - [ImageStep](#imagestep)
     - [Image Positioning and Sizing](#image-positioning-and-sizing)
     - [Alignment](#alignment)
+  - [🎬 Title Slide](#-title-slide)
   - [📖 Helper Functions](#-helper-functions)
     - [`create_bullet_point_chapter`](#create_bullet_point_chapter)
 - [⌨️ Controls](#-controls)
