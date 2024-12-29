@@ -6,6 +6,7 @@ from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.css.scalar import Scalar
+from textual.events import MouseScrollDown, MouseScrollUp
 from textual.widgets import Footer, Header, TabbedContent, TabPane, Tabs
 
 from .widgets import Chapter, TitleSlide
@@ -147,3 +148,13 @@ class TuitorialApp(App):
         """Toggle dim background."""
         await self.current_chapter.toggle_dim()
         await self.update_display()
+
+    @on(MouseScrollDown)
+    async def next_focus_scroll(self) -> None:
+        """Handle next focus scroll action."""
+        await self.action_next_focus()
+
+    @on(MouseScrollUp)
+    async def previous_focus_scroll(self) -> None:
+        """Handle previous focus scroll action."""
+        await self.action_previous_focus()

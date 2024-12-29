@@ -911,7 +911,7 @@ wheels = [
 
 [[package]]
 name = "tuitorial"
-version = "0.3.0.dev27+fix.image.g0e8abe3.dirty"
+version = "0.3.0.dev30+main.g4284ad9.dirty"
 source = { editable = "." }
 dependencies = [
     { name = "pyfiglet" },
