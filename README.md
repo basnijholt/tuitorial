@@ -15,6 +15,7 @@
 
 - [🎯 Features](#-features)
 - [🤨 Why?](#-why)
+- [📸 Recording](#-recording)
 - [🚀 Installation](#-installation)
 - [🎮 Quick Start](#-quick-start)
 - [📖 Usage](#-usage)
