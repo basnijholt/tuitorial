@@ -1,5 +1,6 @@
 """App for presenting code tutorials."""
 
+import asyncio
 from typing import ClassVar
 
 from textual import on
@@ -86,6 +87,8 @@ class TuitorialApp(App):
         self.chapters: list[Chapter] = chapters
         self.current_chapter_index: int = 0
         self.title_slide = title_slide
+        self.is_scrolling: bool = False  # Flag to track if a scroll action is in progress
+        self.scroll_throttle_time: float = 0.1  # Adjust this value for desired throttle speed
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -152,9 +155,17 @@ class TuitorialApp(App):
     @on(MouseScrollDown)
     async def next_focus_scroll(self) -> None:
         """Handle next focus scroll action."""
-        await self.action_next_focus()
+        if not self.is_scrolling:
+            self.is_scrolling = True
+            await self.action_next_focus()
+            await asyncio.sleep(self.scroll_throttle_time)
+            self.is_scrolling = False
 
     @on(MouseScrollUp)
     async def previous_focus_scroll(self) -> None:
         """Handle previous focus scroll action."""
-        await self.action_previous_focus()
+        if not self.is_scrolling:
+            self.is_scrolling = True
+            await self.action_previous_focus()
+            await asyncio.sleep(self.scroll_throttle_time)
+            self.is_scrolling = False
