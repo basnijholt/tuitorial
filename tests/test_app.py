@@ -1,5 +1,7 @@
 # tests/test_app.py
+import time
 from pathlib import Path
+from unittest.mock import patch
 
 import PIL
 import pytest
@@ -294,3 +296,64 @@ async def test_switch_from_title_slide():
         # Check that the chapter is now active
         assert app.current_chapter_index == 0
         assert app.current_chapter.title == "Chapter 1"
+
+
+@pytest.fixture
+def app_with_single_chapter(example_code, tutorial_steps):
+    """Fixture to create an app with a single chapter."""
+    chapter = Chapter("Test Chapter", example_code, tutorial_steps)
+    return TuitorialApp([chapter])
+
+
+@pytest.mark.asyncio
+async def test_scroll_debouncing(app_with_single_chapter):
+    """Test that scroll events are debounced."""
+    app = app_with_single_chapter
+    async with app.run_test():
+        # Initial state
+        assert app.current_chapter.current_index == 0
+
+        # Get the initial time
+        initial_time = time.monotonic()
+
+        # Simulate rapid calls to action_next_focus (faster than debounce time)
+        with patch("time.monotonic", return_value=initial_time):
+            await app.action_next_focus()  # First call should be processed
+        time_delta = initial_time + 0.05
+        with patch("time.monotonic", return_value=time_delta):
+            await app.action_next_focus()  # Ignored due to debounce
+            await app.action_next_focus()  # Ignored due to debounce
+
+        # Only one scroll action should have been processed
+        assert app.current_chapter.current_index == 1
+
+        # Wait for longer than the debounce time and try again
+        time_delta += 0.2
+        with patch("time.monotonic", return_value=time_delta):
+            await app.action_next_focus()
+
+        # Another scroll action should be processed
+        assert app.current_chapter.current_index == 0
+
+        # Reset to the first step
+        await app.current_chapter.reset_step()
+        assert app.current_chapter.current_index == 0
+
+        # Simulate rapid calls to action_previous_focus (faster than debounce time)
+        with patch("time.monotonic", return_value=time_delta):
+            await app.action_previous_focus()  # First call should be processed
+        time_delta += 0.05
+        with patch("time.monotonic", return_value=time_delta):
+            await app.action_previous_focus()  # Ignored due to debounce
+            await app.action_previous_focus()  # Ignored due to debounce
+
+        # Only one scroll action should have been processed
+        assert app.current_chapter.current_index == 1
+
+        # Wait for longer than the debounce time and try again
+        time_delta += 0.2
+        with patch("time.monotonic", return_value=time_delta):
+            await app.action_previous_focus()
+
+        # Another scroll action should be processed
+        assert app.current_chapter.current_index == 0
