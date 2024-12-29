@@ -1,6 +1,6 @@
 """App for presenting code tutorials."""
 
-import asyncio
+import time
 from typing import ClassVar
 
 from textual import on
@@ -88,7 +88,8 @@ class TuitorialApp(App):
         self.current_chapter_index: int = 0
         self.title_slide = title_slide
         self.is_scrolling: bool = False  # Flag to track if a scroll action is in progress
-        self.scroll_throttle_time: float = 0.1  # Adjust this value for desired throttle speed
+        self.last_scroll_time: float = 0.0  # Initialize the time of the last scroll event
+        self.scroll_debounce_time: float = 0.1  # Minimum time between scroll events in seconds
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -154,18 +155,18 @@ class TuitorialApp(App):
 
     @on(MouseScrollDown)
     async def next_focus_scroll(self) -> None:
-        """Handle next focus scroll action."""
-        if not self.is_scrolling:
-            self.is_scrolling = True
+        """Handle next focus scroll event."""
+        current_time = time.monotonic()
+        if current_time - self.last_scroll_time >= self.scroll_debounce_time:
+            # We debounce the scroll event to prevent multiple scroll events.
+            # A single physical scroll event can trigger multiple scroll events (e.g., 4 for me)
+            self.last_scroll_time = current_time
             await self.action_next_focus()
-            await asyncio.sleep(self.scroll_throttle_time)
-            self.is_scrolling = False
 
     @on(MouseScrollUp)
     async def previous_focus_scroll(self) -> None:
-        """Handle previous focus scroll action."""
-        if not self.is_scrolling:
-            self.is_scrolling = True
+        """Handle previous focus scroll event."""
+        current_time = time.monotonic()
+        if current_time - self.last_scroll_time >= self.scroll_debounce_time:
+            self.last_scroll_time = current_time
             await self.action_previous_focus()
-            await asyncio.sleep(self.scroll_throttle_time)
-            self.is_scrolling = False
