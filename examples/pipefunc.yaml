@@ -142,7 +142,6 @@ chapters:
     steps:
       - description: |
           Let's execute this same pipeline. There are 2 main ways to execute a pipeline:
-
           1. Call the pipeline as a function ([b i]sequentially[/]) and get a specific output:
             - [bold blue]pipeline(output_name, **kwargs)[/]
             - [bold blue]pipeline.run(output_name, kwargs)[/]
@@ -153,13 +152,15 @@ chapters:
           - type: syntax
             theme: monokai
 
-      - description: "Call the pipeline with inputs and get the result"
+      - description: |
+          Call the pipeline with inputs and get the result.
+          This returns the final leaf node of the pipeline [i](if it exists)[/], in this case [bold blue]"e"[/].
         focus:
           - type: line_containing
             pattern: pipeline(a=1, b=2)
             style: "bright_magenta bold"
 
-      - description: "Specify the [bold blue]output_name[/] to get the result of a specific function"
+      - description: "Specify the [bold blue]output_name[/] to get the result of a specific function."
         focus:
           - type: line_containing
             pattern: pipeline("d
@@ -188,3 +189,17 @@ chapters:
             pattern: output_name="c"
             style: "strike"
             lines_after: 2
+
+      - description: |
+          Calling the pipeline as a function is equivalent to calling [cyan bold]pipeline.run(output_name, kwargs, full_output)[/].
+        focus:
+          - type: line_containing
+            pattern: pipeline.run
+            style: "cyan bold"
+
+      - description: |
+          Finally, there is [cyan bold]pipeline.map()[/] which is the most powerful way to evaluate the pipeline.
+        focus:
+          - type: line_containing
+            pattern: pipeline.map
+            style: "cyan bold"
