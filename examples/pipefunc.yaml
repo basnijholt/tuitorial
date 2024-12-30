@@ -54,10 +54,6 @@ chapters:
 
       pipeline.visualize()
 
-      # Let's execute the pipeline
-      pipeline(a=1, b=2)  # returns 12
-      pipeline("d", a=1, b=2)  # returns 6
-      pipeline("e", a=1, b=2)  # returns 12
     steps:
       - description: "Structure of the Pipeline\nLet's break down the code into its components"
         focus:
@@ -119,13 +115,51 @@ chapters:
         height: auto
         width: 60%
 
-      - description: "Pipeline Execution\nCall the pipeline with inputs and get the result"
+  - title: "Pipeline Execution"
+    code: |
+      @pipefunc(output_name="c")
+      def f(a, b):
+          return a + b
+
+      @pipefunc(output_name="d")
+      def g(b, c, x=1):
+          return b * c * x
+
+      @pipefunc(output_name="e")
+      def h(c, d, x=1):
+          return c * d * x
+
+      pipeline = Pipeline([f, g, h])
+
+      pipeline(a=1, b=2)  # returns 18
+      pipeline("d", a=1, b=2)  # returns 6
+      pipeline("e", a=1, b=2)  # returns 18
+      pipeline("e", b=2, c=3)  # returns 18
+      pipeline.run("e", {"a": 1, "b": 2})  # returns 18
+      pipeline.run("e", {"a": 1, "b": 2}, full_output=True)  # returns {'a': 1, 'b': 2, 'c': 3, 'd': 6, 'e': 18}
+
+      pipeline.map({"a": 1, "b": 2})  # returns {"c": Result(output=3, ...), "d": Result(output=6, ...), "e": Result(output=18, ...)}
+    steps:
+      - description: |
+          Let's execute this same pipeline. There are 2 main ways to execute a pipeline:
+
+          1. Call the pipeline as a function ([b i]sequentially[/]) and get a specific output:
+            - [bold blue]pipeline(output_name, **kwargs)[/]
+            - [bold blue]pipeline.run(output_name, kwargs)[/]
+          2. Evaluate the entire pipeline ([b i]parallel[/]) including map-reduce operations:
+            - [bold blue]pipeline.map(kwargs)[/]
+
+        focus:
+          - type: syntax
+            theme: monokai
+
+      - description: "Call the pipeline with inputs and get the result"
         focus:
           - type: line_containing
             pattern: pipeline(a=1, b=2)
             style: "bright_magenta bold"
 
-      - description: "Pipeline Execution\nSpecify the [bold blue]output_name[/] to get the result of a specific function"
+      - description: "Specify the [bold blue]output_name[/] to get the result of a specific function"
         focus:
           - type: line_containing
             pattern: pipeline("d
@@ -134,19 +168,23 @@ chapters:
             pattern: output_name="d"
             style: "bright_magenta bold"
           - type: line_containing
-            pattern: pipeline("e
+            pattern: pipeline("e", a=1, b=2)
             style: "cyan bold"
           - type: line_containing
             pattern: output_name="e"
             style: "cyan bold"
-  - title: "Pipeline Execution"
-    code: |
-      pipeline(a=1, b=2)  # returns 12
-      pipeline("d", a=1, b=2)  # returns 6
-      pipeline("e", a=1, b=2)  # returns 12
-      pipeline.run("e", {"a": 1, "b": 2})  # returns 12
-      pipeline.run("d", {"a": 1, "b": 2})  # returns 12
 
-      pipeline.map({"a": 1, "b": 2})  # returns {"c": Result(output=3, ...), "d": Result(output=6, ...), "e": Result(output=12, ...)}
-    steps:
-      - description: Pipeline
+      - description: |
+          Can also provide intermediate results to skip some functions (e.g., [bold blue]c=3[/]).
+          This will skip the calculation of [bold blue]f[/] and directly use the provided value.
+        focus:
+          - type: line_containing
+            pattern: pipeline("e", b=2, c=3)
+            style: "cyan bold"
+          - type: line_containing
+            pattern: output_name="e"
+            style: "cyan bold"
+          - type: line_containing
+            pattern: output_name="c"
+            style: "strike"
+            lines_after: 2
