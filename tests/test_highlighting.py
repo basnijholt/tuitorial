@@ -371,3 +371,37 @@ def test_literal_with_match_index():
     result = display.highlight_code()
     highlighted = {(start, end) for start, end, style in result.spans if style and style.bold}
     assert not highlighted  # No matches
+
+
+def test_literal_with_multiple_match_indices():
+    """Test literal focus with a list of match indices."""
+    text = "test test test test"
+
+    # Highlight the first and third "test"
+    focus = Focus.literal("test", match_index=[0, 2])
+    display = CodeDisplay(text)
+    display.update_focuses([focus])
+    result = display.highlight_code()
+    highlighted = {(start, end) for start, end, style in result.spans if style and style.bold}
+    assert highlighted == {(0, 4), (10, 14)}
+
+    # Highlight the second and fourth "test"
+    focus = Focus.literal("test", match_index=[1, 3])
+    display.update_focuses([focus])
+    result = display.highlight_code()
+    highlighted = {(start, end) for start, end, style in result.spans if style and style.bold}
+    assert highlighted == {(5, 9), (15, 19)}
+
+    # Invalid match indices
+    focus = Focus.literal("test", match_index=[5, 6])
+    display.update_focuses([focus])
+    result = display.highlight_code()
+    highlighted = {(start, end) for start, end, style in result.spans if style and style.bold}
+    assert not highlighted
+
+    # Mixed valid and invalid indices
+    focus = Focus.literal("test", match_index=[0, 5])
+    display.update_focuses([focus])
+    result = display.highlight_code()
+    highlighted = {(start, end) for start, end, style in result.spans if style and style.bold}
+    assert highlighted == {(0, 4)}

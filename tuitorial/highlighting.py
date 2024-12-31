@@ -42,7 +42,7 @@ class Focus:
         style: Style = Style(color="yellow", bold=True),  # noqa: B008
         *,
         word_boundary: bool = False,
-        match_index: int | None = None,
+        match_index: int | list[int] | None = None,
     ) -> Focus:
         """Create a focus for a literal string.
 
@@ -55,7 +55,7 @@ class Focus:
         word_boundary
             If True, only match the text when it appears as a word
         match_index
-            If provided, only highlight the nth match (0-based).
+            If provided, only highlight the nth match (0-based) or matches specified by the list.
             If None, highlight all matches.
 
         """

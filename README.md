@@ -293,7 +293,7 @@ steps:
 
 ```python
 Focus.literal("def", style="bold yellow")
-Focus.literal("def", style="bold yellow", match_index=2) # Highlight the third "def"
+Focus.literal("def", style="bold yellow", match_index=[0, 2]) # Highlight the first and third "def"
 ```
 
 **YAML:**
@@ -306,9 +306,14 @@ focus:
   - type: literal
     pattern: "def"
     style: "bold yellow"
-    match_index: 2 # Highlight the third "def"
-
+    match_index: [0, 2] # Highlight the first and third "def"
 ```
+
+**`match_index` note:**
+
+- If provided as an integer, only highlight the nth match (0-based).
+- If provided as a list of integers, highlight the matches corresponding to those indices.
+- If None, highlight all matches.
 
 #### Regular Expression
 

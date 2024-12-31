@@ -220,3 +220,18 @@ def test_parse_focus_literal_with_match_index():
     assert focus.pattern == "test"
     assert focus.style == Style.parse("red")
     assert focus.extra["match_index"] == 2
+
+
+def test_parse_focus_literal_with_list_match_index():
+    """Test parsing a literal focus with a list for match_index."""
+    focus_data = {
+        "type": "literal",
+        "pattern": "test",
+        "style": "red",
+        "match_index": [1, 3],
+    }
+    focus = _parse_focus(focus_data)
+    assert focus.type == Focus.type.LITERAL
+    assert focus.pattern == "test"
+    assert focus.style == Style.parse("red")
+    assert focus.extra["match_index"] == [1, 3]
