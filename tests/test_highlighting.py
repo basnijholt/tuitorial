@@ -344,3 +344,30 @@ def test_validate_multiple_syntax_focuses():
     ]
     with pytest.raises(ValueError, match="Only one syntax focus is allowed"):
         focuses[0].validate(focuses)
+
+
+def test_literal_with_match_index():
+    """Test literal focus with match_index."""
+    text = "test test test"
+
+    # Highlight only the second "test"
+    focus = Focus.literal("test", match_index=1)
+    display = CodeDisplay(text)
+    display.update_focuses([focus])
+    result = display.highlight_code()
+    highlighted = {(start, end) for start, end, style in result.spans if style and style.bold}
+    assert highlighted == {(5, 9)}  # Second "test"
+
+    # Highlight only the third "test"
+    focus = Focus.literal("test", match_index=2)
+    display.update_focuses([focus])
+    result = display.highlight_code()
+    highlighted = {(start, end) for start, end, style in result.spans if style and style.bold}
+    assert highlighted == {(10, 14)}  # Third "test"
+
+    # Invalid match index
+    focus = Focus.literal("test", match_index=5)
+    display.update_focuses([focus])
+    result = display.highlight_code()
+    highlighted = {(start, end) for start, end, style in result.spans if style and style.bold}
+    assert not highlighted  # No matches

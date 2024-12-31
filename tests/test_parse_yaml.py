@@ -205,3 +205,18 @@ def test_parse_bullet_point_chapter():
     assert len(chapter.steps) == 2
     assert chapter.steps[0].description == "Extra 1"
     assert chapter.steps[1].description == "Extra 2"
+
+
+def test_parse_focus_literal_with_match_index():
+    """Test parsing a literal focus with match_index."""
+    focus_data = {
+        "type": "literal",
+        "pattern": "test",
+        "style": "red",
+        "match_index": 2,
+    }
+    focus = _parse_focus(focus_data)
+    assert focus.type == Focus.type.LITERAL
+    assert focus.pattern == "test"
+    assert focus.style == Style.parse("red")
+    assert focus.extra["match_index"] == 2

@@ -291,8 +291,19 @@ def _collect_literal_ranges(code: str, focus: Focus) -> set[tuple[int, int, Styl
     pattern = re.escape(str(focus.pattern))
     if getattr(focus, "word_boundary", False):
         pattern = rf"\b{pattern}\b"
-    for match in re.finditer(pattern, code):
-        ranges.add((match.start(), match.end(), focus.style))
+
+    # Apply match_index logic
+    matches = list(re.finditer(pattern, code))
+    match_index = focus.extra.get("match_index") if focus.extra else None
+
+    if match_index is not None:
+        if 0 <= match_index < len(matches):
+            match = matches[match_index]
+            ranges.add((match.start(), match.end(), focus.style))
+    else:
+        for match in matches:
+            ranges.add((match.start(), match.end(), focus.style))
+
     return ranges
 
 

@@ -42,6 +42,7 @@ class Focus:
         style: Style = Style(color="yellow", bold=True),  # noqa: B008
         *,
         word_boundary: bool = False,
+        match_index: int | None = None,
     ) -> Focus:
         """Create a focus for a literal string.
 
@@ -53,12 +54,15 @@ class Focus:
             The style to apply to the matched text
         word_boundary
             If True, only match the text when it appears as a word
+        match_index
+            If provided, only highlight the nth match (0-based).
+            If None, highlight all matches.
 
         """
         if word_boundary:
             pattern = re.compile(rf"\b{re.escape(text)}\b")
-            return cls(pattern, style, FocusType.REGEX)
-        return cls(text, style, FocusType.LITERAL)
+            return cls(pattern, style, FocusType.REGEX, extra={"match_index": match_index})
+        return cls(text, style, FocusType.LITERAL, extra={"match_index": match_index})
 
     @classmethod
     def regex(

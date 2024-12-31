@@ -293,6 +293,7 @@ steps:
 
 ```python
 Focus.literal("def", style="bold yellow")
+Focus.literal("def", style="bold yellow", match_index=2) # Highlight the third "def"
 ```
 
 **YAML:**
@@ -302,6 +303,11 @@ focus:
   - type: literal
     pattern: "def"
     style: "bold yellow"
+  - type: literal
+    pattern: "def"
+    style: "bold yellow"
+    match_index: 2 # Highlight the third "def"
+
 ```
 
 #### Regular Expression
