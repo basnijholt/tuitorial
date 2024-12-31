@@ -292,3 +292,108 @@ chapters:
             pattern: pipeline.info()
             style: "green bold"
             lines_after: 2
+
+  - title: "pipeline.map"
+    code: |
+      @pipefunc(output_name="y", mapspec="x[i] -> y[i]")
+      def double_it(x: int) -> int:
+          return 2 * x
+
+      pipeline_double = Pipeline([double_it])
+
+      inputs = {"x": [1, 2, 3, 4, 5]}
+      result = pipeline_double.map(inputs)
+      result["y"].output # returns [2, 4, 6, 8, 10]
+
+    steps:
+      - description: |
+          The [bold blue]pipeline.map[/] method allows you to execute your pipeline over a set of inputs in parallel.
+          It's the most powerful way to evaluate a pipeline and it unlocks map-reduce operations.
+          Here is the simplest example.
+        focus:
+          - type: syntax
+            theme: monokai
+
+      - description: |
+          We define a function [bold blue]double_it[/] that takes an [bold yellow]int[/] [bold red]x[/] and returns an [bold yellow]int[/] [bold green]y[/].
+          The [bold cyan]mapspec[/] argument specifies that the function maps over the index [bold white]i[/] of the input [bold red]x[/].
+          This means that the function will be called for each element in the input list [bold red]x[/].
+        focus:
+          - type: literal
+            pattern: double_it
+            style: "bold blue"
+            match_index: 0
+          - type: literal
+            pattern: int
+            style: "bold yellow"
+            word_boundary: true
+          - type: literal
+            pattern: '"y"'
+            style: "bold green"
+            match_index: 0
+          - type: literal
+            pattern: y
+            style: "bold green"
+            match_index: 1
+          - type: literal
+            pattern: x
+            style: "bold red"
+            match_index: [0, 1]
+          - type: literal
+            pattern: mapspec
+            style: "bold cyan"
+          - type: literal
+            pattern: "[i]"
+            style: "bold white"
+
+      - description: |
+          We create a pipeline with the [bold blue]double_it[/] function.
+        focus:
+          - type: line_containing
+            pattern: "pipeline_double = Pipeline([double_it])"
+            style: "bright_green bold"
+
+      - description: |
+          We define the inputs to the pipeline as a dictionary.
+          The keys of the dictionary correspond to the input names of the functions in the pipeline.
+        focus:
+          - type: line_containing
+            pattern: 'inputs = {"x": [1, 2, 3, 4, 5]}'
+            style: "bright_cyan bold"
+          - type: literal
+            pattern: mapspec="x[i] -> y[i]"
+            style: "bright_cyan bold"
+
+      - description: |
+          We call the [bold blue]map[/] method on the pipeline object, passing the inputs.
+          This will execute the pipeline for each element in the input list [bold blue]x[/].
+          The result of each function call is stored in a dictionary, where the keys are the output names of the functions.
+        focus:
+          - type: line_containing
+            pattern: "result = pipeline_double.map(inputs)"
+            style: "bright_magenta bold"
+
+      - description: |
+          Finally, we print the output of the [bold blue]double_it[/] function by accessing the [bold blue]output[/] attribute of the [bold blue]Result[/] object.
+        focus:
+          - type: literal
+            pattern: "result"
+            style: "bold yellow"
+          - type: literal
+            pattern: '"y"'
+            style: "bold green"
+          - type: literal
+            pattern: "y[i]"
+            style: "bold green"
+          - type: literal
+            pattern: '"x"'
+            style: "bold blue"
+          - type: literal
+            pattern: "x[i]"
+            style: "bold blue"
+          - type: literal
+            pattern: "[1, 2, 3, 4, 5]"
+            style: "bright_cyan bold"
+          - type: literal
+            pattern: "[2, 4, 6, 8, 10]"
+            style: "bright_cyan bold"
