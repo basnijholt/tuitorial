@@ -138,7 +138,7 @@ chapters:
       pipeline.run("e", {"a": 1, "b": 2})  # returns 18
       pipeline.run("e", {"a": 1, "b": 2}, full_output=True)  # returns {'a': 1, 'b': 2, 'c': 3, 'd': 6, 'e': 18}
 
-      pipeline.map({"a": 1, "b": 2})  # returns {"c": Result(output=3, ...), "d": Result(output=6, ...), "e": Result(output=18, ...)}
+      pipeline.map({"a": 1, "b": 2})  # returns {"c": Result(output=3, ...), "d": Result(output=6, ...), ...}
     steps:
       - description: |
           Let's execute this same pipeline. There are 2 main ways to execute a pipeline:
@@ -199,7 +199,96 @@ chapters:
 
       - description: |
           Finally, there is [cyan bold]pipeline.map()[/] which is the most powerful way to evaluate the pipeline.
+          It returns a dictionary with the results of each function.
+          Can run in [b i]parallel[/], [b i]save results[/], do [b i]map-reduce[/], [b i]parameter sweeps[/], and more.
+          We will see more about this later!
         focus:
           - type: line_containing
             pattern: pipeline.map
             style: "cyan bold"
+
+  - title: "Quick notes"
+    code: |
+      from pipefunc import PipeFunc, Pipeline, pipefunc
+
+      @pipefunc(output_name="c")
+      def f(a, b):
+          return a + b
+
+      assert isinstance(f, PipeFunc)
+
+      # is equivalent to
+
+      def f(a, b):
+          return a + b
+
+      f = PipeFunc(f, output_name="c")
+
+      # Still works as expected
+      f(1, 2) # returns 3
+      f(a=1, b=2)  # returns 3
+      f.func # is the original function
+
+      pipeline = Pipeline([f])
+      pipeline.info() # returns:
+      # {'inputs': ('a', 'b', 'x'), 'outputs': ('e',), 'intermediate_outputs': ('c', 'd'),
+      #  'required_inputs': ('a', 'b'), 'optional_inputs': ('x',)}
+    steps:
+      - description: |
+          A couple of quick notes about the [bold blue]PipeFunc[/] and [bold blue]Pipeline[/] class.
+        focus:
+          - type: syntax
+            theme: monokai
+
+      - description: |
+          Decorating a function with [bold blue]@pipefunc[/] is equivalent to creating a [bold blue]PipeFunc[/] object.
+        focus:
+          - type: line_containing
+            pattern: "assert"
+            style: "purple bold"
+          - type: line_containing
+            pattern: "@pipefunc"
+            style: "purple bold"
+            lines_after: 2
+
+      - description: |
+          Instead of decorating the function with [bold blue]@pipefunc[/], you can create a [bold blue]PipeFunc[/] object directly.
+          You can create a [bold blue]PipeFunc[/] object from any callable, also from external libraries.
+        focus:
+          - type: line_containing
+            pattern: "def f(a, b):"
+            style: "yellow bold"
+            lines_after: 2
+          - type: line_containing
+            pattern: PipeFunc(f
+            style: "purple bold"
+          - type: line_containing
+            pattern: "@pipefunc"
+            style: "purple bold"
+
+      - description: |
+          We can still call the function [bold blue]f[/] as usual.
+        focus:
+          - type: line_containing
+            pattern: works as expected
+            style: "green bold"
+            lines_after: 2
+
+      - description: |
+          Or access the original function using the [bold blue]func[/] attribute.
+        focus:
+          - type: line_containing
+            pattern: f.func
+            style: "green bold"
+
+      - description: |
+          Another useful method is [bold blue]pipeline.info()[/] which returns information about the pipeline.
+          Or call [bold blue]pipeline.info(print_table=True)[/] to print a pretty table.
+        focus:
+          - type: line_containing
+            pattern: pipeline =
+            style: "yellow bold"
+          - type: line_containing
+            pattern: pipeline.info()
+            style: "green bold"
+            lines_after: 2
