@@ -9,7 +9,7 @@
 [![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 > [!NOTE]
-> **tuitorial**? Typo? Typo? No, a combination of "TUI" (Terminal User Interface) and "tutorial".
+> **tuitorial**? Typo? No, a combination of "TUI" (Terminal User Interface) and "tutorial".
 
 <details><summary><b><u>[ToC]</u></b> 📚</summary>
 
