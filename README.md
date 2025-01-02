@@ -8,10 +8,10 @@
 [![Coverage](https://codecov.io/gh/basnijholt/tuitorial/branch/main/graph/badge.svg)](https://codecov.io/gh/basnijholt/tuitorial)
 [![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-<details><summary><b><u>[ToC]</u></b> 📚</summary>
-
 > [!NOTE]
-> **tuitorial**? Typo? Typo? No, a combination of "TUI" (Terminal User Interface) and "tutorial". 
+> **tuitorial**? Typo? Typo? No, a combination of "TUI" (Terminal User Interface) and "tutorial".
+
+<details><summary><b><u>[ToC]</u></b> 📚</summary>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
