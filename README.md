@@ -10,6 +10,9 @@
 
 <details><summary><b><u>[ToC]</u></b> 📚</summary>
 
+> [!NOTE]
+> **tuitorial**? Typo? Typo? No, a combination of "TUI" (Terminal User Interface) and "tutorial". 
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
