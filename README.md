@@ -35,6 +35,7 @@
     - [Markdown](#markdown)
     - [Syntax Highlighting](#syntax-highlighting)
   - [🎨 Styling](#-styling)
+  - [🔄 Live Reloading (Development Mode)](#-live-reloading-development-mode)
   - [Custom Highlighting Patterns](#custom-highlighting-patterns)
   - [Multiple Highlights per Step](#multiple-highlights-per-step)
   - [🖼️ Displaying Images](#-displaying-images)
