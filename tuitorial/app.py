@@ -122,13 +122,16 @@ class TuitorialApp(App):
             self.current_chapter_index = chapter_index
             self.query_one(TabbedContent).active = f"chapter_{chapter_index}"
             await self.current_chapter.update_display()
+        else:
+            msg = f"Invalid chapter index: {chapter_index}"
+            raise ValueError(msg)
 
     async def set_step(self, step_index: int) -> None:
         """Set the current step and update the display."""
         if self.current_chapter_index >= 0:
             n_steps = len(self.current_chapter.steps) - 1
             self.current_chapter.current_index = max(0, min(step_index, n_steps))
-            await self.current_chapter.update_display()
+            await self.update_display()
 
     async def on_ready(self) -> None:
         """Handle on ready event."""
@@ -171,14 +174,14 @@ class TuitorialApp(App):
     async def action_next_focus(self) -> None:
         """Handle next focus action."""
         if self.current_chapter_index >= 0:
-            next_step = self.current_chapter.current_index + 1
-            await self.set_step(next_step)
+            await self.current_chapter.next_step()
+            await self.update_display()
 
     async def action_previous_focus(self) -> None:
         """Handle previous focus action."""
         if self.current_chapter_index >= 0:
-            prev_step = self.current_chapter.current_index - 1
-            await self.set_step(prev_step)
+            await self.current_chapter.previous_step()
+            await self.update_display()
 
     async def action_reset_focus(self) -> None:
         """Reset to first focus pattern."""
