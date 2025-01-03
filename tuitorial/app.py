@@ -156,16 +156,16 @@ class TuitorialApp(App):
 
     @on(TabbedContent.TabActivated)
     @on(Tabs.TabActivated)
-    async def on_change(self, event: TabbedContent.TabActivated | Tabs.TabActivated) -> None:
-        """Handle tab change event."""
+    def on_change(self, event: TabbedContent.TabActivated | Tabs.TabActivated) -> None:
+        """Handle tab change event and set the current chapter index."""
         tab_id = event.pane.id
         if tab_id == "title-slide-tab":
-            await self.set_chapter(-1)
+            self.current_chapter_index = -1
             return
 
         assert tab_id.startswith("chapter_")
         index = int(tab_id.split("_")[-1])
-        await self.set_chapter(index)
+        self.current_chapter_index = int(index)
 
     async def update_display(self) -> None:
         """Update the display with current focus."""
