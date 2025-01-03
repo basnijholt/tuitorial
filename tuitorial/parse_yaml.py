@@ -1,11 +1,14 @@
 """Module for parsing a YAML configuration file to run a tuitorial."""
 
+import asyncio
 import os
 import re
 from pathlib import Path
 
 import yaml
 from rich.style import Style
+from textual.app import App
+from watchfiles import awatch
 
 from tuitorial import Chapter, Focus, ImageStep, Step, TitleSlide, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
@@ -128,11 +131,78 @@ def parse_yaml_config(yaml_file: str | Path) -> tuple[list[Chapter], TitleSlide 
     return chapters, title_slide
 
 
-def run_from_yaml(yaml_file: str | Path) -> None:  # pragma: no cover
+def run_from_yaml(
+    yaml_file: str | Path,
+    chapter_index: int = 0,
+    step_index: int = 0,
+) -> None:  # pragma: no cover
     """Parses a YAML config and runs the tutorial."""
     chapters, title_slide = parse_yaml_config(yaml_file)
-    app = TuitorialApp(chapters, title_slide)
+    app = TuitorialApp(
+        chapters, title_slide, initial_chapter=chapter_index, initial_step=step_index
+    )
     app.run()
+
+
+def reload_app(app: App, yaml_file: str | Path) -> None:
+    """Reloads the YAML configuration and updates the TuitorialApp instance."""
+    try:
+        chapters, title_slide = parse_yaml_config(yaml_file)
+
+        # Store current state
+        current_chapter_index = app.current_chapter_index
+        current_step_index = app.current_chapter.current_index if current_chapter_index >= 0 else 0
+
+        app.chapters = chapters
+        app.title_slide = title_slide
+
+        # Clear existing widgets and re-compose
+        app.query("*").remove()
+        app.compose()
+
+        # Restore previous state if possible
+        if 0 <= current_chapter_index < len(app.chapters):
+            app.current_chapter_index = current_chapter_index
+            app.current_chapter.current_index = current_step_index
+            app.switch_chapter(current_chapter_index)  # Helper function (add this to TuitorialApp)
+            app.current_chapter.update_display()
+        elif app.title_slide:
+            app.switch_chapter(-1)  # Switch to the title slide
+
+        print(f"Reloaded {yaml_file}")
+
+    except Exception as e:
+        print(f"Error reloading {yaml_file}: {e}")
+
+
+async def watch_for_changes(app: App, yaml_file: str | Path) -> None:
+    """Watches for changes in the YAML file and reloads the app."""
+    async for changes in awatch(str(Path(yaml_file).parent)):
+        for change, path in changes:
+            if Path(path).resolve() == Path(yaml_file).resolve():
+                reload_app(app, yaml_file)  # Call reload_app directly
+
+
+def run_dev_mode(yaml_file: str | Path, chapter_index: int = 0, step_index: int = 0) -> None:
+    """Parses a YAML config, runs the tutorial, and watches for changes."""
+    chapters, title_slide = parse_yaml_config(yaml_file)
+    app = TuitorialApp(
+        chapters,
+        title_slide,
+        initial_chapter=chapter_index,
+        initial_step=step_index,
+    )
+
+    async def run_app_and_watch():
+        """Run the app and the file watcher concurrently."""
+        app_task = asyncio.create_task(app.run_async())
+        watch_task = asyncio.create_task(watch_for_changes(app, yaml_file))
+        await asyncio.gather(app_task, watch_task)
+
+    try:
+        asyncio.run(run_app_and_watch())
+    except KeyboardInterrupt:
+        print("Exiting development mode.")
 
 
 def cli() -> None:  # pragma: no cover
@@ -141,6 +211,27 @@ def cli() -> None:  # pragma: no cover
 
     parser = argparse.ArgumentParser(description="Run a tuitorial from a YAML file.")
     parser.add_argument("yaml_file", help="Path to the YAML configuration file.", type=Path)
+    parser.add_argument(
+        "--dev",
+        action="store_true",
+        help="Run in development mode with automatic reloading.",
+    )
+    parser.add_argument(
+        "--chapter",
+        type=int,
+        default=0,
+        help="Initial chapter index (0-based) for development mode.",
+    )
+    parser.add_argument(
+        "--step",
+        type=int,
+        default=0,
+        help="Initial step index (0-based) for development mode.",
+    )
     args = parser.parse_args()
+
     os.chdir(args.yaml_file.parent)
-    run_from_yaml(args.yaml_file.name)
+    if args.dev:
+        run_dev_mode(args.yaml_file.name, chapter_index=args.chapter, step_index=args.step)
+    else:
+        run_from_yaml(args.yaml_file.name)

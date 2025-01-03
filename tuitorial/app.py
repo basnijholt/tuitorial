@@ -82,10 +82,18 @@ class TuitorialApp(App):
         ("r", "reset_focus", "Reset Focus"),
     ]
 
-    def __init__(self, chapters: list[Chapter], title_slide: TitleSlide | None = None) -> None:
+    def __init__(
+        self,
+        chapters: list[Chapter],
+        title_slide: TitleSlide | None = None,
+        initial_chapter: int = 0,
+        initial_step: int = 0,
+    ) -> None:
         super().__init__()
         self.chapters: list[Chapter] = chapters
-        self.current_chapter_index: int = 0
+        self.current_chapter_index: int = initial_chapter
+        self.initial_chapter: int = initial_chapter
+        self.initial_step: int = initial_step
         self.title_slide = title_slide
         self.is_scrolling: bool = False  # Flag to track if a scroll action is in progress
         self.last_scroll_time: float = 0.0  # Initialize the time of the last scroll event
@@ -103,7 +111,7 @@ class TuitorialApp(App):
                     yield chapter
         yield Footer()
 
-    def on_ready(self) -> None:
+    async def on_ready(self) -> None:
         """Handle on ready event."""
         if self.title_slide:
             # Set the height of the tab to match the height of the title slide
@@ -111,6 +119,21 @@ class TuitorialApp(App):
             tab = self.query_one("#title-slide-tab")
             tabbed = self.query_one(TabbedContent)
             tab.styles.height = Scalar.from_number(tabbed.size.height)
+
+        # Set initial chapter and step
+        if 0 <= self.initial_chapter < len(self.chapters):
+            self.switch_chapter(self.initial_chapter)
+            self.current_chapter.current_index = self.initial_step
+            await self.current_chapter.update_display()
+        elif self.title_slide:
+            self.switch_chapter(-1)  # Switch to the title slide
+
+    def switch_chapter(self, chapter_index: int) -> None:
+        """Switches to the specified chapter."""
+        if chapter_index == -1 and self.title_slide:
+            self.query_one(TabbedContent).active = "title-slide-tab"
+        elif 0 <= chapter_index < len(self.chapters):
+            self.query_one(TabbedContent).active = f"chapter_{chapter_index}"
 
     @property
     def current_chapter(self) -> Chapter:
