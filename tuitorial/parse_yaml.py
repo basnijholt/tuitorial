@@ -158,7 +158,6 @@ async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
     # `active_app` is a workaround https://github.com/Textualize/textual/issues/5421#issuecomment-2569836231
     active_app.set(app)
     await app.recompose()
-    app.set_title_slide_height()
 
     # Restore previous state
     await app.set_chapter(current_chapter_index)
