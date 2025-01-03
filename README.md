@@ -66,6 +66,7 @@
 - 🚀 **Customizable:** Python or YAML configuration, custom highlighting.
 - 🎓 **Beginner Friendly:** Simple API, no Textual knowledge required.
 - ⚡ **Title Slide:** Eye-catching ASCII art title slides.
+- 🔄 **Live Reloading:** Automatically refreshes app on YAML update.
 
 ## 🤨 Why?
 
@@ -546,6 +547,32 @@ focus:
 ```
 
 </details>
+
+### 🔄 Live Reloading (Development Mode)
+
+`tuitorial` offers a convenient development mode that automatically reloads your tutorial whenever you make changes to the YAML configuration file. This allows you to iterate quickly on your tutorial's content and see your changes reflected in real-time without manually restarting the application.
+
+**Usage:**
+
+To enable live reloading, use the `--watch` (or `-w`) flag when running `tuitorial` from the command line:
+
+```bash
+tuitorial tutorial.yaml --watch
+```
+
+or
+
+```bash
+tuitorial tutorial.yaml -w
+```
+
+**How it Works:**
+
+When you run `tuitorial` with the `--watch` flag, it will monitor the specified YAML file for any modifications. If a change is detected, `tuitorial` will automatically:
+
+1. Parse the updated YAML configuration.
+2. Reload the tutorial content within the running application.
+3. Preserve the current chapter and step, so you can continue where you left off.
 
 ### Custom Highlighting Patterns
 

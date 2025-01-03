@@ -199,9 +199,10 @@ def cli() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(description="Run a tuitorial from a YAML file.")
     parser.add_argument("yaml_file", help="Path to the YAML configuration file.", type=Path)
     parser.add_argument(
-        "--dev",
+        "-w",
+        "--watch",
         action="store_true",
-        help="Run in development mode with automatic reloading.",
+        help="Watch the YAML file for changes and automatically reload the app.",
     )
     parser.add_argument(
         "--chapter",
