@@ -9,7 +9,6 @@ import yaml
 from rich.style import Style
 from textual._context import active_app
 from textual.app import App
-from watchfiles import awatch
 
 from tuitorial import Chapter, Focus, ImageStep, Step, TitleSlide, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
@@ -158,24 +157,19 @@ async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
 
     active_app.set(app)  # https://github.com/Textualize/textual/issues/5421#issuecomment-2569836231
     await app.recompose()
-    await app.on_ready()
+    app.set_title_slide_height()
     # Restore previous state if possible
-    if 0 <= current_chapter_index < len(app.chapters):
-        app.current_chapter_index = current_chapter_index
-        app.current_chapter.current_index = current_step_index
-        app.switch_chapter(current_chapter_index)
-        app.current_chapter.update_display()
-    elif app.title_slide:
-        app.switch_chapter(-1)  # Switch to the title slide
+    await app.set_chapter(current_chapter_index)
+    await app.set_step(current_step_index)
     print(f"Reloaded {yaml_file}")
 
 
 async def watch_for_changes(app: App, yaml_file: str | Path) -> None:
     """Watches for changes in the YAML file and reloads the app."""
-    async for changes in awatch(yaml_file):
-        for change, path in changes:
-            if Path(path).resolve() == Path(yaml_file).resolve():
-                await reload_app(app, yaml_file)  # Call reload_app directly
+    from watchfiles import awatch
+
+    async for _ in awatch(yaml_file):
+        await reload_app(app, yaml_file)  # Call reload_app directly
 
 
 def run_dev_mode(yaml_file: str | Path, chapter_index: int = 0, step_index: int = 0) -> None:
@@ -188,7 +182,7 @@ def run_dev_mode(yaml_file: str | Path, chapter_index: int = 0, step_index: int 
         initial_step=step_index,
     )
 
-    async def run_app_and_watch():
+    async def run_app_and_watch() -> None:
         """Run the app and the file watcher concurrently."""
         app_task = asyncio.create_task(app.run_async())
         watch_task = asyncio.create_task(watch_for_changes(app, yaml_file))

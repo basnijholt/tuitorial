@@ -944,7 +944,7 @@ wheels = [
 
 [[package]]
 name = "tuitorial"
-version = "0.4.0.dev22+switch.ged480af.dirty"
+version = "0.4.0.dev30+watch.file.ge40f105.dirty"
 source = { editable = "." }
 dependencies = [
     { name = "pyfiglet" },
