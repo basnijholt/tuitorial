@@ -171,11 +171,11 @@ To run the YAML example:
 1. Save the YAML content as a `.yaml` file (e.g., `tutorial.yaml`).
 2. Either:
    - Use the provided `tuitorial.run_from_yaml(...)` function:
-   - Run `tuitorial tutorial.yaml` from the command line.
+   - Run `tuitorial --watch tutorial.yaml` from the command line.
 
 ```bash
 # From the command line
-tuitorial tutorial.yaml
+tuitorial --watch tutorial.yaml
 ```
 
 or
@@ -575,7 +575,7 @@ When you run `tuitorial` with the `--watch` flag, it will monitor the specified 
 2. Reload the tutorial content within the running application.
 3. Preserve the current chapter and step, so you can continue where you left off.
 
-### Custom Highlighting Patterns
+### 🎨 Custom Highlighting Patterns
 
 **Python:**
 
@@ -639,7 +639,7 @@ chapters:
 
 </details>
 
-### Multiple Highlights per Step
+### ✨ Multiple Highlights per Step
 
 **Python:**
 
