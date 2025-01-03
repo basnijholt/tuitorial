@@ -155,14 +155,14 @@ async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
 
     app.chapters, app.title_slide = parse_yaml_config(yaml_file)
 
-    # this is a workaround https://github.com/Textualize/textual/issues/5421#issuecomment-2569836231
+    # `active_app` is a workaround https://github.com/Textualize/textual/issues/5421#issuecomment-2569836231
     active_app.set(app)
     await app.recompose()
     app.set_title_slide_height()
-    # Restore previous state if possible
+
+    # Restore previous state
     await app.set_chapter(current_chapter_index)
     await app.set_step(current_step_index)
-    print(f"Reloaded {yaml_file}")
 
 
 async def watch_for_changes(app: App, yaml_file: str | Path) -> None:
