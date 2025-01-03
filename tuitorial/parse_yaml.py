@@ -133,17 +133,12 @@ def parse_yaml_config(yaml_file: str | Path) -> tuple[list[Chapter], TitleSlide 
 
 def run_from_yaml(
     yaml_file: str | Path,
-    chapter_index: int = 0,
+    chapter_index: int | None = None,
     step_index: int = 0,
 ) -> None:  # pragma: no cover
     """Parses a YAML config and runs the tutorial."""
     chapters, title_slide = parse_yaml_config(yaml_file)
-    app = TuitorialApp(
-        chapters,
-        title_slide,
-        initial_chapter=chapter_index,
-        initial_step=step_index,
-    )
+    app = TuitorialApp(chapters, title_slide, chapter_index, step_index)
     app.run()
 
 
