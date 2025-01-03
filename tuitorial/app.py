@@ -186,7 +186,7 @@ class TuitorialApp(App):
     async def action_reset_focus(self) -> None:
         """Reset to first focus pattern."""
         if self.current_chapter_index >= 0:
-            await self.set_step(0)
+            await self.current_chapter.reset_step()
 
     async def action_toggle_dim(self) -> None:
         """Toggle dim background."""
