@@ -86,11 +86,13 @@ class TuitorialApp(App):
         self,
         chapters: list[Chapter],
         title_slide: TitleSlide | None = None,
-        initial_chapter: int = 0,
+        initial_chapter: int | None = None,
         initial_step: int = 0,
     ) -> None:
         super().__init__()
         self.chapters: list[Chapter] = chapters
+        if initial_chapter is None:
+            initial_chapter = 0 if title_slide is None else -1
         self.current_chapter_index: int = initial_chapter
         self.initial_chapter: int = initial_chapter
         self.initial_step: int = initial_step

@@ -7,6 +7,7 @@ from pathlib import Path
 
 import yaml
 from rich.style import Style
+from textual._context import active_app
 from textual.app import App
 from watchfiles import awatch
 
@@ -139,48 +140,42 @@ def run_from_yaml(
     """Parses a YAML config and runs the tutorial."""
     chapters, title_slide = parse_yaml_config(yaml_file)
     app = TuitorialApp(
-        chapters, title_slide, initial_chapter=chapter_index, initial_step=step_index
+        chapters,
+        title_slide,
+        initial_chapter=chapter_index,
+        initial_step=step_index,
     )
     app.run()
 
 
-def reload_app(app: App, yaml_file: str | Path) -> None:
+async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
     """Reloads the YAML configuration and updates the TuitorialApp instance."""
-    try:
-        chapters, title_slide = parse_yaml_config(yaml_file)
+    # Store current state
+    current_chapter_index = app.current_chapter_index
+    current_step_index = app.current_chapter.current_index if current_chapter_index >= 0 else 0
 
-        # Store current state
-        current_chapter_index = app.current_chapter_index
-        current_step_index = app.current_chapter.current_index if current_chapter_index >= 0 else 0
+    app.chapters, app.title_slide = parse_yaml_config(yaml_file)
 
-        app.chapters = chapters
-        app.title_slide = title_slide
-
-        # Clear existing widgets and re-compose
-        app.query("*").remove()
-        app.compose()
-
-        # Restore previous state if possible
-        if 0 <= current_chapter_index < len(app.chapters):
-            app.current_chapter_index = current_chapter_index
-            app.current_chapter.current_index = current_step_index
-            app.switch_chapter(current_chapter_index)  # Helper function (add this to TuitorialApp)
-            app.current_chapter.update_display()
-        elif app.title_slide:
-            app.switch_chapter(-1)  # Switch to the title slide
-
-        print(f"Reloaded {yaml_file}")
-
-    except Exception as e:
-        print(f"Error reloading {yaml_file}: {e}")
+    active_app.set(app)  # https://github.com/Textualize/textual/issues/5421#issuecomment-2569836231
+    await app.recompose()
+    await app.on_ready()
+    # Restore previous state if possible
+    if 0 <= current_chapter_index < len(app.chapters):
+        app.current_chapter_index = current_chapter_index
+        app.current_chapter.current_index = current_step_index
+        app.switch_chapter(current_chapter_index)
+        app.current_chapter.update_display()
+    elif app.title_slide:
+        app.switch_chapter(-1)  # Switch to the title slide
+    print(f"Reloaded {yaml_file}")
 
 
 async def watch_for_changes(app: App, yaml_file: str | Path) -> None:
     """Watches for changes in the YAML file and reloads the app."""
-    async for changes in awatch(str(Path(yaml_file).parent)):
+    async for changes in awatch(yaml_file):
         for change, path in changes:
             if Path(path).resolve() == Path(yaml_file).resolve():
-                reload_app(app, yaml_file)  # Call reload_app directly
+                await reload_app(app, yaml_file)  # Call reload_app directly
 
 
 def run_dev_mode(yaml_file: str | Path, chapter_index: int = 0, step_index: int = 0) -> None:
@@ -219,7 +214,7 @@ def cli() -> None:  # pragma: no cover
     parser.add_argument(
         "--chapter",
         type=int,
-        default=0,
+        default=None,
         help="Initial chapter index (0-based) for development mode.",
     )
     parser.add_argument(
