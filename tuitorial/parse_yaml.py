@@ -1,11 +1,15 @@
 """Module for parsing a YAML configuration file to run a tuitorial."""
 
+import asyncio
+import contextlib
 import os
 import re
 from pathlib import Path
 
 import yaml
 from rich.style import Style
+from textual._context import active_app
+from textual.app import App
 
 from tuitorial import Chapter, Focus, ImageStep, Step, TitleSlide, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
@@ -128,11 +132,64 @@ def parse_yaml_config(yaml_file: str | Path) -> tuple[list[Chapter], TitleSlide 
     return chapters, title_slide
 
 
-def run_from_yaml(yaml_file: str | Path) -> None:  # pragma: no cover
+def run_from_yaml(
+    yaml_file: str | Path,
+    chapter_index: int | None = None,
+    step_index: int = 0,
+) -> None:  # pragma: no cover
     """Parses a YAML config and runs the tutorial."""
     chapters, title_slide = parse_yaml_config(yaml_file)
-    app = TuitorialApp(chapters, title_slide)
+    app = TuitorialApp(chapters, title_slide, chapter_index, step_index)
     app.run()
+
+
+async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
+    """Reloads the YAML configuration and updates the TuitorialApp instance."""
+    # Store current state
+    current_chapter_index = app.current_chapter_index
+    current_step_index = app.current_chapter.current_index if current_chapter_index >= 0 else 0
+
+    app.chapters, app.title_slide = parse_yaml_config(yaml_file)
+
+    # `active_app` is a workaround https://github.com/Textualize/textual/issues/5421#issuecomment-2569836231
+    active_app.set(app)
+    await app.recompose()
+
+    # Restore previous state
+    await app.set_chapter(current_chapter_index)
+    await app.set_step(current_step_index)
+
+
+async def watch_for_changes(app: App, yaml_file: str | Path) -> None:
+    """Watches for changes in the YAML file and reloads the app."""
+    from watchfiles import awatch
+
+    async for _ in awatch(yaml_file):
+        await reload_app(app, yaml_file)  # Call reload_app directly
+
+
+def run_dev_mode(
+    yaml_file: str | Path,
+    chapter_index: int | None = None,
+    step_index: int = 0,
+) -> None:
+    """Parses a YAML config, runs the tutorial, and watches for changes."""
+    chapters, title_slide = parse_yaml_config(yaml_file)
+    app = TuitorialApp(chapters, title_slide, chapter_index, step_index)
+
+    async def run_app_and_watch() -> None:
+        """Run the app and the file watcher concurrently."""
+        watch_task = asyncio.create_task(watch_for_changes(app, yaml_file))
+        try:
+            # Wait for app to finish
+            await app.run_async()
+        finally:
+            # Cancel watch task when app finishes
+            watch_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await watch_task
+
+    asyncio.run(run_app_and_watch())
 
 
 def cli() -> None:  # pragma: no cover
@@ -141,6 +198,28 @@ def cli() -> None:  # pragma: no cover
 
     parser = argparse.ArgumentParser(description="Run a tuitorial from a YAML file.")
     parser.add_argument("yaml_file", help="Path to the YAML configuration file.", type=Path)
+    parser.add_argument(
+        "-w",
+        "--watch",
+        action="store_true",
+        help="Watch the YAML file for changes and automatically reload the app.",
+    )
+    parser.add_argument(
+        "--chapter",
+        type=int,
+        default=None,
+        help="Initial chapter index (0-based) for development mode.",
+    )
+    parser.add_argument(
+        "--step",
+        type=int,
+        default=0,
+        help="Initial step index (0-based) for development mode.",
+    )
     args = parser.parse_args()
+
     os.chdir(args.yaml_file.parent)
-    run_from_yaml(args.yaml_file.name)
+    if args.dev:
+        run_dev_mode(args.yaml_file.name, chapter_index=args.chapter, step_index=args.step)
+    else:
+        run_from_yaml(args.yaml_file.name)

@@ -133,10 +133,13 @@ class TuitorialApp(App):
             self.current_chapter.current_index = max(0, min(step_index, n_steps))
             await self.update_display()
 
-    async def on_ready(self) -> None:
+    def on_ready(self) -> None:
         """Handle on ready event."""
+        self.set_title_slide_height()
+
+    def set_title_slide_height(self) -> None:
+        """Set the height of the title slide tab to match the title slide to center in middle."""
         if self.title_slide:
-            # Set the height of the tab to match the height of the title slide
             tab = self.query_one("#title-slide-tab")
             tabbed = self.query_one(TabbedContent)
             tab.styles.height = Scalar.from_number(tabbed.size.height)
