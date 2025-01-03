@@ -82,10 +82,20 @@ class TuitorialApp(App):
         ("r", "reset_focus", "Reset Focus"),
     ]
 
-    def __init__(self, chapters: list[Chapter], title_slide: TitleSlide | None = None) -> None:
+    def __init__(
+        self,
+        chapters: list[Chapter],
+        title_slide: TitleSlide | None = None,
+        initial_chapter: int | None = None,
+        initial_step: int = 0,
+    ) -> None:
         super().__init__()
         self.chapters: list[Chapter] = chapters
-        self.current_chapter_index: int = 0
+        if initial_chapter is None:
+            initial_chapter = 0 if title_slide is None else -1
+        self.current_chapter_index: int = initial_chapter
+        self.initial_chapter: int = initial_chapter
+        self.initial_step: int = initial_step
         self.title_slide = title_slide
         self.is_scrolling: bool = False  # Flag to track if a scroll action is in progress
         self.last_scroll_time: float = 0.0  # Initialize the time of the last scroll event
@@ -103,14 +113,41 @@ class TuitorialApp(App):
                     yield chapter
         yield Footer()
 
-    def on_ready(self) -> None:
+    async def set_chapter(self, chapter_index: int) -> None:
+        """Set the current chapter and update the display."""
+        if chapter_index == -1 and self.title_slide:
+            self.current_chapter_index = -1
+            self.query_one(TabbedContent).active = "title-slide-tab"
+        elif 0 <= chapter_index < len(self.chapters):
+            self.current_chapter_index = chapter_index
+            self.query_one(TabbedContent).active = f"chapter_{chapter_index}"
+            await self.current_chapter.update_display()
+        else:
+            msg = f"Invalid chapter index: {chapter_index}"
+            raise ValueError(msg)
+
+    async def set_step(self, step_index: int) -> None:
+        """Set the current step and update the display."""
+        if self.current_chapter_index >= 0:
+            n_steps = len(self.current_chapter.steps) - 1
+            self.current_chapter.current_index = max(0, min(step_index, n_steps))
+            await self.update_display()
+
+    async def on_ready(self) -> None:
         """Handle on ready event."""
         if self.title_slide:
             # Set the height of the tab to match the height of the title slide
-            # to make the title slide appear in the middle of the screen.
             tab = self.query_one("#title-slide-tab")
             tabbed = self.query_one(TabbedContent)
             tab.styles.height = Scalar.from_number(tabbed.size.height)
+
+    async def on_mount(self) -> None:
+        """Set initial chapter and step."""
+        if 0 <= self.initial_chapter < len(self.chapters):
+            await self.set_chapter(self.initial_chapter)
+            await self.set_step(self.initial_step)
+        elif self.title_slide:
+            await self.set_chapter(-1)
 
     @property
     def current_chapter(self) -> Chapter:
@@ -120,13 +157,14 @@ class TuitorialApp(App):
     @on(TabbedContent.TabActivated)
     @on(Tabs.TabActivated)
     def on_change(self, event: TabbedContent.TabActivated | Tabs.TabActivated) -> None:
-        """Handle tab change event."""
+        """Handle tab change event and set the current chapter index."""
         tab_id = event.pane.id
         if tab_id == "title-slide-tab":
             self.current_chapter_index = -1
             return
+
         assert tab_id.startswith("chapter_")
-        index = tab_id.split("_")[-1]
+        index = int(tab_id.split("_")[-1])
         self.current_chapter_index = int(index)
 
     async def update_display(self) -> None:
@@ -135,18 +173,20 @@ class TuitorialApp(App):
 
     async def action_next_focus(self) -> None:
         """Handle next focus action."""
-        await self.current_chapter.next_step()
-        await self.update_display()
+        if self.current_chapter_index >= 0:
+            await self.current_chapter.next_step()
+            await self.update_display()
 
     async def action_previous_focus(self) -> None:
         """Handle previous focus action."""
-        await self.current_chapter.previous_step()
-        await self.update_display()
+        if self.current_chapter_index >= 0:
+            await self.current_chapter.previous_step()
+            await self.update_display()
 
     async def action_reset_focus(self) -> None:
         """Reset to first focus pattern."""
-        await self.current_chapter.reset_step()
-        await self.update_display()
+        if self.current_chapter_index >= 0:
+            await self.current_chapter.reset_step()
 
     async def action_toggle_dim(self) -> None:
         """Toggle dim background."""
