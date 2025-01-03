@@ -1,6 +1,7 @@
 """Module for parsing a YAML configuration file to run a tuitorial."""
 
 import asyncio
+import contextlib
 import os
 import re
 from pathlib import Path
@@ -178,14 +179,17 @@ def run_dev_mode(
 
     async def run_app_and_watch() -> None:
         """Run the app and the file watcher concurrently."""
-        app_task = asyncio.create_task(app.run_async())
         watch_task = asyncio.create_task(watch_for_changes(app, yaml_file))
-        await asyncio.gather(app_task, watch_task)
+        try:
+            # Wait for app to finish
+            await app.run_async()
+        finally:
+            # Cancel watch task when app finishes
+            watch_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await watch_task
 
-    try:
-        asyncio.run(run_app_and_watch())
-    except KeyboardInterrupt:
-        print("Exiting development mode.")
+    asyncio.run(run_app_and_watch())
 
 
 def cli() -> None:  # pragma: no cover
