@@ -167,15 +167,14 @@ async def watch_for_changes(app: App, yaml_file: str | Path) -> None:
         await reload_app(app, yaml_file)  # Call reload_app directly
 
 
-def run_dev_mode(yaml_file: str | Path, chapter_index: int = 0, step_index: int = 0) -> None:
+def run_dev_mode(
+    yaml_file: str | Path,
+    chapter_index: int | None = None,
+    step_index: int = 0,
+) -> None:
     """Parses a YAML config, runs the tutorial, and watches for changes."""
     chapters, title_slide = parse_yaml_config(yaml_file)
-    app = TuitorialApp(
-        chapters,
-        title_slide,
-        initial_chapter=chapter_index,
-        initial_step=step_index,
-    )
+    app = TuitorialApp(chapters, title_slide, chapter_index, step_index)
 
     async def run_app_and_watch() -> None:
         """Run the app and the file watcher concurrently."""
