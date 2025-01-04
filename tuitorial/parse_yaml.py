@@ -2,6 +2,7 @@
 
 import asyncio
 import contextlib
+import inspect
 import os
 import re
 import tempfile
@@ -16,14 +17,35 @@ from textual.app import App
 
 from tuitorial import Chapter, Focus, ImageStep, Step, TitleSlide, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
+from tuitorial.highlighting import FocusType
 
 _DEFAULT_STYLE = "yellow bold"
+
+
+def _validate_focus_data(focus_data: dict) -> None:
+    if "type" not in focus_data:
+        msg = "Focus item must have a 'type' key."
+        raise ValueError(msg)
+    focus_type = focus_data["type"]
+    method = getattr(Focus, focus_type, None)
+    if method is None:
+        msg = f"Unknown focus type: {focus_type}, must be one of {FocusType.__members__}"
+        raise ValueError(msg)
+    sig = inspect.signature(method)
+    for key in focus_data:
+        if key == "type":
+            continue
+        if key not in sig.parameters:
+            allowed = ", ".join(sig.parameters)
+            msg = f"Invalid key '{key}' for focus type '{focus_type}', must be one of {allowed}"
+            raise ValueError(msg)
 
 
 def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
     """Parses a single focus item from the YAML data."""
     focus_type = focus_data["type"]
     style = Style.parse(focus_data.get("style", _DEFAULT_STYLE))
+    _validate_focus_data(focus_data)
 
     match focus_type:
         case "literal":
