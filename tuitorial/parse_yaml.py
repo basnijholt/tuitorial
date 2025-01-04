@@ -163,7 +163,7 @@ async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
     await app.set_step(current_step_index)
 
 
-async def watch_for_changes(app: App, yaml_file: str | Path) -> None:
+async def watch_for_changes(app: App, yaml_file: str | Path) -> None:  # pragma: no cover
     """Watches for changes in the YAML file and reloads the app."""
     from watchfiles import awatch
 
@@ -175,7 +175,7 @@ def run_dev_mode(
     yaml_file: str | Path,
     chapter_index: int | None = None,
     step_index: int = 0,
-) -> None:
+) -> None:  # pragma: no cover
     """Parses a YAML config, runs the tutorial, and watches for changes."""
     chapters, title_slide = parse_yaml_config(yaml_file)
     app = TuitorialApp(chapters, title_slide, chapter_index, step_index)
