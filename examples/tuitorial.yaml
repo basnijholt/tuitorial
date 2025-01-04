@@ -1,0 +1,305 @@
+title_slide:
+  title: "Tuitorial"
+  subtitle: "Zen and the Art of Terminal Tutorials"
+  font: "slant"
+
+chapters:
+  - title: "Introduction"
+    code: |
+      # **Tuitorial**
+      > Create beautiful terminal-based code tutorials with syntax highlighting and interactive navigation.
+
+      ## Features:
+
+      - **Rich Syntax Highlighting:** Customizable styles, wide language support.
+      - **Multiple Focus Types:** Literal, regex, line, range, startswith, between, line containing, and syntax highlighting.
+      - **Step-by-Step Tutorials:** Interactive, sequential steps with clear descriptions.
+      - **Multimedia:** Markdown rendering and image embedding.
+      - **Interactive Navigation:** Intuitive keyboard controls.
+      - **Beautiful Terminal UI:** Powered by [Textual](https://textual.textualize.io/).
+    steps:
+      - description: "Introducing Tuitorial and its features"
+        focus:
+          - type: markdown
+
+  - title: "Installation"
+    code: |
+      # Install tuitorial using pip:
+      pip install tuitorial
+    steps:
+      - description: "Installing tuitorial"
+        focus:
+          - type: syntax
+            lexer: "bash"
+          - type: literal
+            pattern: "pip install tuitorial"
+            style: "bright_green bold"
+
+  - title: "Basic Example"
+    code: |
+      from tuitorial import Chapter, Step, TuitorialApp, Focus
+      from rich.style import Style
+
+      zen_of_python = """
+      Beautiful is better than ugly.
+      Explicit is better than implicit.
+      Simple is better than complex.
+      """
+
+      steps = [
+          Step("Highlight 'Beautiful'", [Focus.literal("Beautiful", style="bold yellow")]),
+          Step("Highlight 'Explicit'", [Focus.regex(r"Explicit", style="bold blue")]),
+          Step("Highlight line 3", [Focus.line(2, style="bold green")]),
+      ]
+
+      chapter = Chapter("Basic Example", zen_of_python, steps)
+      app = TuitorialApp([chapter])
+      app.run()
+    steps:
+      - description: "Import necessary classes"
+        focus:
+          - type: literal
+            pattern: "from tuitorial import Chapter, Step, TuitorialApp, Focus"
+            style: "cyan bold"
+          - type: literal
+            pattern: "from rich.style import Style"
+            style: "cyan bold"
+      - description: "Define the Zen of Python as a string"
+        focus:
+          - type: literal
+            pattern: '"""'
+            style: "yellow"
+            match_index: [0, 1]
+      - description: "Create steps with different focus types"
+        focus:
+          - type: literal
+            pattern: "Step("
+            style: "yellow"
+      - description: "Initialize and run the TuitorialApp"
+        focus:
+          - type: literal
+            pattern: "TuitorialApp"
+            style: "cyan bold"
+          - type: literal
+            pattern: "app.run()"
+            style: "green bold"
+
+  - title: "Focus Types - Literal, Regex, Line"
+    code: |
+      zen_of_python = """
+      Beautiful is better than ugly.
+      Explicit is better than implicit.
+      Simple is better than complex.
+      Complex is better than complicated.
+      """
+
+      steps = [
+          Step("Literal: Highlight 'better'", [Focus.literal("better", style="bold yellow")]),
+          Step("Regex: Highlight words starting with 'c'", [Focus.regex(r"\\bc\\w+", style="bold blue")]),
+          Step("Line: Highlight line 4", [Focus.line(3, style="bold green")]),
+      ]
+    steps:
+      - description: "Literal focus on 'better'"
+        focus:
+          - type: literal
+            pattern: "better"
+            style: "bold yellow"
+      - description: "Regex focus on words starting with 'c'"
+        focus:
+          - type: regex
+            pattern: "\\bc\\w+"
+            style: "bold blue"
+      - description: "Line focus on line 4 (index 3)"
+        focus:
+          - type: line
+            pattern: 3
+            style: "bold green"
+
+  - title: "Focus Types - Range, Starts With, Between"
+    code: |
+      zen_of_python = """
+      Flat is better than nested.
+      Sparse is better than dense.
+      Readability counts.
+      Special cases aren't special enough to break the rules.
+      """
+
+      steps = [
+          Step("Range: Highlight characters 10-20", [Focus.range(10, 20, style="bold magenta")]),
+          Step("Starts With: Highlight lines starting with 'S'", [Focus.startswith("S", style="bold cyan", from_start_of_line=True)]),
+          Step("Between: Highlight text between 'cases' and 'enough'", [Focus.between("cases", "enough", style="bold red")]),
+      ]
+    steps:
+      - description: "Range focus highlighting characters 10 to 19"
+        focus:
+          - type: range
+            start: 10
+            end: 20
+            style: "bold magenta"
+      - description: "Starts With focus on lines starting with 'S'"
+        focus:
+          - type: startswith
+            pattern: "S"
+            style: "bold cyan"
+            from_start_of_line: true
+      - description: "Between focus highlighting text between 'cases' and 'enough'"
+        focus:
+          - type: between
+            start_pattern: "cases"
+            end_pattern: "enough"
+            style: "bold red"
+
+  - title: "Focus Types - Line Containing"
+    code: |
+      zen_of_python = """
+      Although practicality beats purity.
+      Errors should never pass silently.
+      Unless explicitly silenced.
+      In the face of ambiguity, refuse the temptation to guess.
+      """
+
+      steps = [
+          Step("Line Containing: Highlight lines with 'sil'", [Focus.line_containing("sil", style="bold yellow")]),
+          Step("Line Containing (Regex): Highlight lines with words ending in 'ty'", [Focus.line_containing(r"\\w+ty", style="bold blue", regex=True, lines_before=1, lines_after=1)]),
+      ]
+    steps:
+      - description: "Highlight lines containing 'sil'"
+        focus:
+          - type: line_containing
+            pattern: "sil"
+            style: "bold yellow"
+      - description: "Highlight lines with words ending in 'ty' (using regex) and include surrounding lines"
+        focus:
+          - type: line_containing
+            pattern: "\\w+ty"
+            style: "bold blue"
+            regex: true
+            lines_before: 1
+            lines_after: 1
+
+  - title: "Focus Types - Syntax"
+    code: |
+      def hello(name: str) -> str:
+          """A simple function from the Zen of Python."""
+          return f"Hello, {name}! Always remember: 'Readability counts.'"
+
+      print(hello("World"))
+    steps:
+      - description: "Syntax Highlighting with default theme"
+        focus:
+          - type: syntax
+      - description: "Syntax Highlighting with Monokai theme"
+        focus:
+          - type: syntax
+            theme: "monokai"
+            line_numbers: true
+
+  - title: "Styling"
+    code: |
+      zen_of_python = """
+      There should be one-- and preferably only one --obvious way to do it.
+      Although that way may not be obvious at first unless you're Dutch.
+      """
+
+      steps = [
+          Step("Styling: 'obvious' in bold red", [Focus.literal("obvious", style="bold red")]),
+          Step("Styling: 'Dutch' in italic green", [Focus.literal("Dutch", style="italic green")]),
+      ]
+    steps:
+      - description: "Highlight 'obvious' with bold red style"
+        focus:
+          - type: literal
+            pattern: "obvious"
+            style: "bold red"
+      - description: "Highlight 'Dutch' with italic green style"
+        focus:
+          - type: literal
+            pattern: "Dutch"
+            style: "italic green"
+
+  - title: "Multiple Highlights"
+    code: |
+      zen_of_python = """
+      Now is better than never.
+      Although never is often better than *right* now.
+      If the implementation is hard to explain, it's a bad idea.
+      If the implementation is easy to explain, it may be a good idea.
+      """
+
+      steps = [
+          Step(
+              "Multiple: Highlight 'is better than' and 'to explain'",
+              [
+                  Focus.literal("is better than", style="bold yellow"),
+                  Focus.literal("to explain", style="italic blue"),
+              ],
+          ),
+      ]
+    steps:
+      - description: "Demonstrate multiple highlights in a single step"
+        focus:
+          - type: literal
+            pattern: "is better than"
+            style: "bold yellow"
+          - type: literal
+            pattern: "to explain"
+            style: "italic blue"
+
+  - title: "Helper Functions - Bullet Points"
+    code: |
+      from tuitorial.helpers import create_bullet_point_chapter
+      from rich.style import Style
+
+      zen_summary = [
+          "Beautiful is better than ugly.",
+          "Explicit is better than implicit.",
+          "Simple is better than complex.",
+          "Readability counts.",
+      ]
+
+      chapter = create_bullet_point_chapter(
+          "Zen of Python - Summary",
+          zen_summary,
+          style=Style(color="cyan", bold=True),
+      )
+    steps:
+      - description: "Create a bullet point chapter from a list"
+        focus:
+          - type: syntax
+            lexer: "python"
+
+  # - title: "Image Display"
+  #   steps:
+  #     - description: "Displaying an example image using ImageStep"
+  #       image: "test_image.png"  # Replace with an actual image path if running this
+  #       width: 50%
+  #       height: auto
+  #       halign: center
+
+  - title: "Controls"
+    code: |
+      ## Keyboard Controls
+
+      - `↑` Previous step in current chapter
+      - `↓` Next step in current chapter
+      - `→` Next chapter
+      - `←` Previous chapter
+      - `r` Reset to first step of current chapter
+      - `d` Toggle dim/bright background
+      - `q` Quit tuitorial
+    steps:
+      - description: "Navigating the tutorial"
+        focus:
+          - type: markdown
+
+  - title: "Conclusion"
+    code: |
+      ## Conclusion
+
+      **Tuitorial** offers a powerful and flexible way to create interactive, terminal-based code tutorials. Its various focus types, styling options, and intuitive controls make it an excellent tool for teaching and learning.
+
+      Try it out and make your own beautiful, engaging tutorials!
+    steps:
+      - description: "Concluding the presentation"
+        focus:
+          - type: markdown
