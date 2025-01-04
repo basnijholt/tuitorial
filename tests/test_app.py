@@ -360,3 +360,14 @@ async def test_scroll_debouncing(app_with_single_chapter):
 
         # Another scroll action should be processed
         assert app.current_chapter.current_index == 0
+
+
+def test_chapter_no_step():
+    """Test that a chapter with no steps is handled correctly."""
+    chapter = Chapter("Empty Chapter", "code", [])
+    app = TuitorialApp([chapter])
+
+    assert app.current_chapter_index == 0
+    assert app.current_chapter.current_index == 0
+    assert app.current_chapter.current_step.description == ""
+    assert app.current_chapter.current_step.focuses == []
