@@ -94,6 +94,10 @@ pip install tuitorial
 
 ## 🎮 Quick Start
 
+> [!TIP]
+> Have `uv` installed? Run the following command to see a quick example:
+> `uvx tuitorial https://raw.githubusercontent.com/basnijholt/tuitorial/refs/heads/main/examples/pipefunc.yaml`
+
 <details>
 <summary><b>Python</b></summary>
 
