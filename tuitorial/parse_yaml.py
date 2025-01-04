@@ -17,22 +17,21 @@ from textual.app import App
 from tuitorial import Chapter, Focus, ImageStep, Step, TitleSlide, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
 
+_DEFAULT_STYLE = "yellow bold"
+
 
 def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
     """Parses a single focus item from the YAML data."""
     focus_type = focus_data["type"]
-    style = Style.parse(focus_data.get("style", "yellow bold"))
-    word_boundary = focus_data.get("word_boundary", False)
-    from_start_of_line = focus_data.get("from_start_of_line", False)
-    match_index = focus_data.get("match_index")
+    style = Style.parse(focus_data.get("style", _DEFAULT_STYLE))
 
     match focus_type:
         case "literal":
             return Focus.literal(
                 focus_data["pattern"],
                 style=style,
-                word_boundary=word_boundary,
-                match_index=match_index,
+                word_boundary=focus_data.get("word_boundary", False),
+                match_index=focus_data.get("match_index"),
             )
         case "regex":
             # Ensure the pattern is compiled for Focus.regex
@@ -45,7 +44,7 @@ def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
             return Focus.startswith(
                 focus_data["pattern"],
                 style=style,
-                from_start_of_line=from_start_of_line,
+                from_start_of_line=focus_data.get("from_start_of_line", False),
             )
         case "between":
             return Focus.between(
@@ -54,7 +53,7 @@ def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
                 style=style,
                 inclusive=focus_data.get("inclusive", True),
                 multiline=focus_data.get("multiline", True),
-                match_index=match_index,
+                match_index=focus_data.get("match_index"),
                 greedy=focus_data.get("greedy", False),
             )
         case "line_containing":
@@ -64,7 +63,7 @@ def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
                 lines_before=focus_data.get("lines_before", 0),
                 lines_after=focus_data.get("lines_after", 0),
                 regex=focus_data.get("regex", False),
-                match_index=match_index,
+                match_index=focus_data.get("match_index"),
             )
         case "syntax":
             return Focus.syntax(
