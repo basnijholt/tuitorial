@@ -26,11 +26,10 @@ def valid_yaml_config() -> str:
       - title: "Bullet Points"
         type: bullet_points
         bullet_points:
-          - "Point 1"
-          - "Point 2"
-        extras:
-          - "Extra 1"
-          - "Extra 2"
+          - text: "Point 1"
+            extra: "Extra 1"
+          - text: "Point 2"
+            extra: "Extra 2"
         style: "green bold"
     """
 
@@ -194,8 +193,10 @@ def test_parse_bullet_point_chapter():
     chapter_data = {
         "title": "Bullet Points",
         "type": "bullet_points",
-        "bullet_points": ["Point 1", "Point 2"],
-        "extras": ["Extra 1", "Extra 2"],
+        "bullet_points": [
+            {"text": "Point 1", "extra": "Extra 1"},
+            {"text": "Point 2", "extra": "Extra 2"},
+        ],
         "marker": "1.",
         "style": "yellow bold",
     }
