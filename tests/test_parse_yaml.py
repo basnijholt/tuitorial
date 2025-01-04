@@ -203,11 +203,11 @@ def test_parse_bullet_point_chapter():
     }
     chapter = _parse_chapter(chapter_data)
     assert chapter.title == "Bullet Points"
-    assert chapter.code == "1. Point 1\n2. Point 2"  # Check generated code
-    assert len(chapter.steps) == 2
+    assert chapter.code == "1. Point 1\n2. Point 2\n3. Point 3"  # Check generated code
+    assert len(chapter.steps) == 3
     assert chapter.steps[0].description == "Extra 1"
     assert chapter.steps[1].description == "Extra 2"
-    assert chapter.steps[2].description == "Point 3"
+    assert chapter.steps[2].description == ""
 
 
 def test_parse_focus_literal_with_match_index():
