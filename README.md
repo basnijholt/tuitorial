@@ -50,6 +50,7 @@
 - [🤝 Contributing](#-contributing)
 - [📝 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
+- [📚 Similar Projects](#-similar-projects)
 - [🐛 Troubleshooting](#-troubleshooting)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
