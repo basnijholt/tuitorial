@@ -1002,6 +1002,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Textual](https://textual.textualize.io/) for the amazing TUI framework
 - [Rich](https://rich.readthedocs.io/) for beautiful terminal formatting
 
+## 📚 Similar Projects
+
+- [Spiel](https://github.com/JoshKarpel/spiel) Display richly-styled presentations using your terminal (also Textual-based, more for general presentations, no focus modes like `tuitorial).
+
 ## 🐛 Troubleshooting
 
 **Q: The colors don't show up correctly in my terminal.**
