@@ -1010,6 +1010,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📚 Similar Projects
 
 - [Spiel](https://github.com/JoshKarpel/spiel) Display richly-styled presentations using your terminal (also Textual-based, more for general presentations, no focus modes like `tuitorial`).
+- [present](https://github.com/vinayak-mehta/present) A terminal-based presentation tool with markdown support (more focused on general presentations, less on code tutorials) also the last commit was in 2020.
 
 ## 🐛 Troubleshooting
 
