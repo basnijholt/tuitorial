@@ -119,7 +119,7 @@ def _parse_chapter(chapter_data: dict) -> Chapter:
             elif isinstance(bullet_point, dict):
                 text = bullet_point.get("text", "")
                 extra = bullet_point.get("extra", "")
-            else:
+            else:  # pragma: no cover
                 msg = f"Invalid bullet point format: {bullet_point}"
                 raise TypeError(msg)
             bullet_points.append(text)
