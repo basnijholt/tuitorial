@@ -110,10 +110,24 @@ def _parse_chapter(chapter_data: dict) -> Chapter:
         code = chapter_data["code"]
 
     if chapter_data.get("type") == "bullet_points":
+        bullet_points = []
+        extras = []
+        for bullet_point in chapter_data["bullet_points"]:
+            if isinstance(bullet_point, str):
+                text = bullet_point
+                extra = ""
+            elif isinstance(bullet_point, dict):
+                text = bullet_point.get("text", "")
+                extra = bullet_point.get("extra", "")
+            else:  # pragma: no cover
+                msg = f"Invalid bullet point format: {bullet_point}"
+                raise TypeError(msg)
+            bullet_points.append(text)
+            extras.append(extra)
         return create_bullet_point_chapter(
             title,
-            chapter_data["bullet_points"],
-            extras=chapter_data.get("extras", []),
+            bullet_points=bullet_points,
+            extras=extras,
             marker=chapter_data.get("marker", "-"),
             style=Style.parse(chapter_data.get("style", "cyan bold")),
         )

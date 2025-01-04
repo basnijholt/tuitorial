@@ -26,11 +26,10 @@ def valid_yaml_config() -> str:
       - title: "Bullet Points"
         type: bullet_points
         bullet_points:
-          - "Point 1"
-          - "Point 2"
-        extras:
-          - "Extra 1"
-          - "Extra 2"
+          - text: "Point 1"
+            extra: "Extra 1"
+          - text: "Point 2"
+            extra: "Extra 2"
         style: "green bold"
     """
 
@@ -194,8 +193,11 @@ def test_parse_bullet_point_chapter():
     chapter_data = {
         "title": "Bullet Points",
         "type": "bullet_points",
-        "bullet_points": ["Point 1", "Point 2"],
-        "extras": ["Extra 1", "Extra 2"],
+        "bullet_points": [
+            {"text": "Point 1", "extra": "Extra 1"},
+            {"text": "Point 2", "extra": "Extra 2"},
+            "Point 3",
+        ],
         "marker": "1.",
         "style": "yellow bold",
     }
@@ -205,6 +207,7 @@ def test_parse_bullet_point_chapter():
     assert len(chapter.steps) == 2
     assert chapter.steps[0].description == "Extra 1"
     assert chapter.steps[1].description == "Extra 2"
+    assert chapter.steps[2].description == "Point 3"
 
 
 def test_parse_focus_literal_with_match_index():
