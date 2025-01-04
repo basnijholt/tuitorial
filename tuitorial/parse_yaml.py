@@ -245,12 +245,7 @@ def cli() -> None:  # pragma: no cover
         os.remove(yaml_file)  # Clean up the temporary file  # noqa: PTH107
         return
     # Use the provided local YAML file
-    os.chdir(Path(args.yaml_source).parent)
-    if args.watch:
-        run_dev_mode(
-            Path(args.yaml_source).name,
-            chapter_index=args.chapter,
-            step_index=args.step,
-        )
-    else:
-        run_from_yaml(args.yaml_source, chapter_index=args.chapter, step_index=args.step)
+    path = Path(args.yaml_source)
+    os.chdir(path.parent)
+    run = run_dev_mode if args.watch else run_from_yaml
+    run(path.name, chapter_index=args.chapter, step_index=args.step)
