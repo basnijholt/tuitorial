@@ -4,8 +4,11 @@ import asyncio
 import contextlib
 import os
 import re
+import tempfile
+import urllib.request
 from pathlib import Path
 
+import rich
 import yaml
 from rich.style import Style
 from textual._context import active_app
@@ -196,8 +199,8 @@ def cli() -> None:  # pragma: no cover
     """Run the tutorial from a YAML file."""
     import argparse
 
-    parser = argparse.ArgumentParser(description="Run a tuitorial from a YAML file.")
-    parser.add_argument("yaml_file", help="Path to the YAML configuration file.", type=Path)
+    parser = argparse.ArgumentParser(description="Run a tuitorial from a YAML file or URL.")
+    parser.add_argument("yaml_source", help="Path to the YAML configuration file or URL.", type=str)
     parser.add_argument(
         "-w",
         "--watch",
@@ -218,8 +221,28 @@ def cli() -> None:  # pragma: no cover
     )
     args = parser.parse_args()
 
-    os.chdir(args.yaml_file.parent)
-    if args.dev:
-        run_dev_mode(args.yaml_file.name, chapter_index=args.chapter, step_index=args.step)
-    else:
-        run_from_yaml(args.yaml_file.name)
+    if args.yaml_source.startswith(("http://", "https://")):
+        if args.watch:
+            rich.print("[red bold]Error[/]: `--watch` is not supported for URLs.")
+            return
+
+        # Download YAML from URL to a temporary file
+        try:
+            with (
+                urllib.request.urlopen(args.yaml_source) as response,  # noqa: S310
+                tempfile.NamedTemporaryFile(delete=False, suffix=".yaml") as tmp_file,
+            ):
+                tmp_file.write(response.read())
+                yaml_file = tmp_file.name
+        except urllib.error.URLError as e:
+            print(f"Error fetching URL: {e}")
+            return
+
+        run_from_yaml(yaml_file, chapter_index=args.chapter, step_index=args.step)
+        os.remove(yaml_file)  # Clean up the temporary file  # noqa: PTH107
+        return
+    # Use the provided local YAML file
+    path = Path(args.yaml_source)
+    os.chdir(path.parent)
+    run = run_dev_mode if args.watch else run_from_yaml
+    run(path.name, chapter_index=args.chapter, step_index=args.step)
