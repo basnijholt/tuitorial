@@ -6,4 +6,4 @@ test:
     uv run pytest
 
 example:
-    uv run python examples/example.py
+    uv run tuitorial --watch examples/pipefunc.yaml
