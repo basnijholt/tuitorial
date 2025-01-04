@@ -1005,7 +1005,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📚 Similar Projects
 
-- [Spiel](https://github.com/JoshKarpel/spiel) Display richly-styled presentations using your terminal (also Textual-based, more for general presentations, no focus modes like `tuitorial).
+- [Spiel](https://github.com/JoshKarpel/spiel) Display richly-styled presentations using your terminal (also Textual-based, more for general presentations, no focus modes like `tuitorial`).
 
 ## 🐛 Troubleshooting
 
