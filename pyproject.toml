@@ -34,6 +34,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
+    "pydantic>=2.10.4",
     "pyfiglet>=1.0.2",
     "pyyaml>=6.0.2",
     "rich",
