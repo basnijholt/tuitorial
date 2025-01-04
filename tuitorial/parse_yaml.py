@@ -8,6 +8,7 @@ import tempfile
 import urllib.request
 from pathlib import Path
 
+import rich
 import yaml
 from rich.style import Style
 from textual._context import active_app
@@ -226,7 +227,7 @@ def cli() -> None:  # pragma: no cover
 
     if args.yaml_source.startswith(("http://", "https://")):
         if args.watch:
-            print("Error: --watch is not supported for URLs.")
+            rich.print("[red bold]Error[/]: `--watch` is not supported for URLs.")
             return
 
         # Download YAML from URL to a temporary file
