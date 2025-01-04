@@ -177,10 +177,6 @@ def run_dev_mode(
     step_index: int = 0,
 ) -> None:
     """Parses a YAML config, runs the tutorial, and watches for changes."""
-    if isinstance(yaml_file, str) and yaml_file.startswith(("http://", "https://")):
-        print("Error: --watch is not supported for URLs.")
-        return
-
     chapters, title_slide = parse_yaml_config(yaml_file)
     app = TuitorialApp(chapters, title_slide, chapter_index, step_index)
 
