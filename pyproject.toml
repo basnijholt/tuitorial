@@ -142,6 +142,7 @@ ignore = [
 "tests/*" = ["SLF001", "ANN", "D", "PLR2004", "ARG001"]
 "tests/test_examples.py" = ["E501"]
 ".github/*" = ["INP001"]
+"examples/*" = ["INP001"]
 "example.ipynb" = [
     "D101",
     "D103",
