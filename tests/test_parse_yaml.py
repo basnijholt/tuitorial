@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from rich.style import Style
 
-from tuitorial import Focus, Step
+from tuitorial import Focus, ImageStep, Step
 from tuitorial.parse_yaml import _parse_chapter, _parse_focus, _parse_step, parse_yaml_config
 from tuitorial.widgets import _BetweenTuple, _RangeTuple, _StartsWithTuple
 
@@ -235,3 +235,28 @@ def test_parse_focus_literal_with_list_match_index():
     assert focus.pattern == "test"
     assert focus.style == Style.parse("red")
     assert focus.extra["match_index"] == [1, 3]
+
+
+def test_parse_forcus_markdown():
+    """Test parsing a markdown focus."""
+    focus_data = {"type": "markdown"}
+    focus = _parse_focus(focus_data)
+    assert focus.type == Focus.type.MARKDOWN
+
+
+def test_parse_step_with_image():
+    """Test parsing a step with an image."""
+    step_data = {
+        "description": "Image Step",
+        "image": "image.png",
+        "width": 100,
+        "height": 200,
+        "halign": "center",
+    }
+    step = _parse_step(step_data)
+    assert isinstance(step, ImageStep)
+    assert step.description == "Image Step"
+    assert step.image == "image.png"
+    assert step.width == 100
+    assert step.height == 200
+    assert step.halign == "center"
