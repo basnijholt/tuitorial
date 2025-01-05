@@ -336,8 +336,8 @@ async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
         active_app.set(app)
         await app.recompose()
         # Restore previous state
-        await app.set_chapter(current_chapter_index)
-        await app.set_step(current_step_index)
+        await app.set_chapter(min(current_chapter_index, len(app.chapters) - 1))
+        await app.set_step(min(current_step_index, len(app.current_chapter.steps) - 1))
 
 
 async def watch_for_changes(app: App, yaml_file: str | Path) -> None:  # pragma: no cover
