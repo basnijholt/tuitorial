@@ -2,6 +2,7 @@
 
 import asyncio
 import contextlib
+import inspect
 import os
 import re
 import tempfile
@@ -16,33 +17,58 @@ from textual.app import App
 
 from tuitorial import Chapter, Focus, ImageStep, Step, TitleSlide, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
+from tuitorial.highlighting import FocusType
 
 _DEFAULT_STYLE = "yellow bold"
 
 
+class InvalidFocusError(TypeError):
+    """Raised when an invalid focus type is encountered."""
+
+
+def _validate_focus_data(focus_data: dict) -> None:
+    if "type" not in focus_data:
+        msg = f"Focus dict must have a 'type' key, got: {focus_data}"
+        raise InvalidFocusError(msg)
+    focus_type = focus_data["type"]
+    method = getattr(Focus, focus_type, None)
+    if method is None:
+        msg = f"Unknown focus type: {focus_type}, must be one of {FocusType.__members__}"
+        raise InvalidFocusError(msg)
+    sig = inspect.signature(method)
+    for key in focus_data:
+        if key == "type":
+            continue
+        if key not in sig.parameters:
+            allowed = ", ".join(sig.parameters)
+            msg = f"Invalid key '{key}' for focus type '{focus_type}', must be one of {allowed}"
+            raise InvalidFocusError(msg)
+
+
 def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
     """Parses a single focus item from the YAML data."""
+    _validate_focus_data(focus_data)
     focus_type = focus_data["type"]
     style = Style.parse(focus_data.get("style", _DEFAULT_STYLE))
 
     match focus_type:
         case "literal":
             return Focus.literal(
-                focus_data["pattern"],
+                text=focus_data["text"],
                 style=style,
                 word_boundary=focus_data.get("word_boundary", False),
                 match_index=focus_data.get("match_index"),
             )
         case "regex":
             # Ensure the pattern is compiled for Focus.regex
-            return Focus.regex(re.compile(focus_data["pattern"]), style=style)
+            return Focus.regex(pattern=re.compile(focus_data["pattern"]), style=style)
         case "line":
-            return Focus.line(focus_data["pattern"], style=style)
+            return Focus.line(line_number=focus_data["line_number"], style=style)
         case "range":
             return Focus.range(focus_data["start"], focus_data["end"], style=style)
         case "startswith":
             return Focus.startswith(
-                focus_data["pattern"],
+                text=focus_data["text"],
                 style=style,
                 from_start_of_line=focus_data.get("from_start_of_line", False),
             )

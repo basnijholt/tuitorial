@@ -160,7 +160,7 @@ chapters:
       - description: "Return Statement"
         focus:
           - type: literal
-            pattern: 'return f"Hello, {name}!"'
+            text: 'return f"Hello, {name}!"'
             style: "bold green"
       - description: "Main Function"
         focus:
@@ -247,7 +247,7 @@ chapters:
       - description: "Return Statement"
         focus:
           - type: literal
-            pattern: 'return f"Hello, {name}!"'
+            text: 'return f"Hello, {name}!"'
 
   - title: "Farewells"
     code: |
@@ -261,7 +261,7 @@ chapters:
       - description: "Return Statement"
         focus:
           - type: literal
-            pattern: 'return f"Goodbye, {name}!"'
+            text: 'return f"Goodbye, {name}!"'
 ```
 
 </details>
@@ -289,7 +289,7 @@ steps:
   - description: "Step Description"
     focus:
       - type: literal
-        pattern: "some text"
+        text: "some text"
       - type: regex
         pattern: "pattern.*"
 ```
@@ -310,10 +310,10 @@ Focus.literal("def", style="bold yellow", match_index=[0, 2]) # Highlight the fi
 ```yaml
 focus:
   - type: literal
-    pattern: "def"
+    text: "def"
     style: "bold yellow"
   - type: literal
-    pattern: "def"
+    text: "def"
     style: "bold yellow"
     match_index: [0, 2] # Highlight the first and third "def"
 ```
@@ -354,7 +354,7 @@ Focus.line(1, style="bold blue")  # Highlight first line
 ```yaml
 focus:
   - type: line
-    pattern: 1
+    line_number: 1
     style: "bold blue"
 ```
 
@@ -394,11 +394,11 @@ Focus.startswith("from", style="bold blue", from_start_of_line=False)
 ```yaml
 focus:
   - type: startswith
-    pattern: "import"
+    text: "import"
     style: "bold blue"
     from_start_of_line: true
   - type: startswith
-    pattern: "from"
+    text: "from"
     style: "bold blue"
     from_start_of_line: false
 ```
@@ -543,11 +543,11 @@ Focus.literal("def", style=Style(bold=True, color="yellow"))
 ```yaml
 focus:
   - type: literal
-    pattern: "def"
+    text: "def"
     style: "bold yellow" # Using string syntax
 
   - type: literal
-    pattern: "def"
+    text: "def"
     style: "bold color(yellow)" # Using Style object
 ```
 
@@ -701,7 +701,7 @@ chapters:
       - description: "Input/Output"
         focus:
           - type: literal
-            pattern: "name"
+            text: "name"
             style: "bold cyan"
           - type: regex
             pattern: "->.*$"

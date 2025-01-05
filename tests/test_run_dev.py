@@ -17,7 +17,7 @@ def sample_yaml_file(tmp_path):
           - description: "First step"
             focus:
               - type: literal
-                pattern: "print"
+                text: "print"
                 style: "bold blue"
     """
     yaml_file = tmp_path / "test.yaml"
