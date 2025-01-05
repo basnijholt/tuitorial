@@ -44,7 +44,7 @@ class TuitorialApp(App):
     }
 
     TabbedContent {
-        height: 1fr;
+        height: 100%;
     }
 
     ContentContainer {
