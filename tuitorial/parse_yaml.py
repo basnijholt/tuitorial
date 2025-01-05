@@ -22,6 +22,10 @@ from tuitorial.highlighting import FocusType
 _DEFAULT_STYLE = "yellow bold"
 
 
+class InvalidFocusError(TypeError):
+    """Raised when an invalid focus type is encountered."""
+
+
 def _validate_focus_data(focus_data: dict) -> None:
     if "type" not in focus_data:
         msg = "Focus item must have a 'type' key."
@@ -38,7 +42,7 @@ def _validate_focus_data(focus_data: dict) -> None:
         if key not in sig.parameters:
             allowed = ", ".join(sig.parameters)
             msg = f"Invalid key '{key}' for focus type '{focus_type}', must be one of {allowed}"
-            raise ValueError(msg)
+            raise InvalidFocusError(msg)
 
 
 def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911

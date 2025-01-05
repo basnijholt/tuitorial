@@ -5,7 +5,13 @@ import pytest
 from rich.style import Style
 
 from tuitorial import Focus, ImageStep, Step
-from tuitorial.parse_yaml import _parse_chapter, _parse_focus, _parse_step, parse_yaml_config
+from tuitorial.parse_yaml import (
+    InvalidFocusError,
+    _parse_chapter,
+    _parse_focus,
+    _parse_step,
+    parse_yaml_config,
+)
 from tuitorial.widgets import _BetweenTuple, _RangeTuple, _StartsWithTuple
 
 
@@ -263,3 +269,23 @@ def test_parse_step_with_image():
     assert step.width == 100
     assert step.height == 200
     assert step.halign == "center"
+
+
+@pytest.mark.parametrize(
+    "type_",
+    [
+        "literal",
+        "regex",
+        "line",
+        "range",
+        "startswith",
+        "between",
+        "line_containing",
+        "syntax",
+        "markdown",
+    ],
+)
+def test_validate_yaml(type_):
+    """Test validating a YAML file."""
+    with pytest.raises(InvalidFocusError, match="Invalid key"):
+        _parse_focus({"type": type_, "wrong": "key"})
