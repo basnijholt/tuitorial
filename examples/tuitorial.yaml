@@ -112,7 +112,7 @@ chapters:
       - description: "Line focus on line 4 (index 3)"
         focus:
           - type: line
-            line_numbers: 3
+            line_number: 3
             style: "bold green"
 
   - title: "Focus Types - Range, Starts With, Between"

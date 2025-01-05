@@ -289,3 +289,9 @@ def test_validate_yaml(type_):
     """Test validating a YAML file."""
     with pytest.raises(InvalidFocusError, match="Invalid key"):
         _parse_focus({"type": type_, "wrong": "key"})
+
+
+def test_parsing_examples():
+    examples_dir = Path(__file__).parent.parent / "examples"
+    for example_file in examples_dir.glob("*.yaml"):
+        parse_yaml_config(example_file)
