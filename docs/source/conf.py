@@ -52,7 +52,7 @@ pygments_style = "sphinx"
 
 # -- Options for HTML output -------------------------------------------------
 
-html_logo = "logo-tt.png"
+html_logo = "_static/logo-tuitorial.png"
 html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
 
