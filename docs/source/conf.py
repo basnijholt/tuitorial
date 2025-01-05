@@ -185,9 +185,11 @@ def replace_video_url_with_video_directive(input_path: Path, output_path: Path) 
 
     # Find line starting with https://github.com/user-attachments and replace with .. video:: URL_HERE
     new_content = []
+    new_url = "https://www.nijho.lt/post/tuitorial/tuitorial-0.4.0.mp4"
     for line in content.split("\n"):
         if line.startswith("https://github.com/user-attachments"):
-            new_content.append(f"```{{video}}:: {line}")
+            new_content.append(f"```{{video}} {new_url}")
+            new_content.append(":width: 95%")
             new_content.append("```")
         else:
             new_content.append(line)
