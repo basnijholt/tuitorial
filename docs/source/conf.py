@@ -41,6 +41,7 @@ extensions = [
     "sphinx_togglebutton",
     "sphinx_copybutton",
     "notfound.extension",
+    "sphinxcontrib.video",
 ]
 
 templates_path = ["_templates"]
@@ -168,6 +169,35 @@ def change_alerts_to_admonitions(input_file: Path, output_file: Path) -> None:
         outfile.write(new_content)
 
 
+def replace_video_url_with_video_directive(input_path: Path, output_path: Path) -> None:
+    """Replace video URLs with video directives.
+
+    Parameters
+    ----------
+    input_path
+        Path to the input file.
+    output_path
+        Path to the output file.
+
+    """
+    with input_path.open("r") as infile:
+        content = infile.read()
+
+    # Find line starting with https://github.com/user-attachments and replace with .. video:: URL_HERE
+    new_content = []
+    new_url = "https://www.nijho.lt/post/tuitorial/tuitorial-0.4.0.mp4"
+    for line in content.split("\n"):
+        if line.startswith("https://github.com/user-attachments"):
+            new_content.append(f"```{{video}} {new_url}")
+            new_content.append(":width: 95%")
+            new_content.append("```")
+        else:
+            new_content.append(line)
+
+    with output_path.open("w") as outfile:
+        outfile.write("\n".join(new_content))
+
+
 def process_readme_for_sphinx_docs(readme_path: Path, docs_path: Path) -> None:
     """Process the README.md file for Sphinx documentation generation.
 
@@ -183,6 +213,7 @@ def process_readme_for_sphinx_docs(readme_path: Path, docs_path: Path) -> None:
     output_file = docs_path / "source" / "README.md"
     replace_named_emojis(readme_path, output_file)
     change_alerts_to_admonitions(output_file, output_file)
+    replace_video_url_with_video_directive(output_file, output_file)
 
 
 # Process the README.md file for Sphinx documentation

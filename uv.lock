@@ -1550,6 +1550,18 @@ wheels = [
 ]
 
 [[package]]
+name = "sphinxcontrib-video"
+version = "0.3.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "sphinx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9b/2c/837c9eb523fa28b78aa54e0eeda8cb5e547a95ac4d36625e95da50d7eef3/sphinxcontrib_video-0.3.2.tar.gz", hash = "sha256:9b9c56c195b0d2dea3d5ee3b34c36048f4cf05ac640593ee71532c64d88fc197", size = 11048 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/23/3f/93ced52a774ca554b9713e780b73c5d296e4f890a2711f075f59f8429f7f/sphinxcontrib_video-0.3.2-py3-none-any.whl", hash = "sha256:0d9601adfd57d89807ae8045c13e29e43af31dfa21a60a9f6eaec386ee00100b", size = 9892 },
+]
+
+[[package]]
 name = "sqlalchemy"
 version = "2.0.36"
 source = { registry = "https://pypi.org/simple" }
@@ -1718,7 +1730,7 @@ wheels = [
 
 [[package]]
 name = "tuitorial"
-version = "0.8.0.dev2+main.gd15f001.dirty"
+version = "0.8.0.dev5+video.docs.gaef315b.dirty"
 source = { editable = "." }
 dependencies = [
     { name = "pyfiglet" },
@@ -1744,6 +1756,7 @@ dev = [
     { name = "sphinx-copybutton" },
     { name = "sphinx-notfound-page" },
     { name = "sphinx-togglebutton" },
+    { name = "sphinxcontrib-video" },
     { name = "versioningit" },
 ]
 
@@ -1772,6 +1785,7 @@ dev = [
     { name = "sphinx-copybutton", specifier = ">=0.5.2" },
     { name = "sphinx-notfound-page", specifier = ">=1.0.4" },
     { name = "sphinx-togglebutton", specifier = ">=0.3.2" },
+    { name = "sphinxcontrib-video", specifier = ">=0.3.2" },
     { name = "versioningit", specifier = ">=3.1.2" },
 ]
 
