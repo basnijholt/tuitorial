@@ -306,3 +306,14 @@ def test_validate_step_data():
         _parse_step({"description": "Test", "image": "image.png", "focus": []})
     with pytest.raises(ValueError, match="for ImageStep"):
         _parse_step({"description": "Test", "image": "", "wrong_image_key": "image.png"})
+
+
+def test_validate_chapter_data():
+    with pytest.raises(ValueError, match="Chapter dict must have a 'title' key."):
+        _parse_chapter({})
+    with pytest.raises(ValueError, match="A chapter cannot have both 'code_file' and 'code' keys."):
+        _parse_chapter({"title": "Test", "code_file": "file.py", "code": "print('test')"})
+    with pytest.raises(ValueError, match="Invalid 'type', must be one of 'bullet_points'."):
+        _parse_chapter({"title": "Test", "type": "invalid_type"})
+    with pytest.raises(ValueError, match="Invalid key 'invalid_key' for Chapter"):
+        _parse_chapter({"title": "Test", "invalid_key": "value"})

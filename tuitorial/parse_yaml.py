@@ -144,9 +144,61 @@ def _parse_step(step_data: dict) -> Step | ImageStep:
     return Step(description, focus_list)
 
 
+def _validate_chapter_data(chapter_data: dict) -> None:
+    if "title" not in chapter_data:
+        msg = "Chapter dict must have a 'title' key."
+        raise ValueError(msg)
+    if "code_file" in chapter_data and "code" in chapter_data:
+        msg = "A chapter cannot have both 'code_file' and 'code' keys."
+        raise ValueError(msg)
+    allowed_types = {"bullet_points"}
+    if "type" in chapter_data and chapter_data["type"] not in allowed_types:
+        # The rest of the `chapter_data` is validated in `_parse_bullet_points`
+        allowed = ", ".join(allowed_types)
+        msg = f"Invalid 'type', must be one of '{allowed}'."
+        raise ValueError(msg)
+    allowed_keys = {"title", "code_file", "code", "steps", "type"}
+    for key in chapter_data:
+        if key not in allowed_keys:
+            allowed = ", ".join(allowed_keys)
+            msg = f"Invalid key '{key}' for Chapter, must be one of {allowed}"
+            raise ValueError(msg)
+
+
+def _parse_bullet_points(title: str, chapter_data: dict) -> Chapter:
+    if "bullet_points" not in chapter_data:
+        msg = f"Bullet points chapter must have a 'bullet_points' key, `{chapter_data=}`."
+        raise ValueError(msg)
+    bullet_points = []
+    extras = []
+    for bullet_point in chapter_data["bullet_points"]:
+        if isinstance(bullet_point, str):
+            text = bullet_point
+            extra = ""
+        elif isinstance(bullet_point, dict):
+            text = bullet_point.get("text", "")
+            extra = bullet_point.get("extra", "")
+        else:  # pragma: no cover
+            msg = f"Invalid bullet point format: {bullet_point}, must be a string or `dict(text='...', extra='...')`."
+            raise TypeError(msg)
+        bullet_points.append(text)
+        extras.append(extra)
+    return create_bullet_point_chapter(
+        title,
+        bullet_points=bullet_points,
+        extras=extras,
+        marker=chapter_data.get("marker", "-"),
+        style=Style.parse(chapter_data.get("style", "cyan bold")),
+    )
+
+
 def _parse_chapter(chapter_data: dict) -> Chapter:
     """Parses a single chapter from the YAML data."""
+    _validate_chapter_data(chapter_data)
     title = chapter_data["title"]
+    if chapter_data.get("type") == "bullet_points":
+        return _parse_bullet_points(title, chapter_data)
+
     code = ""
     steps = []
 
@@ -155,29 +207,6 @@ def _parse_chapter(chapter_data: dict) -> Chapter:
             code = code_file.read()
     elif "code" in chapter_data:
         code = chapter_data["code"]
-
-    if chapter_data.get("type") == "bullet_points":
-        bullet_points = []
-        extras = []
-        for bullet_point in chapter_data["bullet_points"]:
-            if isinstance(bullet_point, str):
-                text = bullet_point
-                extra = ""
-            elif isinstance(bullet_point, dict):
-                text = bullet_point.get("text", "")
-                extra = bullet_point.get("extra", "")
-            else:  # pragma: no cover
-                msg = f"Invalid bullet point format: {bullet_point}"
-                raise TypeError(msg)
-            bullet_points.append(text)
-            extras.append(extra)
-        return create_bullet_point_chapter(
-            title,
-            bullet_points=bullet_points,
-            extras=extras,
-            marker=chapter_data.get("marker", "-"),
-            style=Style.parse(chapter_data.get("style", "cyan bold")),
-        )
 
     # Only parse steps if not a bullet_points type
     if "steps" in chapter_data:
