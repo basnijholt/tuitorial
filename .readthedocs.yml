@@ -10,9 +10,6 @@ build:
     - asdf global uv latest
     - uv sync --dev --frozen
     - uv run -m sphinx -T -b html -d docs/_build/doctrees -D language=en docs $READTHEDOCS_OUTPUT/html
-  jobs:
-    post_checkout:
-      - git fetch --unshallow || true
 
 sphinx:
   configuration: docs/source/conf.py
