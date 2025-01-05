@@ -292,7 +292,7 @@ def test_validate_yaml(type_):
 
 
 def test_validate_focus_data():
-    with pytest.raises(ValueError, match="Focus dict must have a 'type' key"):
+    with pytest.raises(TypeError, match="Focus dict must have a 'type' key"):
         _parse_focus({"missing": "keytype"})
 
 
@@ -327,4 +327,6 @@ def test_validate_chapter_data():
     with pytest.raises(TypeError, match="Invalid bullet_points format"):
         _parse_chapter({"title": "Test", "type": "bullet_points", "bullet_points": "invalid"})
     with pytest.raises(ValueError, match="Invalid key 'invalid' "):
-        _parse_chapter({"title": "Test", "type": "bullet_points", "invalid": "invalid"})
+        _parse_chapter(
+            {"title": "Test", "type": "bullet_points", "bullet_points": [], "invalid": "invalid"},
+        )
