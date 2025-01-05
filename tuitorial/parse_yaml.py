@@ -306,7 +306,7 @@ def run_from_yaml(
     app.run()
 
 
-async def display_error(app: TuitorialApp, error_message: str) -> None:
+async def _display_error(app: TuitorialApp, error_message: str) -> None:
     """Display an error message in the current chapter tab."""
     label = TextArea(
         error_message,
@@ -330,7 +330,7 @@ async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
     except Exception as e:  # noqa: BLE001
         error_message = f"Error reloading YAML: {e!s}\n\n"
         error_message += "".join(traceback.format_exception(*sys.exc_info()))
-        await display_error(app, error_message)
+        await _display_error(app, error_message)
     else:
         # `active_app` is a workaround https://github.com/Textualize/textual/issues/5421#issuecomment-2569836231
         active_app.set(app)
