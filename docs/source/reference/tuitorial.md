@@ -1,7 +1,7 @@
 ## `tuitorial.app` module
 
 ```{eval-rst}
-.. automodule:: tuitorial.app
+.. automodule:: tuitorial
     :members:
     :undoc-members:
     :show-inheritance:
