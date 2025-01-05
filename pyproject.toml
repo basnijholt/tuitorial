@@ -58,6 +58,7 @@ dev = [
     "sphinx-notfound-page>=1.0.4",
     "emoji>=2.14.0",
     "sphinx-book-theme>=1.1.3",
+    "sphinxcontrib-video>=0.3.2",
 ]
 
 [project.urls]
