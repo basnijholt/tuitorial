@@ -187,7 +187,8 @@ def replace_video_url_with_video_directive(input_path: Path, output_path: Path) 
     new_content = []
     for line in content.split("\n"):
         if line.startswith("https://github.com/user-attachments"):
-            new_content.append(f".. video:: {line}")
+            new_content.append(f"```{{video}}:: {line}")
+            new_content.append("```")
         else:
             new_content.append(line)
 
