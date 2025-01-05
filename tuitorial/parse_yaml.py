@@ -106,8 +106,30 @@ def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
             raise ValueError(msg)
 
 
+def _validate_step_data(step_data: dict) -> None:
+    if "description" not in step_data:
+        msg = f"Step dict must have a 'description' key, got: {step_data}"
+        raise ValueError(msg)
+    if "image" in step_data and "focus" in step_data:
+        msg = "A step cannot have both 'image' and 'focus' keys."
+        raise ValueError(msg)
+    if "image" in step_data:
+        allowed_keys = set(inspect.signature(ImageStep).parameters)
+        for key in step_data:
+            if key not in allowed_keys:
+                msg = f"Invalid key '{key}' for ImageStep, must be one of {allowed_keys}"
+                raise ValueError(msg)
+    else:
+        allowed_keys = {"description", "focus"}
+        for key in step_data:
+            if key not in allowed_keys:
+                msg = f"Invalid key '{key}' for Step, must be one of {allowed_keys}"
+                raise ValueError(msg)
+
+
 def _parse_step(step_data: dict) -> Step | ImageStep:
     """Parses a single step from the YAML data."""
+    _validate_step_data(step_data)
     description = step_data["description"]
 
     if "image" in step_data:
