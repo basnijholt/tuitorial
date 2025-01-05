@@ -63,7 +63,7 @@
 - 🔍 **Multiple Focus Types:** Literal, regex, line, range, startswith, between, line containing, and syntax highlighting.
 - 📝 **Step-by-Step Tutorials:** Interactive, sequential steps with clear descriptions.
 - 🖼️ **Multimedia:** Markdown rendering and image embedding.
-- ⌨️ **Interactive Navigation:** Intuitive keyboard controls.
+- ⌨️ **Interactive Navigation:** Intuitive keyboard and scroll controls.
 - 🖥️ **Beautiful Terminal UI:** Powered by [Textual](https://textual.textualize.io/).
 - 🚀 **Customizable:** Python or YAML configuration, custom highlighting.
 - 🎓 **Beginner Friendly:** Simple API, no Textual knowledge required.
