@@ -41,6 +41,7 @@ extensions = [
     "sphinx_togglebutton",
     "sphinx_copybutton",
     "notfound.extension",
+    "sphinxcontrib.video",
 ]
 
 templates_path = ["_templates"]
