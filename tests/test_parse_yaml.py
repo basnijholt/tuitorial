@@ -291,6 +291,11 @@ def test_validate_yaml(type_):
         _parse_focus({"type": type_, "wrong": "key"})
 
 
+def test_validate_focus_data():
+    with pytest.raises(ValueError, match="Focus dict must have a 'type' key"):
+        _parse_focus({"missing": "keytype"})
+
+
 def test_parsing_examples():
     examples_dir = Path(__file__).parent.parent / "examples"
     for example_file in examples_dir.glob("*.yaml"):
