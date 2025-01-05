@@ -8,6 +8,7 @@
 [![Tests](https://github.com/basnijholt/tuitorial/actions/workflows/pytest.yml/badge.svg)](https://github.com/basnijholt/tuitorial/actions/workflows/pytest.yml)
 [![Coverage](https://codecov.io/gh/basnijholt/tuitorial/branch/main/graph/badge.svg)](https://codecov.io/gh/basnijholt/tuitorial)
 [![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![GitHub Repo stars](https://img.shields.io/github/stars/basnijholt/tuitorial)](https://github.com/basnijholt/tuitorial)
 
 > [!NOTE]
 > **tuitorial**? Typo? No, a combination of "TUI" (Terminal User Interface) and "tutorial".
