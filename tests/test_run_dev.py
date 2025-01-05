@@ -65,5 +65,8 @@ async def test_reload_app_updates_chapters(sample_yaml_file, mock_tuitorial_app)
         assert mock_tuitorial_app.chapters == new_chapters
         assert mock_tuitorial_app.title_slide == new_title_slide
         mock_tuitorial_app.recompose.assert_awaited_once()
-        mock_tuitorial_app.set_chapter.assert_awaited_once_with(1)  # Check if preserved
+        mock_tuitorial_app.set_chapter.assert_awaited_once_with(
+            1,
+            nearest=True,
+        )  # Check if preserved
         mock_tuitorial_app.set_step.assert_awaited_once_with(2)  # Check if preserved
