@@ -8,7 +8,8 @@
 [![Coverage](https://codecov.io/gh/basnijholt/tuitorial/branch/main/graph/badge.svg)](https://codecov.io/gh/basnijholt/tuitorial)
 [![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-> [!NOTE] > **tuitorial**? Typo? No, a combination of "TUI" (Terminal User Interface) and "tutorial".
+> [!NOTE]
+> **tuitorial**? Typo? No, a combination of "TUI" (Terminal User Interface) and "tutorial".
 
 <details><summary><b><u>[ToC]</u></b> 📚</summary>
 
