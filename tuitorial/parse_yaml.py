@@ -50,21 +50,21 @@ def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
     match focus_type:
         case "literal":
             return Focus.literal(
-                focus_data["pattern"],
+                text=focus_data["text"],
                 style=style,
                 word_boundary=focus_data.get("word_boundary", False),
                 match_index=focus_data.get("match_index"),
             )
         case "regex":
             # Ensure the pattern is compiled for Focus.regex
-            return Focus.regex(re.compile(focus_data["pattern"]), style=style)
+            return Focus.regex(pattern=re.compile(focus_data["pattern"]), style=style)
         case "line":
-            return Focus.line(focus_data["pattern"], style=style)
+            return Focus.line(line_number=focus_data["line_number"], style=style)
         case "range":
             return Focus.range(focus_data["start"], focus_data["end"], style=style)
         case "startswith":
             return Focus.startswith(
-                focus_data["pattern"],
+                text=focus_data["text"],
                 style=style,
                 from_start_of_line=focus_data.get("from_start_of_line", False),
             )

@@ -21,7 +21,7 @@ def valid_yaml_config() -> str:
           - description: "First step"
             focus:
               - type: literal
-                pattern: "print"
+                text: "print"
                 style: "bold blue"
       - title: "Bullet Points"
         type: bullet_points
@@ -73,7 +73,7 @@ def test_parse_invalid_yaml_config(invalid_yaml_config: str, tmp_path: Path):
 
 def test_parse_focus_literal():
     """Test parsing a literal focus."""
-    focus_data = {"type": "literal", "pattern": "test", "style": "red", "word_boundary": False}
+    focus_data = {"type": "literal", "text": "test", "style": "red", "word_boundary": False}
     focus = _parse_focus(focus_data)
     assert focus.type == Focus.type.LITERAL
     assert focus.pattern == "test"
@@ -91,7 +91,7 @@ def test_parse_focus_regex():
 
 def test_parse_focus_line() -> None:
     """Test parsing a line focus."""
-    focus_data = {"type": "line", "pattern": 3, "style": "blue"}
+    focus_data = {"type": "line", "line_number": 3, "style": "blue"}
     focus = _parse_focus(focus_data)
     assert focus.type == Focus.type.LINE
     assert focus.pattern == 3
@@ -113,7 +113,7 @@ def test_parse_focus_startswith() -> None:
     """Test parsing a startswith focus."""
     focus_data = {
         "type": "startswith",
-        "pattern": "prefix",
+        "text": "prefix",
         "style": "cyan",
         "from_start_of_line": True,
     }
@@ -154,7 +154,7 @@ def test_parse_step_with_multiple_focus() -> None:
     step_data = {
         "description": "Multiple Focus Step",
         "focus": [
-            {"type": "literal", "pattern": "a", "style": "red"},
+            {"type": "literal", "text": "a", "style": "red"},
             {"type": "regex", "pattern": "\\d+", "style": "blue"},
         ],
     }
@@ -214,7 +214,7 @@ def test_parse_focus_literal_with_match_index():
     """Test parsing a literal focus with match_index."""
     focus_data = {
         "type": "literal",
-        "pattern": "test",
+        "text": "test",
         "style": "red",
         "match_index": 2,
     }
@@ -229,7 +229,7 @@ def test_parse_focus_literal_with_list_match_index():
     """Test parsing a literal focus with a list for match_index."""
     focus_data = {
         "type": "literal",
-        "pattern": "test",
+        "text": "test",
         "style": "red",
         "match_index": [1, 3],
     }

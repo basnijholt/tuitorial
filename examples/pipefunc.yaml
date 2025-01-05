@@ -78,15 +78,15 @@ chapters:
             pattern: 'output_name="\\w+"'
             style: "bright_green bold"
           - type: literal
-            pattern: "c"
+            text: "c"
             style: "bright_green"
             word_boundary: true
           - type: literal
-            pattern: "d"
+            text: "d"
             style: "bright_cyan"
             word_boundary: true
           - type: literal
-            pattern: "e"
+            text: "e"
             style: "bright_magenta"
             word_boundary: true
 
@@ -319,30 +319,30 @@ chapters:
           This means that the function will be called for each element in the input list [bold red]x[/].
         focus:
           - type: literal
-            pattern: double_it
+            text: double_it
             style: "bold blue"
             match_index: 0
           - type: literal
-            pattern: int
+            text: int
             style: "bold yellow"
             word_boundary: true
           - type: literal
-            pattern: '"y"'
+            text: '"y"'
             style: "bold green"
             match_index: 0
           - type: literal
-            pattern: y
+            text: y
             style: "bold green"
             match_index: 1
           - type: literal
-            pattern: x
+            text: x
             style: "bold red"
             match_index: [0, 1]
           - type: literal
-            pattern: mapspec
+            text: mapspec
             style: "bold cyan"
           - type: literal
-            pattern: "[i]"
+            text: "[i]"
             style: "bold white"
 
       - description: |
@@ -360,7 +360,7 @@ chapters:
             pattern: 'inputs = {"x": [1, 2, 3, 4, 5]}'
             style: "bright_cyan bold"
           - type: literal
-            pattern: mapspec="x[i] -> y[i]"
+            text: mapspec="x[i] -> y[i]"
             style: "bright_cyan bold"
 
       - description: |
@@ -376,23 +376,23 @@ chapters:
           Finally, we print the output of the [bold blue]double_it[/] function by accessing the [bold blue]output[/] attribute of the [bold blue]Result[/] object.
         focus:
           - type: literal
-            pattern: "result"
+            text: "result"
             style: "bold yellow"
           - type: literal
-            pattern: '"y"'
+            text: '"y"'
             style: "bold green"
           - type: literal
-            pattern: "y[i]"
+            text: "y[i]"
             style: "bold green"
           - type: literal
-            pattern: '"x"'
+            text: '"x"'
             style: "bold blue"
           - type: literal
-            pattern: "x[i]"
+            text: "x[i]"
             style: "bold blue"
           - type: literal
-            pattern: "[1, 2, 3, 4, 5]"
+            text: "[1, 2, 3, 4, 5]"
             style: "bright_cyan bold"
           - type: literal
-            pattern: "[2, 4, 6, 8, 10]"
+            text: "[2, 4, 6, 8, 10]"
             style: "bright_cyan bold"

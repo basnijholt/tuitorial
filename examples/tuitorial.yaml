@@ -32,7 +32,7 @@ chapters:
           - type: syntax
             lexer: "bash"
           - type: literal
-            pattern: "pip install tuitorial"
+            text: "pip install tuitorial"
             style: "bright_green bold"
 
   - title: "Basic Example"
@@ -59,29 +59,29 @@ chapters:
       - description: "Import necessary classes"
         focus:
           - type: literal
-            pattern: "from tuitorial import Chapter, Step, TuitorialApp, Focus"
+            text: "from tuitorial import Chapter, Step, TuitorialApp, Focus"
             style: "cyan bold"
           - type: literal
-            pattern: "from rich.style import Style"
+            text: "from rich.style import Style"
             style: "cyan bold"
       - description: "Define the Zen of Python as a string"
         focus:
           - type: literal
-            pattern: '"""'
+            text: '"""'
             style: "yellow"
             match_index: [0, 1]
       - description: "Create steps with different focus types"
         focus:
           - type: literal
-            pattern: "Step("
+            text: "Step("
             style: "yellow"
       - description: "Initialize and run the TuitorialApp"
         focus:
           - type: literal
-            pattern: "TuitorialApp"
+            text: "TuitorialApp"
             style: "cyan bold"
           - type: literal
-            pattern: "app.run()"
+            text: "app.run()"
             style: "green bold"
 
   - title: "Focus Types - Literal, Regex, Line"
@@ -102,7 +102,7 @@ chapters:
       - description: "Literal focus on 'better'"
         focus:
           - type: literal
-            pattern: "better"
+            text: "better"
             style: "bold yellow"
       - description: "Regex focus on words starting with 'c'"
         focus:
@@ -112,7 +112,7 @@ chapters:
       - description: "Line focus on line 4 (index 3)"
         focus:
           - type: line
-            pattern: 3
+            line_numbers: 3
             style: "bold green"
 
   - title: "Focus Types - Range, Starts With, Between"
@@ -139,7 +139,7 @@ chapters:
       - description: "Starts With focus on lines starting with 'S'"
         focus:
           - type: startswith
-            pattern: "S"
+            text: "S"
             style: "bold cyan"
             from_start_of_line: true
       - description: "Between focus highlighting text between 'cases' and 'enough'"
@@ -209,12 +209,12 @@ chapters:
       - description: "Highlight 'obvious' with bold red style"
         focus:
           - type: literal
-            pattern: "obvious"
+            text: "obvious"
             style: "bold red"
       - description: "Highlight 'Dutch' with italic green style"
         focus:
           - type: literal
-            pattern: "Dutch"
+            text: "Dutch"
             style: "italic green"
 
   - title: "Multiple Highlights"
@@ -239,10 +239,10 @@ chapters:
       - description: "Demonstrate multiple highlights in a single step"
         focus:
           - type: literal
-            pattern: "is better than"
+            text: "is better than"
             style: "bold yellow"
           - type: literal
-            pattern: "to explain"
+            text: "to explain"
             style: "italic blue"
 
   - title: "Helper Functions - Bullet Points"
