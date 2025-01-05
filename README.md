@@ -2,6 +2,7 @@
 
 > Create beautiful terminal-based code tutorials with syntax highlighting and interactive navigation.
 
+[![Documentation](https://readthedocs.org/projects/tuitorial/badge/?version=latest)](https://tuitorial.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/tuitorial.svg)](https://badge.fury.io/py/tuitorial)
 [![Python](https://img.shields.io/pypi/pyversions/tuitorial.svg)](https://pypi.org/project/tuitorial/)
 [![Tests](https://github.com/basnijholt/tuitorial/actions/workflows/pytest.yml/badge.svg)](https://github.com/basnijholt/tuitorial/actions/workflows/pytest.yml)
