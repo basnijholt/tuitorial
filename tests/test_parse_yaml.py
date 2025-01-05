@@ -313,7 +313,7 @@ def test_validate_chapter_data():
         _parse_chapter({})
     with pytest.raises(ValueError, match="A chapter cannot have both 'code_file' and 'code' keys."):
         _parse_chapter({"title": "Test", "code_file": "file.py", "code": "print('test')"})
-    with pytest.raises(ValueError, match="Invalid 'type', must be one of 'bullet_points'."):
+    with pytest.raises(ValueError, match="Unknown chapter type"):
         _parse_chapter({"title": "Test", "type": "invalid_type"})
     with pytest.raises(ValueError, match="Invalid key 'invalid_key' for Chapter"):
         _parse_chapter({"title": "Test", "invalid_key": "value"})

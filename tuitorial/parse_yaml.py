@@ -12,6 +12,7 @@ from pathlib import Path
 import rich
 import yaml
 from rich.style import Style
+from rich.traceback import install
 from textual._context import active_app
 from textual.app import App
 
@@ -148,27 +149,39 @@ def _validate_chapter_data(chapter_data: dict) -> None:
     if "title" not in chapter_data:
         msg = "Chapter dict must have a 'title' key."
         raise ValueError(msg)
+    if "type" in chapter_data:
+        if chapter_data["type"] == "bullet_points":
+            _validate_bullet_points_data(chapter_data)
+            return
+        msg = f"Unknown chapter type: {chapter_data['type']}, must be 'bullet_points' or omitted."
+        raise ValueError(msg)
     if "code_file" in chapter_data and "code" in chapter_data:
         msg = "A chapter cannot have both 'code_file' and 'code' keys."
         raise ValueError(msg)
-    allowed_types = {"bullet_points"}
-    if "type" in chapter_data and chapter_data["type"] not in allowed_types:
-        # The rest of the `chapter_data` is validated in `_parse_bullet_points`
-        allowed = ", ".join(allowed_types)
-        msg = f"Invalid 'type', must be one of '{allowed}'."
-        raise ValueError(msg)
-    allowed_keys = {"title", "code_file", "code", "steps", "type"}
+    allowed_keys = {"title", "code_file", "code", "steps"}
     for key in chapter_data:
         if key not in allowed_keys:
             allowed = ", ".join(allowed_keys)
-            msg = f"Invalid key '{key}' for Chapter, must be one of {allowed}"
+            msg = f"Invalid key '{key}' for Chapter ({chapter_data}), must be one of {allowed}, unless 'type: bullet_points'"
+            raise ValueError(msg)
+
+
+def _validate_bullet_points_data(chapter_data: dict) -> None:
+    if "bullet_points" not in chapter_data:
+        msg = f"Bullet points chapter must have a 'bullet_points' key, `{chapter_data=}`."
+        raise ValueError(msg)
+    if not isinstance(chapter_data["bullet_points"], list):
+        msg = f"Invalid bullet_points format: {chapter_data['bullet_points']}, must be a list."
+        raise TypeError(msg)
+    allowed_keys = {"type", "title", "bullet_points", "marker", "style"}
+    for key in chapter_data:
+        if key not in allowed_keys:
+            allowed = ", ".join(allowed_keys)
+            msg = f"Invalid key '{key}' for `type: bullet_points` Chapter (`{chapter_data}`), must be one of {allowed}"
             raise ValueError(msg)
 
 
 def _parse_bullet_points(title: str, chapter_data: dict) -> Chapter:
-    if "bullet_points" not in chapter_data:
-        msg = f"Bullet points chapter must have a 'bullet_points' key, `{chapter_data=}`."
-        raise ValueError(msg)
     bullet_points = []
     extras = []
     for bullet_point in chapter_data["bullet_points"]:
@@ -217,6 +230,7 @@ def _parse_chapter(chapter_data: dict) -> Chapter:
 
 def parse_yaml_config(yaml_file: str | Path) -> tuple[list[Chapter], TitleSlide | None]:
     """Parses a YAML configuration file and returns a list of Chapter objects."""
+    install()
     with open(yaml_file) as f:  # noqa: PTH123
         config = yaml.safe_load(f)
 
