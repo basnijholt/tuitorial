@@ -170,6 +170,15 @@ class TuitorialApp(App):
         index = int(tab_id.split("_")[-1])
         self.current_chapter_index = int(index)
 
+    def current_tab_pane(self) -> TabPane:
+        """Get the current tab id."""
+        if self.current_chapter_index == -1:  # Title slide
+            tab_id = "title-slide-tab"
+        else:
+            tab_id = f"chapter_{self.current_chapter_index}"
+
+        return self.query_one(f"#{tab_id}")
+
     async def update_display(self) -> None:
         """Update the display with current focus."""
         await self.current_chapter.update_display()

@@ -315,16 +315,8 @@ async def display_error(app: TuitorialApp, error_message: str) -> None:
         theme="monokai",
         read_only=True,
     )
-
-    if app.current_chapter_index == -1:  # Title slide
-        tab_id = "title-slide-tab"
-    else:
-        tab_id = f"chapter_{app.current_chapter_index}"
-
-    pane = app.query_one(f"#{tab_id}")
+    pane = app.current_tab_pane()
     await pane.remove_children()
-
-    # Mount the error label
     await pane.mount(label, before=0)
 
 
