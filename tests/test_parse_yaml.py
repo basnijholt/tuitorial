@@ -295,3 +295,14 @@ def test_parsing_examples():
     examples_dir = Path(__file__).parent.parent / "examples"
     for example_file in examples_dir.glob("*.yaml"):
         parse_yaml_config(example_file)
+
+
+def test_validate_step_data():
+    with pytest.raises(ValueError, match="Invalid key"):
+        _parse_step({"description": "Test", "wrong": "key"})
+    with pytest.raises(ValueError, match="Step dict must have a 'description' key"):
+        _parse_step({"missing": "description"})
+    with pytest.raises(ValueError, match="A step cannot have both 'image' and 'focus' keys."):
+        _parse_step({"description": "Test", "image": "image.png", "focus": []})
+    with pytest.raises(ValueError, match="for ImageStep"):
+        _parse_step({"description": "Test", "image": "", "wrong_image_key": "image.png"})
