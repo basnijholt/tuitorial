@@ -11,12 +11,12 @@
 > [!NOTE]
 > **tuitorial**? Typo? No, a combination of "TUI" (Terminal User Interface) and "tutorial".
 
+<!-- toc-start -->
 <details><summary><b><u>[ToC]</u></b> 📚</summary>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [🎯 Features](#-features)
 - [🤨 Why?](#-why)
 - [📸 Recording](#-recording)
 - [🚀 Installation](#-installation)
@@ -56,7 +56,7 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 </details>
-
+<!-- toc-end -->
 ## 🎯 Features
 
 - 🎨 **Rich Syntax Highlighting:** Customizable styles, wide language support.

@@ -20,7 +20,7 @@ import tuitorial  # noqa: E402, isort:skip
 
 project = "tuitorial"
 author = "tuitorial Developers"
-copyright = f"2024, {author}"
+copyright = f"2025, {author}"
 
 version = ".".join(tuitorial.__version__.split(".")[:3])
 release = version
@@ -52,7 +52,7 @@ pygments_style = "sphinx"
 
 # -- Options for HTML output -------------------------------------------------
 
-html_logo = "https://github.com/basnijholt/nijho.lt/raw/92b0aa820318f466388d828adf01120760255acf/content/project/tuitorial/featured.png"
+# html_logo = "https://github.com/basnijholt/nijho.lt/raw/92b0aa820318f466388d828adf01120760255acf/content/project/tuitorial/featured.png"
 html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
 
@@ -103,8 +103,6 @@ def replace_named_emojis(input_file: Path, output_file: Path) -> None:
 
         with output_file.open("w") as outfile:
             outfile.write(content_with_emojis)
-
-
 
 
 def _change_alerts_to_admonitions(input_text: str) -> str:

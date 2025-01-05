@@ -2,5 +2,4 @@
 
 ```{toctree}
 tuitorial
-tuitorial.app
 ```
