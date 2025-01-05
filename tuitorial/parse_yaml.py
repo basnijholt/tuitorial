@@ -12,6 +12,7 @@ import urllib.request
 from pathlib import Path
 
 import rich
+import textual.theme
 import yaml
 from rich.style import Style
 from rich.traceback import install
@@ -299,10 +300,13 @@ def run_from_yaml(
     yaml_file: str | Path,
     chapter_index: int | None = None,
     step_index: int = 0,
+    theme: str | None = None,
 ) -> None:  # pragma: no cover
     """Parses a YAML config and runs the tutorial."""
     chapters, title_slide = parse_yaml_config(yaml_file)
     app = TuitorialApp(chapters, title_slide, chapter_index, step_index)
+    if theme is not None:
+        app.theme = theme
     app.run()
 
 
@@ -352,10 +356,13 @@ def run_dev_mode(
     yaml_file: str | Path,
     chapter_index: int | None = None,
     step_index: int = 0,
+    theme: str | None = None,
 ) -> None:  # pragma: no cover
     """Parses a YAML config, runs the tutorial, and watches for changes."""
     chapters, title_slide = parse_yaml_config(yaml_file)
     app = TuitorialApp(chapters, title_slide, chapter_index, step_index)
+    if theme is not None:
+        app.theme = theme
 
     async def run_app_and_watch() -> None:
         """Run the app and the file watcher concurrently."""
@@ -396,6 +403,13 @@ def cli() -> None:  # pragma: no cover
         default=0,
         help="Initial step index (0-based) for development mode.",
     )
+    parser.add_argument(
+        "--theme",
+        type=str,
+        default=None,
+        help="Initial theme to use for the app.",
+        choices=tuple(textual.theme.BUILTIN_THEMES.keys()),
+    )
     args = parser.parse_args()
 
     if args.yaml_source.startswith(("http://", "https://")):
@@ -422,4 +436,4 @@ def cli() -> None:  # pragma: no cover
     path = Path(args.yaml_source)
     os.chdir(path.parent)
     run = run_dev_mode if args.watch else run_from_yaml
-    run(path.name, chapter_index=args.chapter, step_index=args.step)
+    run(path.name, chapter_index=args.chapter, step_index=args.step, theme=args.theme)
