@@ -27,23 +27,31 @@ class InvalidFocusError(TypeError):
     """Raised when an invalid focus type is encountered."""
 
 
+class InvalidYamlError(ValueError):
+    """Raised when an invalid YAML configuration is encountered."""
+
+
 def _validate_focus_data(focus_data: dict) -> None:
     if "type" not in focus_data:
-        msg = f"Focus dict must have a 'type' key, got: {focus_data}"
-        raise InvalidFocusError(msg)
+        msg = f"Invalid focus definition: Each focus must have a 'type' key. Found: {focus_data}"
+        raise InvalidYamlError(msg)
     focus_type = focus_data["type"]
     method = getattr(Focus, focus_type, None)
     if method is None:
-        msg = f"Unknown focus type: {focus_type}, must be one of {FocusType.__members__}"
-        raise InvalidFocusError(msg)
+        valid_types = ", ".join(FocusType.__members__)
+        msg = f"Invalid focus type: '{focus_type}'. Must be one of: {valid_types}"
+        raise InvalidYamlError(msg)
     sig = inspect.signature(method)
     for key in focus_data:
         if key == "type":
             continue
         if key not in sig.parameters:
             allowed = ", ".join(sig.parameters)
-            msg = f"Invalid key '{key}' for focus type '{focus_type}', must be one of {allowed}"
-            raise InvalidFocusError(msg)
+            msg = (
+                f"Invalid key '{key}' for focus type '{focus_type}'. "
+                f"Allowed keys are: {allowed}"
+            )
+            raise InvalidYamlError(msg)
 
 
 def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
@@ -104,28 +112,41 @@ def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
             return Focus.markdown()
         case _:
             msg = f"Unknown focus type: {focus_type}"
-            raise ValueError(msg)
+            raise InvalidYamlError(msg)
 
 
 def _validate_step_data(step_data: dict) -> None:
     if "description" not in step_data:
-        msg = f"Step dict must have a 'description' key, got: {step_data}"
-        raise ValueError(msg)
+        msg = (
+            f"Invalid step definition: Each step must have a 'description' key. Found: {step_data}"
+        )
+        raise InvalidYamlError(msg)
     if "image" in step_data and "focus" in step_data:
-        msg = "A step cannot have both 'image' and 'focus' keys."
-        raise ValueError(msg)
+        msg = (
+            f"Invalid step definition: A step cannot have both 'image' and 'focus' keys. "
+            f"Found: {step_data}"
+        )
+        raise InvalidYamlError(msg)
     if "image" in step_data:
         allowed_keys = set(inspect.signature(ImageStep).parameters)
         for key in step_data:
             if key not in allowed_keys:
-                msg = f"Invalid key '{key}' for ImageStep, must be one of {allowed_keys}"
-                raise ValueError(msg)
+                allowed = ", ".join(allowed_keys)
+                msg = (
+                    f"Invalid key '{key}' for ImageStep in step with description '{step_data['description']}'. "
+                    f"Allowed keys are: {allowed}"
+                )
+                raise InvalidYamlError(msg)
     else:
         allowed_keys = {"description", "focus"}
         for key in step_data:
             if key not in allowed_keys:
-                msg = f"Invalid key '{key}' for Step, must be one of {allowed_keys}"
-                raise ValueError(msg)
+                allowed = ", ".join(allowed_keys)
+                msg = (
+                    f"Invalid key '{key}' for Step in step with description '{step_data['description']}'. "
+                    f"Allowed keys are: {allowed}"
+                )
+                raise InvalidYamlError(msg)
 
 
 def _parse_step(step_data: dict) -> Step | ImageStep:
@@ -147,38 +168,55 @@ def _parse_step(step_data: dict) -> Step | ImageStep:
 
 def _validate_chapter_data(chapter_data: dict) -> None:
     if "title" not in chapter_data:
-        msg = "Chapter dict must have a 'title' key."
-        raise ValueError(msg)
+        msg = f"Invalid chapter definition: Each chapter must have a 'title' key. Found: {chapter_data}"
+        raise InvalidYamlError(msg)
+    title = chapter_data["title"]
     if "type" in chapter_data:
         if chapter_data["type"] == "bullet_points":
             _validate_bullet_points_data(chapter_data)
             return
-        msg = f"Unknown chapter type: {chapter_data['type']}, must be 'bullet_points' or omitted."
-        raise ValueError(msg)
+        msg = f"Unknown chapter type: {chapter_data['type']}'. Must be 'bullet_points' or omitted."
+        raise InvalidYamlError(msg)
     if "code_file" in chapter_data and "code" in chapter_data:
-        msg = "A chapter cannot have both 'code_file' and 'code' keys."
-        raise ValueError(msg)
+        msg = (
+            f"Invalid chapter definition: A chapter cannot have both 'code_file' and 'code' keys. "
+            f"Found: {chapter_data}"
+        )
+        raise InvalidYamlError(msg)
     allowed_keys = {"title", "code_file", "code", "steps"}
     for key in chapter_data:
         if key not in allowed_keys:
             allowed = ", ".join(allowed_keys)
-            msg = f"Invalid key '{key}' for Chapter ({chapter_data}), must be one of {allowed}, unless 'type: bullet_points'"
-            raise ValueError(msg)
+            msg = (
+                f"Invalid key '{key}' for chapter '{title}'. "
+                f"Allowed keys are: {allowed} (unless 'type: bullet_points' is specified)"
+            )
+            raise InvalidYamlError(msg)
 
 
 def _validate_bullet_points_data(chapter_data: dict) -> None:
+    title = chapter_data["title"]  # guaranteed to exist by _validate_chapter_data
     if "bullet_points" not in chapter_data:
-        msg = f"Bullet points chapter must have a 'bullet_points' key, `{chapter_data=}`."
-        raise ValueError(msg)
+        msg = (
+            f"Invalid bullet points chapter definition: "
+            f"Missing 'bullet_points' key in chapter '{title}'."
+        )
+        raise InvalidYamlError(msg)
     if not isinstance(chapter_data["bullet_points"], list):
-        msg = f"Invalid bullet_points format: {chapter_data['bullet_points']}, must be a list."
-        raise TypeError(msg)
+        msg = (
+            f"Invalid 'bullet_points' format in chapter '{title}'. "
+            f"'bullet_points' must be a list."
+        )
+        raise InvalidYamlError(msg)
     allowed_keys = {"type", "title", "bullet_points", "marker", "style"}
     for key in chapter_data:
         if key not in allowed_keys:
             allowed = ", ".join(allowed_keys)
-            msg = f"Invalid key '{key}' for `type: bullet_points` Chapter (`{chapter_data}`), must be one of {allowed}"
-            raise ValueError(msg)
+            msg = (
+                f"Invalid key '{key}' for bullet points chapter '{title}'. "
+                f"Allowed keys are: {allowed}"
+            )
+            raise InvalidYamlError(msg)
 
 
 def _parse_bullet_points(title: str, chapter_data: dict) -> Chapter:
@@ -192,8 +230,11 @@ def _parse_bullet_points(title: str, chapter_data: dict) -> Chapter:
             text = bullet_point.get("text", "")
             extra = bullet_point.get("extra", "")
         else:  # pragma: no cover
-            msg = f"Invalid bullet point format: {bullet_point}, must be a string or `dict(text='...', extra='...')`."
-            raise TypeError(msg)
+            msg = (
+                f"Invalid bullet point format in chapter '{title}'. "
+                f"Each bullet point must be a string or a dictionary with keys 'text' and 'extra'."
+            )
+            raise InvalidYamlError(msg)
         bullet_points.append(text)
         extras.append(extra)
     return create_bullet_point_chapter(
@@ -216,8 +257,13 @@ def _parse_chapter(chapter_data: dict) -> Chapter:
     steps = []
 
     if "code_file" in chapter_data:
-        with open(chapter_data["code_file"]) as code_file:  # noqa: PTH123
-            code = code_file.read()
+        code_file_path = chapter_data["code_file"]
+        try:
+            with open(code_file_path) as code_file:  # noqa: PTH123
+                code = code_file.read()
+        except FileNotFoundError as e:
+            msg = f"Code file not found: {code_file_path}"
+            raise InvalidYamlError(msg) from e
     elif "code" in chapter_data:
         code = chapter_data["code"]
 
@@ -231,8 +277,19 @@ def _parse_chapter(chapter_data: dict) -> Chapter:
 def parse_yaml_config(yaml_file: str | Path) -> tuple[list[Chapter], TitleSlide | None]:
     """Parses a YAML configuration file and returns a list of Chapter objects."""
     install()
-    with open(yaml_file) as f:  # noqa: PTH123
-        config = yaml.safe_load(f)
+    try:
+        with open(yaml_file) as f:  # noqa: PTH123
+            config = yaml.safe_load(f)
+    except FileNotFoundError as e:
+        msg = f"YAML file not found: {yaml_file}"
+        raise InvalidYamlError(msg) from e
+    except yaml.YAMLError as e:
+        msg = f"Error parsing YAML file {yaml_file}: {e}"
+        raise InvalidYamlError(msg) from e
+
+    if "chapters" not in config:
+        msg = "Invalid YAML config: Missing 'chapters' key."
+        raise InvalidYamlError(msg)
 
     chapters = [_parse_chapter(chapter_data) for chapter_data in config["chapters"]]
     title_slide = TitleSlide(**config["title_slide"]) if "title_slide" in config else None

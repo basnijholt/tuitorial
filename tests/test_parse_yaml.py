@@ -6,7 +6,7 @@ from rich.style import Style
 
 from tuitorial import Focus, ImageStep, Step
 from tuitorial.parse_yaml import (
-    InvalidFocusError,
+    InvalidYamlError,
     _parse_chapter,
     _parse_focus,
     _parse_step,
@@ -73,7 +73,7 @@ def test_parse_invalid_yaml_config(invalid_yaml_config: str, tmp_path: Path):
     yaml_file = tmp_path / "invalid.yaml"
     yaml_file.write_text(invalid_yaml_config)
 
-    with pytest.raises(InvalidFocusError, match="Unknown focus type: unknown"):
+    with pytest.raises(InvalidYamlError, match="Invalid focus type: 'unknown'"):
         parse_yaml_config(str(yaml_file))
 
 
@@ -287,12 +287,12 @@ def test_parse_step_with_image():
 )
 def test_validate_yaml(type_):
     """Test validating a YAML file."""
-    with pytest.raises(InvalidFocusError, match="Invalid key"):
+    with pytest.raises(InvalidYamlError, match="Invalid key 'wrong'"):
         _parse_focus({"type": type_, "wrong": "key"})
 
 
 def test_validate_focus_data():
-    with pytest.raises(TypeError, match="Focus dict must have a 'type' key"):
+    with pytest.raises(InvalidYamlError, match="Each focus must have a 'type' key"):
         _parse_focus({"missing": "keytype"})
 
 
@@ -303,30 +303,33 @@ def test_parsing_examples():
 
 
 def test_validate_step_data():
-    with pytest.raises(ValueError, match="Invalid key"):
+    with pytest.raises(InvalidYamlError, match="Invalid key 'wrong' for Step"):
         _parse_step({"description": "Test", "wrong": "key"})
-    with pytest.raises(ValueError, match="Step dict must have a 'description' key"):
+    with pytest.raises(InvalidYamlError, match="Each step must have a 'description' key"):
         _parse_step({"missing": "description"})
-    with pytest.raises(ValueError, match="A step cannot have both 'image' and 'focus' keys."):
+    with pytest.raises(InvalidYamlError, match="A step cannot have both 'image' and 'focus' keys"):
         _parse_step({"description": "Test", "image": "image.png", "focus": []})
-    with pytest.raises(ValueError, match="for ImageStep"):
+    with pytest.raises(InvalidYamlError, match="Invalid key 'wrong_image_key' for ImageStep"):
         _parse_step({"description": "Test", "image": "", "wrong_image_key": "image.png"})
 
 
 def test_validate_chapter_data():
-    with pytest.raises(ValueError, match="Chapter dict must have a 'title' key."):
+    with pytest.raises(InvalidYamlError, match="Each chapter must have a 'title' key"):
         _parse_chapter({})
-    with pytest.raises(ValueError, match="A chapter cannot have both 'code_file' and 'code' keys."):
+    with pytest.raises(
+        InvalidYamlError,
+        match="A chapter cannot have both 'code_file' and 'code' keys",
+    ):
         _parse_chapter({"title": "Test", "code_file": "file.py", "code": "print('test')"})
-    with pytest.raises(ValueError, match="Unknown chapter type"):
+    with pytest.raises(InvalidYamlError, match="Unknown chapter type"):
         _parse_chapter({"title": "Test", "type": "invalid_type"})
-    with pytest.raises(ValueError, match="Invalid key 'invalid_key' for Chapter"):
+    with pytest.raises(InvalidYamlError, match="Invalid key 'invalid_key' for chapter"):
         _parse_chapter({"title": "Test", "invalid_key": "value"})
-    with pytest.raises(ValueError, match="Bullet points chapter must have a 'bullet_points"):
+    with pytest.raises(InvalidYamlError, match="Missing 'bullet_points' key"):
         _parse_chapter({"title": "Test", "type": "bullet_points"})
-    with pytest.raises(TypeError, match="Invalid bullet_points format"):
+    with pytest.raises(InvalidYamlError, match="Invalid 'bullet_points' format"):
         _parse_chapter({"title": "Test", "type": "bullet_points", "bullet_points": "invalid"})
-    with pytest.raises(ValueError, match="Invalid key 'invalid' "):
+    with pytest.raises(InvalidYamlError, match="Invalid key 'invalid' for bullet points chapter"):
         _parse_chapter(
             {"title": "Test", "type": "bullet_points", "bullet_points": [], "invalid": "invalid"},
         )
