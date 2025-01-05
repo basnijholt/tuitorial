@@ -200,7 +200,7 @@ run_from_yaml("tutorial.yaml")
 
 ## 📖 Usage
 
-### Multiple Chapters
+### 📚 Multiple Chapters
 
 <details>
 <summary><b>Python</b></summary>
@@ -271,7 +271,7 @@ chapters:
 
 </details>
 
-### Steps
+### 🚶 Steps
 
 Each step in a tutorial consists of a description and a list of focuses.
 
