@@ -23,10 +23,6 @@ from tuitorial.highlighting import FocusType
 _DEFAULT_STYLE = "yellow bold"
 
 
-class InvalidFocusError(TypeError):
-    """Raised when an invalid focus type is encountered."""
-
-
 class InvalidYamlError(ValueError):
     """Raised when an invalid YAML configuration is encountered."""
 
@@ -110,9 +106,9 @@ def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
             )
         case "markdown":
             return Focus.markdown()
-        case _:
-            msg = f"Unknown focus type: {focus_type}"
-            raise InvalidYamlError(msg)
+        case _:  # pragma: no cover
+            msg = "Should never reach this point because of validation."
+            raise RuntimeError(msg)
 
 
 def _validate_step_data(step_data: dict) -> None:
