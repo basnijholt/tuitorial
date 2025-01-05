@@ -58,6 +58,7 @@
 
 </details>
 <!-- toc-end -->
+
 ## 🎯 Features
 
 - 🎨 **Rich Syntax Highlighting:** Customizable styles, wide language support.
