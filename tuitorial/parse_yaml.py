@@ -5,7 +5,9 @@ import contextlib
 import inspect
 import os
 import re
+import sys
 import tempfile
+import traceback
 import urllib.request
 from pathlib import Path
 
@@ -334,9 +336,6 @@ async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
     try:
         app.chapters, app.title_slide = parse_yaml_config(yaml_file)
     except Exception as e:  # noqa: BLE001
-        import sys
-        import traceback
-
         error_message = f"Error reloading YAML: {e!s}\n\n"
         error_message += "".join(traceback.format_exception(*sys.exc_info()))
         await display_error(app, error_message)
