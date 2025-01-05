@@ -28,13 +28,13 @@ class InvalidFocusError(TypeError):
 
 def _validate_focus_data(focus_data: dict) -> None:
     if "type" not in focus_data:
-        msg = "Focus item must have a 'type' key."
-        raise ValueError(msg)
+        msg = f"Focus dict must have a 'type' key, got: {focus_data}"
+        raise InvalidFocusError(msg)
     focus_type = focus_data["type"]
     method = getattr(Focus, focus_type, None)
     if method is None:
         msg = f"Unknown focus type: {focus_type}, must be one of {FocusType.__members__}"
-        raise ValueError(msg)
+        raise InvalidFocusError(msg)
     sig = inspect.signature(method)
     for key in focus_data:
         if key == "type":
@@ -47,9 +47,9 @@ def _validate_focus_data(focus_data: dict) -> None:
 
 def _parse_focus(focus_data: dict) -> Focus:  # noqa: PLR0911
     """Parses a single focus item from the YAML data."""
+    _validate_focus_data(focus_data)
     focus_type = focus_data["type"]
     style = Style.parse(focus_data.get("style", _DEFAULT_STYLE))
-    _validate_focus_data(focus_data)
 
     match focus_type:
         case "literal":

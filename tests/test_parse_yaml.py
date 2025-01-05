@@ -73,7 +73,7 @@ def test_parse_invalid_yaml_config(invalid_yaml_config: str, tmp_path: Path):
     yaml_file = tmp_path / "invalid.yaml"
     yaml_file.write_text(invalid_yaml_config)
 
-    with pytest.raises(ValueError, match="Unknown focus type: unknown"):
+    with pytest.raises(InvalidFocusError, match="Unknown focus type: unknown"):
         parse_yaml_config(str(yaml_file))
 
 
