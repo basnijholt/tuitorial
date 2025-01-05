@@ -240,7 +240,7 @@ chapters:
             theme: monokai
 
       - description: |
-          Decorating a function with [bold blue]@pipefunc[/] is equivalent to creating a [bold blue]PipeFunc[/] object.
+          Decorating a function with [bold blue]@pipefunc[/] turns the function into a [bold blue]PipeFunc[/] object.
         focus:
           - type: line_containing
             pattern: "assert"
@@ -283,6 +283,7 @@ chapters:
       - description: |
           Another useful method is [bold blue]pipeline.info()[/] which returns information about the pipeline.
           Or call [bold blue]pipeline.info(print_table=True)[/] to print a pretty table.
+          Also check [bold blue]pipeline.defaults()[/] and or any of the 20+ other methods/properties.
         focus:
           - type: line_containing
             pattern: pipeline =
