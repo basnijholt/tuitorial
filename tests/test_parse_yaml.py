@@ -291,6 +291,11 @@ def test_validate_yaml(type_):
         _parse_focus({"type": type_, "wrong": "key"})
 
 
+def test_validate_focus_data():
+    with pytest.raises(TypeError, match="Focus dict must have a 'type' key"):
+        _parse_focus({"missing": "keytype"})
+
+
 def test_parsing_examples():
     examples_dir = Path(__file__).parent.parent / "examples"
     for example_file in examples_dir.glob("*.yaml"):
@@ -306,3 +311,22 @@ def test_validate_step_data():
         _parse_step({"description": "Test", "image": "image.png", "focus": []})
     with pytest.raises(ValueError, match="for ImageStep"):
         _parse_step({"description": "Test", "image": "", "wrong_image_key": "image.png"})
+
+
+def test_validate_chapter_data():
+    with pytest.raises(ValueError, match="Chapter dict must have a 'title' key."):
+        _parse_chapter({})
+    with pytest.raises(ValueError, match="A chapter cannot have both 'code_file' and 'code' keys."):
+        _parse_chapter({"title": "Test", "code_file": "file.py", "code": "print('test')"})
+    with pytest.raises(ValueError, match="Unknown chapter type"):
+        _parse_chapter({"title": "Test", "type": "invalid_type"})
+    with pytest.raises(ValueError, match="Invalid key 'invalid_key' for Chapter"):
+        _parse_chapter({"title": "Test", "invalid_key": "value"})
+    with pytest.raises(ValueError, match="Bullet points chapter must have a 'bullet_points"):
+        _parse_chapter({"title": "Test", "type": "bullet_points"})
+    with pytest.raises(TypeError, match="Invalid bullet_points format"):
+        _parse_chapter({"title": "Test", "type": "bullet_points", "bullet_points": "invalid"})
+    with pytest.raises(ValueError, match="Invalid key 'invalid' "):
+        _parse_chapter(
+            {"title": "Test", "type": "bullet_points", "bullet_points": [], "invalid": "invalid"},
+        )
