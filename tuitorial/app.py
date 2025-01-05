@@ -44,7 +44,7 @@ class TuitorialApp(App):
     }
 
     TabbedContent {
-        height: 1fr;
+        height: 100%;
     }
 
     ContentContainer {
@@ -113,7 +113,7 @@ class TuitorialApp(App):
                     yield chapter
         yield Footer()
 
-    async def set_chapter(self, chapter_index: int) -> None:
+    async def set_chapter(self, chapter_index: int, *, nearest: bool = False) -> None:
         """Set the current chapter and update the display."""
         if chapter_index == -1 and self.title_slide:
             self.current_chapter_index = -1
@@ -122,6 +122,9 @@ class TuitorialApp(App):
             self.current_chapter_index = chapter_index
             self.query_one(TabbedContent).active = f"chapter_{chapter_index}"
             await self.current_chapter.update_display()
+        elif nearest:
+            chapter_index = max(0, min(len(self.chapters) - 1, chapter_index))
+            await self.set_chapter(chapter_index)
         else:
             msg = f"Invalid chapter index: {chapter_index}"
             raise ValueError(msg)
@@ -169,6 +172,11 @@ class TuitorialApp(App):
         assert tab_id.startswith("chapter_")
         index = int(tab_id.split("_")[-1])
         self.current_chapter_index = int(index)
+
+    def current_tab_pane(self) -> TabPane:
+        """Get the current tab id."""
+        tab_id = self.query_one(TabbedContent).active
+        return self.query_one(f"#{tab_id}")
 
     async def update_display(self) -> None:
         """Update the display with current focus."""

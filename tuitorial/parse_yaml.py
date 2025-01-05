@@ -5,7 +5,9 @@ import contextlib
 import inspect
 import os
 import re
+import sys
 import tempfile
+import traceback
 import urllib.request
 from pathlib import Path
 
@@ -15,6 +17,7 @@ from rich.style import Style
 from rich.traceback import install
 from textual._context import active_app
 from textual.app import App
+from textual.widgets import TextArea
 
 from tuitorial import Chapter, Focus, ImageStep, Step, TitleSlide, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
@@ -303,21 +306,38 @@ def run_from_yaml(
     app.run()
 
 
+async def _display_error(app: TuitorialApp, error_message: str) -> None:
+    """Display an error message in the current chapter tab."""
+    label = TextArea(
+        error_message,
+        show_line_numbers=True,
+        language="python",
+        theme="monokai",
+        read_only=True,
+    )
+    pane = app.current_tab_pane()
+    await pane.remove_children()
+    await pane.mount(label, before=0)
+
+
 async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
     """Reloads the YAML configuration and updates the TuitorialApp instance."""
     # Store current state
     current_chapter_index = app.current_chapter_index
     current_step_index = app.current_chapter.current_index if current_chapter_index >= 0 else 0
-
-    app.chapters, app.title_slide = parse_yaml_config(yaml_file)
-
-    # `active_app` is a workaround https://github.com/Textualize/textual/issues/5421#issuecomment-2569836231
-    active_app.set(app)
-    await app.recompose()
-
-    # Restore previous state
-    await app.set_chapter(current_chapter_index)
-    await app.set_step(current_step_index)
+    try:
+        app.chapters, app.title_slide = parse_yaml_config(yaml_file)
+    except Exception as e:  # noqa: BLE001
+        error_message = f"Error reloading YAML: {e!s}\n\n"
+        error_message += "".join(traceback.format_exception(*sys.exc_info()))
+        await _display_error(app, error_message)
+    else:
+        # `active_app` is a workaround https://github.com/Textualize/textual/issues/5421#issuecomment-2569836231
+        active_app.set(app)
+        await app.recompose()
+        # Restore previous state
+        await app.set_chapter(current_chapter_index, nearest=True)
+        await app.set_step(current_step_index)
 
 
 async def watch_for_changes(app: App, yaml_file: str | Path) -> None:  # pragma: no cover
