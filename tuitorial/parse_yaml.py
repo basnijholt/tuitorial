@@ -306,7 +306,13 @@ def run_from_yaml(
 
 async def display_error(app: TuitorialApp, error_message: str) -> None:
     """Display an error message in the current chapter tab."""
-    label = TextArea(error_message, show_line_numbers=True, language="python")
+    label = TextArea(
+        error_message,
+        show_line_numbers=True,
+        language="python",
+        theme="monokai",
+        read_only=True,
+    )
 
     if app.current_chapter_index == -1:  # Title slide
         tab_id = "title-slide-tab"
@@ -314,6 +320,7 @@ async def display_error(app: TuitorialApp, error_message: str) -> None:
         tab_id = f"chapter_{app.current_chapter_index}"
 
     pane = app.query_one(f"#{tab_id}")
+    await pane.remove_children()
 
     # Mount the error label
     await pane.mount(label, before=0)
@@ -326,11 +333,6 @@ async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
     current_step_index = app.current_chapter.current_index if current_chapter_index >= 0 else 0
     try:
         app.chapters, app.title_slide = parse_yaml_config(yaml_file)
-        active_app.set(app)
-        await app.recompose()
-        # Restore previous state
-        await app.set_chapter(current_chapter_index)
-        await app.set_step(current_step_index)
     except Exception as e:  # noqa: BLE001
         import sys
         import traceback
@@ -338,6 +340,13 @@ async def reload_app(app: TuitorialApp, yaml_file: str | Path) -> None:
         error_message = f"Error reloading YAML: {e!s}\n\n"
         error_message += "".join(traceback.format_exception(*sys.exc_info()))
         await display_error(app, error_message)
+    else:
+        # `active_app` is a workaround https://github.com/Textualize/textual/issues/5421#issuecomment-2569836231
+        active_app.set(app)
+        await app.recompose()
+        # Restore previous state
+        await app.set_chapter(current_chapter_index)
+        await app.set_step(current_step_index)
 
 
 async def watch_for_changes(app: App, yaml_file: str | Path) -> None:  # pragma: no cover
