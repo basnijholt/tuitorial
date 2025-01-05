@@ -322,3 +322,9 @@ def test_validate_chapter_data():
         _parse_chapter({"title": "Test", "type": "invalid_type"})
     with pytest.raises(ValueError, match="Invalid key 'invalid_key' for Chapter"):
         _parse_chapter({"title": "Test", "invalid_key": "value"})
+    with pytest.raises(ValueError, match="Bullet points chapter must have a 'bullet_points"):
+        _parse_chapter({"title": "Test", "type": "bullet_points"})
+    with pytest.raises(TypeError, match="Invalid bullet_points format"):
+        _parse_chapter({"title": "Test", "type": "bullet_points", "bullet_points": "invalid"})
+    with pytest.raises(ValueError, match="Invalid key 'invalid' "):
+        _parse_chapter({"title": "Test", "type": "bullet_points", "invalid": "invalid"})
