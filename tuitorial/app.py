@@ -172,11 +172,7 @@ class TuitorialApp(App):
 
     def current_tab_pane(self) -> TabPane:
         """Get the current tab id."""
-        if self.current_chapter_index == -1:  # Title slide
-            tab_id = "title-slide-tab"
-        else:
-            tab_id = f"chapter_{self.current_chapter_index}"
-
+        tab_id = self.query_one(TabbedContent).active
         return self.query_one(f"#{tab_id}")
 
     async def update_display(self) -> None:
