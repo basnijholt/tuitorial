@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import itertools
+import os.path
 import re
 import shutil
+import warnings
+from pathlib import Path
 from re import Pattern
 from typing import TYPE_CHECKING, Literal, NamedTuple
 
@@ -20,8 +23,6 @@ from textual.widgets import Markdown, RichLog, Static
 from .highlighting import Focus, FocusType, _BetweenTuple, _RangeTuple, _StartsWithTuple
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     import textual_image.widget
     from PIL import Image as PILImage
     from textual.app import ComposeResult
@@ -233,6 +234,9 @@ class ContentContainer(Container):
         self.image_container.styles.display = "block"
 
         if not isinstance(image_widget, Static):
+            if isinstance(step.image, str | Path) and not os.path.exists(step.image):  # noqa: PTH110
+                warnings.warn(f"Image file not found: {step.image}", stacklevel=2)
+                return
             image_widget.image = step.image
 
         # Set the image size using styles
