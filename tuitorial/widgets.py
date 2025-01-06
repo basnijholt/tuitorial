@@ -1,25 +1,30 @@
 """Custom widgets for the Tuitorial application."""
 
+from __future__ import annotations
+
 import itertools
 import re
 import shutil
-from pathlib import Path
 from re import Pattern
-from typing import Literal, NamedTuple
+from typing import TYPE_CHECKING, Literal, NamedTuple
 
 import rich
-from PIL import Image as PILImage
 from pyfiglet import Figlet
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
-from textual.app import ComposeResult
 from textual.containers import Container
 from textual.css.scalar import Scalar
 from textual.widgets import Markdown, RichLog, Static
-from textual_image.widget import Image
 
 from .highlighting import Focus, FocusType, _BetweenTuple, _RangeTuple, _StartsWithTuple
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    import textual_image.widget
+    from PIL import Image as PILImage
+    from textual.app import ComposeResult
 
 
 class Step(NamedTuple):
@@ -174,6 +179,21 @@ class Chapter(Container):
         yield Container(self.description, self.content)
 
 
+def _maybe_image(widget_id: str) -> textual_image.widget.Image:
+    """Create an Image widget with optional ID."""
+    # ref: https://github.com/basnijholt/tuitorial/issues/34
+    try:
+        from textual_image.widget import Image
+
+        return Image(id=widget_id)
+    except Exception as e:  # noqa: BLE001
+        msg = (
+            "Image widget not available, it is likely not supported for your terminal,"
+            f" see https://github.com/lnqs/textual-image for supported terminals: {e}"
+        )
+        return Static(msg, id=widget_id)
+
+
 class ContentContainer(Container):
     """A container that can display either code, markdown, or image content."""
 
@@ -182,7 +202,8 @@ class ContentContainer(Container):
         super().__init__()
         self.code_display = CodeDisplay(code, [], dim_background=True)
         self.markdown = Markdown(code, id="markdown")
-        self.image_container = Container(Image(id="image"), id="image-container")
+        image = _maybe_image(widget_id="image")
+        self.image_container = Container(image, id="image-container")
 
     def compose(self) -> ComposeResult:
         """Compose the container with both widgets."""
@@ -205,12 +226,14 @@ class ContentContainer(Container):
 
     async def show_image(self, step: ImageStep) -> None:
         """Show image content."""
+        image_widget = self.query_one("#image")
+
         self.code_display.styles.display = "none"
         self.markdown.styles.display = "none"
         self.image_container.styles.display = "block"
 
-        image_widget = self.query_one("#image", Image)
-        image_widget.image = step.image
+        if not isinstance(image_widget, Static):
+            image_widget.image = step.image
 
         # Set the image size using styles
         if step.width is not None:
