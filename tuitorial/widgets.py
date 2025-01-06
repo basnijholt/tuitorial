@@ -235,6 +235,7 @@ class ContentContainer(Container):
 
         if not isinstance(image_widget, Static):
             if isinstance(step.image, str | Path) and not os.path.exists(step.image):  # noqa: PTH110
+                # TODO: replace the Image widget with a Static widget with the warning
                 warnings.warn(f"Image file not found: {step.image}", stacklevel=2)
                 return
             image_widget.image = step.image
