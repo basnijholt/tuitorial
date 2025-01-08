@@ -67,10 +67,9 @@ class TitleSlide(Container):
     def on_mount(self) -> None:
         """Create and display the ASCII art."""
         # Create ASCII art
-        lines, gradient = _ascii_art(self.title, self.font)
         rich_log = self.query_one("#title-rich-log", RichLog)
 
-        for line, color in zip(lines, itertools.cycle(gradient)):
+        for line, color in zip(self.ascii_art, itertools.cycle(self.gradient)):
             text = Text.from_markup(f"[{color}]{line}[/]")
             rich_log.write(text)
 
@@ -161,7 +160,7 @@ def _get_gradient(name: str) -> list[str]:
     return GRADIENTS[name]
 
 
-def _ascii_art(text: str, font: str, gradient_name: str = "lava") -> tuple[list[str], list[str]]:
+def _ascii_art(text: str, font: str, gradient_name: str) -> tuple[list[str], list[str]]:
     """Create ASCII art with the specified gradient.
 
     Parameters
