@@ -60,6 +60,9 @@ dev = [
     "sphinx-book-theme>=1.1.3",
     "sphinxcontrib-video>=0.3.2",
 ]
+readme = [
+    "markdown-code-runner>=2.1.0",
+]
 
 [project.urls]
 homepage = "https://tuitorial.readthedocs.io/"
