@@ -6,7 +6,6 @@ import itertools
 import os.path
 import re
 import shutil
-import warnings
 from pathlib import Path
 from re import Pattern
 from typing import TYPE_CHECKING, Literal, NamedTuple
@@ -204,7 +203,9 @@ class ContentContainer(Container):
         self.code_display = CodeDisplay(code, [], dim_background=True)
         self.markdown = Markdown(code, id="markdown")
         image = _maybe_image(widget_id="image")
-        self.image_container = Container(image, id="image-container")
+        image_text = Static("Image not available", id="image-text")
+        image_text.styles.display = "none"
+        self.image_container = Container(image, image_text, id="image-container")
 
     def compose(self) -> ComposeResult:
         """Compose the container with both widgets."""
@@ -234,10 +235,14 @@ class ContentContainer(Container):
         self.image_container.styles.display = "block"
 
         if not isinstance(image_widget, Static):
+            image_msg = self.query_one("#image-text", Static)
             if isinstance(step.image, str | Path) and not os.path.exists(step.image):  # noqa: PTH110
-                # TODO: replace the Image widget with a Static widget with the warning
-                warnings.warn(f"Image file not found: {step.image}", stacklevel=2)
+                image_msg.update(
+                    f"[red bold]Image file not found: {step.image}",
+                )
+                image_msg.styles.display = "block"
                 return
+            image_msg.styles.display = "none"
             image_widget.image = step.image
 
         # Set the image size using styles
