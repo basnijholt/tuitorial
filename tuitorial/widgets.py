@@ -90,20 +90,87 @@ class TitleSlide(Container):
         self.styles.width = Scalar.from_number(width)
 
 
-def _ascii_art(text: str, font: str) -> tuple[list[str], list[str]]:
-    f = Figlet(font=font)
-    ascii_text = f.renderText(text)
-
-    # Define gradient colors (blue to pink)
-    gradient = [
+GRADIENTS = {
+    "lava": [
         "#FF4500",  # Red-orange
         "#FF6B00",  # Orange
         "#FF8C00",  # Dark orange
         "#FFA500",  # Orange
         "#FF4500",  # Back to red-orange
-    ]
+    ],
+    "blue": [
+        "#000080",  # Navy
+        "#0000FF",  # Blue
+        "#1E90FF",  # Dodger Blue
+        "#00BFFF",  # Deep Sky Blue
+        "#87CEEB",  # Sky Blue
+    ],
+    "green": [
+        "#006400",  # Dark Green
+        "#228B22",  # Forest Green
+        "#32CD32",  # Lime Green
+        "#90EE90",  # Light Green
+        "#98FB98",  # Pale Green
+    ],
+    "rainbow": [
+        "#FF0000",  # Red
+        "#FFA500",  # Orange
+        "#FFFF00",  # Yellow
+        "#008000",  # Green
+        "#0000FF",  # Blue
+        "#4B0082",  # Indigo
+        "#9400D3",  # Violet
+    ],
+    "pink": [
+        "#FF1493",  # Deep Pink
+        "#FF69B4",  # Hot Pink
+        "#FFB6C1",  # Light Pink
+        "#FFC0CB",  # Pink
+        "#FF69B4",  # Hot Pink
+    ],
+    "ocean": [
+        "#000080",  # Navy
+        "#0077BE",  # Ocean Blue
+        "#20B2AA",  # Light Sea Green
+        "#48D1CC",  # Medium Turquoise
+        "#40E0D0",  # Turquoise
+    ],
+}
 
-    # Split into lines and print with gradient
+
+def _get_gradient(name: str) -> list[str]:
+    """Get a predefined gradient color scheme.
+
+    Parameters
+    ----------
+    name
+        Name of the gradient to use
+
+    """
+    if name not in GRADIENTS:
+        msg = f"Gradient '{name}' not found. Available gradients: `{', '.join(GRADIENTS)}`"
+        raise ValueError(
+            msg,
+        )
+    return GRADIENTS[name]
+
+
+def _ascii_art(text: str, font: str, gradient_name: str = "lava") -> tuple[list[str], list[str]]:
+    """Create ASCII art with the specified gradient.
+
+    Parameters
+    ----------
+    text
+        Text to convert to ASCII art
+    font
+        Font to use for ASCII art
+    gradient_name
+        Name of the gradient to use
+
+    """
+    f = Figlet(font=font)
+    ascii_text = f.renderText(text)
+    gradient = _get_gradient(gradient_name)
     lines = ascii_text.rstrip().split("\n")
     return lines, gradient
 
