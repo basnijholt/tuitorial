@@ -1,7 +1,7 @@
 """A Panel web app to create a tutorial from a YAML file.
 
 Run with:
-`uv run panel serve webapp.py --autoreload`.
+`uv run --group webapp panel serve app.py --autoreload`.
 """
 
 from pathlib import Path
@@ -64,18 +64,18 @@ yaml_input = CodeEditor(
 )
 
 
-def read_yaml_file(filepath: str) -> str | None:
+def read_yaml_file(filepath: Path) -> str | None:
     """Reads the content of a YAML file."""
-    file = Path(filepath)
-    if not file.exists():
+    if not filepath.exists():
         print(f"Error: File '{filepath}' not found.")
         return None
 
-    with file.open() as f:
+    with filepath.open() as f:
         return f.read()
 
 
-yaml_content = read_yaml_file("examples/tuitorial.yaml")
+root = Path(__file__).parent.parent
+yaml_content = read_yaml_file(root / "examples" / "tuitorial.yaml")
 
 if yaml_content:
     yaml_input.value = yaml_content

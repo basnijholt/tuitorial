@@ -2025,7 +2025,7 @@ wheels = [
 
 [[package]]
 name = "tuitorial"
-version = "0.10.0.dev4+webapp.g17bbcb3.dirty"
+version = "0.10.0.dev7+main.g5f7dde2.dirty"
 source = { editable = "." }
 dependencies = [
     { name = "pyfiglet" },

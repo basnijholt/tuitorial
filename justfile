@@ -7,3 +7,6 @@ test:
 
 example:
     uv run tuitorial --watch examples/pipefunc.yaml
+
+webapp:
+    uv run --group webapp panel serve app.py --autoreload
