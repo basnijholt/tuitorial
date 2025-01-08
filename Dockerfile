@@ -3,4 +3,4 @@ WORKDIR /app
 COPY . .
 RUN uv sync
 EXPOSE 80
-CMD ["uv", "run", "--group", "webapp", "panel", "serve", "--port", "80", "webapp/app.py"]
+CMD ["uv", "run", "--group", "webapp", "panel", "serve", "--port", "80", "--address", "0.0.0.0", "webapp/app.py"]
