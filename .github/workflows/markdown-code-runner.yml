@@ -26,7 +26,7 @@ jobs:
 
       - name: Run update-readme.py
         run: |
-          uv sync --all-groups
+          uv sync --all-groups --locked
           uv run markdown-code-runner --verbose README.md
 
       - name: Commit updated README.md
