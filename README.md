@@ -842,6 +842,7 @@ title_slide:
   title: "My Tutorial"
   subtitle: "An Awesome Tutorial"
   font: "slant"
+  gradient: "lava"
 
 chapters:
   # ... your chapters ...
