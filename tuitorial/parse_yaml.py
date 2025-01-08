@@ -301,8 +301,9 @@ def parse_yaml_config(yaml_file: str | Path) -> tuple[list[Chapter], TitleSlide 
         raise InvalidYamlError(msg)
 
     chapters = [_parse_chapter(chapter_data) for chapter_data in config["chapters"]]
-    _validate_title_slide_data(config.get("title_slide", {}))
-    title_slide = TitleSlide(**config["title_slide"]) if "title_slide" in config else None
+    title_slide_kwargs = config.get("title_slide", {})
+    _validate_title_slide_data(title_slide_kwargs)
+    title_slide = TitleSlide(title_slide_kwargs) if title_slide_kwargs else None
     return chapters, title_slide
 
 
