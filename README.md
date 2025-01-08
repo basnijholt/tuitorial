@@ -827,8 +827,8 @@ from tuitorial import TuitorialApp, TitleSlide
 title_slide = TitleSlide(
     "My Tutorial",     # Title text (required)
     subtitle="An Awesome Tutorial",  # Optional subtitle
-    font="slant"   # Optional: PyFiglet font (see available fonts below)
-    gradient="lava"  # Optional: Gradient color (see available gradients below)
+    font="slant",   # Optional: PyFiglet font (see available fonts below)
+    gradient="lava",  # Optional: Gradient color (see available gradients below)
 )
 
 app = TuitorialApp([], title_slide=title_slide)
