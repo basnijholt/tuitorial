@@ -6,7 +6,6 @@ import itertools
 import os.path
 import re
 import shutil
-import warnings
 from pathlib import Path
 from re import Pattern
 from typing import TYPE_CHECKING, Literal, NamedTuple
@@ -48,12 +47,18 @@ class ImageStep(NamedTuple):
 class TitleSlide(Container):
     """A title slide with ASCII art and centered text."""
 
-    def __init__(self, title: str, subtitle: str | None = None, font: str = "ansi_shadow") -> None:
+    def __init__(
+        self,
+        title: str,
+        subtitle: str | None = None,
+        font: str = "ansi_shadow",
+        gradient: str = "lava",
+    ) -> None:
         super().__init__(id="title-slide")
         self.title = title
         self.subtitle = subtitle or ""
         self.font = font
-        self.ascii_art, self.gradient = _ascii_art(self.title, self.font)
+        self.ascii_art, self.gradient = _ascii_art(self.title, self.font, gradient_name=gradient)
 
     def compose(self) -> ComposeResult:
         """Compose the title slide."""
@@ -91,20 +96,87 @@ class TitleSlide(Container):
         self.styles.width = Scalar.from_number(width)
 
 
-def _ascii_art(text: str, font: str) -> tuple[list[str], list[str]]:
-    f = Figlet(font=font)
-    ascii_text = f.renderText(text)
-
-    # Define gradient colors (blue to pink)
-    gradient = [
+GRADIENTS = {
+    "lava": [
         "#FF4500",  # Red-orange
         "#FF6B00",  # Orange
         "#FF8C00",  # Dark orange
         "#FFA500",  # Orange
         "#FF4500",  # Back to red-orange
-    ]
+    ],
+    "blue": [
+        "#000080",  # Navy
+        "#0000FF",  # Blue
+        "#1E90FF",  # Dodger Blue
+        "#00BFFF",  # Deep Sky Blue
+        "#87CEEB",  # Sky Blue
+    ],
+    "green": [
+        "#006400",  # Dark Green
+        "#228B22",  # Forest Green
+        "#32CD32",  # Lime Green
+        "#90EE90",  # Light Green
+        "#98FB98",  # Pale Green
+    ],
+    "rainbow": [
+        "#FF0000",  # Red
+        "#FFA500",  # Orange
+        "#FFFF00",  # Yellow
+        "#008000",  # Green
+        "#0000FF",  # Blue
+        "#4B0082",  # Indigo
+        "#9400D3",  # Violet
+    ],
+    "pink": [
+        "#FF1493",  # Deep Pink
+        "#FF69B4",  # Hot Pink
+        "#FFB6C1",  # Light Pink
+        "#FFC0CB",  # Pink
+        "#FF69B4",  # Hot Pink
+    ],
+    "ocean": [
+        "#000080",  # Navy
+        "#0077BE",  # Ocean Blue
+        "#20B2AA",  # Light Sea Green
+        "#48D1CC",  # Medium Turquoise
+        "#40E0D0",  # Turquoise
+    ],
+}
 
-    # Split into lines and print with gradient
+
+def _get_gradient(name: str) -> list[str]:
+    """Get a predefined gradient color scheme.
+
+    Parameters
+    ----------
+    name
+        Name of the gradient to use
+
+    """
+    if name not in GRADIENTS:
+        msg = f"Gradient '{name}' not found. Available gradients: `{', '.join(GRADIENTS)}`"
+        raise ValueError(
+            msg,
+        )
+    return GRADIENTS[name]
+
+
+def _ascii_art(text: str, font: str, gradient_name: str = "lava") -> tuple[list[str], list[str]]:
+    """Create ASCII art with the specified gradient.
+
+    Parameters
+    ----------
+    text
+        Text to convert to ASCII art
+    font
+        Font to use for ASCII art
+    gradient_name
+        Name of the gradient to use
+
+    """
+    f = Figlet(font=font)
+    ascii_text = f.renderText(text)
+    gradient = _get_gradient(gradient_name)
     lines = ascii_text.rstrip().split("\n")
     return lines, gradient
 
@@ -204,7 +276,9 @@ class ContentContainer(Container):
         self.code_display = CodeDisplay(code, [], dim_background=True)
         self.markdown = Markdown(code, id="markdown")
         image = _maybe_image(widget_id="image")
-        self.image_container = Container(image, id="image-container")
+        image_text = Static("Image not available", id="image-text")
+        image_text.styles.display = "none"
+        self.image_container = Container(image, image_text, id="image-container")
 
     def compose(self) -> ComposeResult:
         """Compose the container with both widgets."""
@@ -234,10 +308,14 @@ class ContentContainer(Container):
         self.image_container.styles.display = "block"
 
         if not isinstance(image_widget, Static):
+            image_msg = self.query_one("#image-text", Static)
             if isinstance(step.image, str | Path) and not os.path.exists(step.image):  # noqa: PTH110
-                # TODO: replace the Image widget with a Static widget with the warning
-                warnings.warn(f"Image file not found: {step.image}", stacklevel=2)
+                image_msg.update(
+                    f"[red bold]Image file not found: {step.image}",
+                )
+                image_msg.styles.display = "block"
                 return
+            image_msg.styles.display = "none"
             image_widget.image = step.image
 
         # Set the image size using styles

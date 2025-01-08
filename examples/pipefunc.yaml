@@ -397,3 +397,59 @@ chapters:
           - type: literal
             text: "[2, 4, 6, 8, 10]"
             style: "bright_cyan bold"
+
+  - title: "mapspecs"
+    code: |
+      import numpy as np
+      from pipefunc import Pipeline, pipefunc
+      from pipefunc.typing import Array
+
+      @pipefunc(output_name="y", mapspec="x[i] -> y[i]")
+      def double_it(x: int, b: int = 0) -> int:
+          assert isinstance(x, int)
+          return 2 * x + b
+
+      @pipefunc(output_name="sum")  # no mapspec, so receives y[:] as input
+      def take_sum(y: Array[int]) -> int:
+          assert isinstance(y, np.ndarray)
+          return sum(y)
+
+      pipeline = Pipeline([double_it, take_sum])
+      pipeline.visualize()
+      r = pipeline.map({"x": [0, 1, 2, 3]})
+
+      results["y"].output.tolist()  # [0, 2, 4, 6]
+      results["sum"].output  # 12
+
+    steps:
+      - description: |
+          TODO
+        focus:
+          - type: syntax
+            theme: monokai
+
+  - title: "add_mapspec_axis"
+    code: |
+      @pipefunc(output_name="y", mapspec="x[i] -> y[i]")
+      def double_it(x: int, b: int = 0) -> int:
+          assert isinstance(x, int)
+          return 2 * x + b
+
+      @pipefunc(output_name="sum")
+      def take_sum(y: Array[int]) -> int:
+          assert isinstance(y, np.ndarray)
+          return sum(y)
+
+      pipeline = Pipeline([double_it, take_sum])
+      pipeline.add_mapspec_axis("b", axis="j")
+      pipeline.mapspecs_as_strings  # ['x[i], b[j] -> y[i, j]', 'y[:, j] -> sum[j]']
+
+      pipeline.map({"x": [0, 1, 2, 3], "b": [1, 2, 3]})
+      results["y"].output.shape  # (4, 3)
+      results["sum"].output  # array([3, 6, 9])
+    steps:
+      - description: |
+          TODO
+        focus:
+          - type: syntax
+            theme: monokai
