@@ -47,12 +47,18 @@ class ImageStep(NamedTuple):
 class TitleSlide(Container):
     """A title slide with ASCII art and centered text."""
 
-    def __init__(self, title: str, subtitle: str | None = None, font: str = "ansi_shadow") -> None:
+    def __init__(
+        self,
+        title: str,
+        subtitle: str | None = None,
+        font: str = "ansi_shadow",
+        gradient: str = "lava",
+    ) -> None:
         super().__init__(id="title-slide")
         self.title = title
         self.subtitle = subtitle or ""
         self.font = font
-        self.ascii_art, self.gradient = _ascii_art(self.title, self.font)
+        self.ascii_art, self.gradient = _ascii_art(self.title, self.font, gradient_name=gradient)
 
     def compose(self) -> ComposeResult:
         """Compose the title slide."""

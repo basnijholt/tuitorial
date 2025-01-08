@@ -219,6 +219,15 @@ def _validate_bullet_points_data(chapter_data: dict) -> None:
             raise InvalidYamlError(msg)
 
 
+def _validate_title_slide_data(title_slide_data: dict) -> None:
+    sig = inspect.signature(TitleSlide)
+    for key in title_slide_data:
+        if key not in sig.parameters:
+            allowed = ", ".join(sig.parameters)
+            msg = f"Invalid key '{key}' for title slide. Allowed keys are: {allowed}"
+            raise InvalidYamlError(msg)
+
+
 def _parse_bullet_points(title: str, chapter_data: dict) -> Chapter:
     bullet_points = []
     extras = []
@@ -292,6 +301,7 @@ def parse_yaml_config(yaml_file: str | Path) -> tuple[list[Chapter], TitleSlide 
         raise InvalidYamlError(msg)
 
     chapters = [_parse_chapter(chapter_data) for chapter_data in config["chapters"]]
+    _validate_title_slide_data(config.get("title_slide", {}))
     title_slide = TitleSlide(**config["title_slide"]) if "title_slide" in config else None
     return chapters, title_slide
 
