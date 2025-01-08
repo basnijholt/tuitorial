@@ -217,7 +217,7 @@ name = "click"
 version = "8.1.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "platform_system == 'Windows'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b9/2e/0090cbf739cee7d23781ad4b89a9894a41538e4fcf4c31dcdd705b78eb8b/click-8.1.8.tar.gz", hash = "sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a", size = 226593 }
 wheels = [
@@ -483,7 +483,7 @@ name = "ipykernel"
 version = "6.29.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "appnope", marker = "platform_system == 'Darwin'" },
+    { name = "appnope", marker = "sys_platform == 'darwin'" },
     { name = "comm" },
     { name = "debugpy" },
     { name = "ipython" },
@@ -634,6 +634,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/2a/ae/bb56c6828e4797ba5a4821eec7c43b8bf40f69cda4d4f5f8c8a2810ec96a/linkify-it-py-2.0.3.tar.gz", hash = "sha256:68cda27e162e9215c17d786649d1da0021a451bdc436ef9e0fa0ba5234b9b048", size = 27946 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/04/1e/b832de447dee8b582cac175871d2f6c3d5077cc56d5575cadba1fd1cccfa/linkify_it_py-2.0.3-py3-none-any.whl", hash = "sha256:6bcbc417b0ac14323382aef5c5192c0075bf8a9d6b41820a2b66371eac6b6d79", size = 19820 },
+]
+
+[[package]]
+name = "markdown-code-runner"
+version = "2.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5e/80/7d1e0dc47a3bfcbf6777281a472b98fea78a3b60dd809f916875e773173b/markdown-code-runner-2.1.0.tar.gz", hash = "sha256:aecc56121ebeccb2a9a74ea818783486cb3a6457ec5da9ee2a64a4fc8833bcf9", size = 15781 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/50/ba/7e2c2088135272059bb33d3324a58cd19550b6bc629a9d249efc6134ffdf/markdown_code_runner-2.1.0-py3-none-any.whl", hash = "sha256:ff439a8c54a7e24d66657d68d342e8cea703ec56f21b31e7f08bbd7d9e241337", size = 11922 },
 ]
 
 [[package]]
@@ -1730,7 +1739,7 @@ wheels = [
 
 [[package]]
 name = "tuitorial"
-version = "0.8.0.dev10+main.g5129854.dirty"
+version = "0.10.0.dev4+grad.ge0f40fa.dirty"
 source = { editable = "." }
 dependencies = [
     { name = "pyfiglet" },
@@ -1758,6 +1767,9 @@ dev = [
     { name = "sphinx-togglebutton" },
     { name = "sphinxcontrib-video" },
     { name = "versioningit" },
+]
+readme = [
+    { name = "markdown-code-runner" },
 ]
 
 [package.metadata]
@@ -1788,6 +1800,7 @@ dev = [
     { name = "sphinxcontrib-video", specifier = ">=0.3.2" },
     { name = "versioningit", specifier = ">=3.1.2" },
 ]
+readme = [{ name = "markdown-code-runner", specifier = ">=2.1.0" }]
 
 [[package]]
 name = "typing-extensions"
