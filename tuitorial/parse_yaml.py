@@ -23,6 +23,7 @@ from textual.widgets import TextArea
 from tuitorial import Chapter, Focus, ImageStep, Step, TitleSlide, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
 from tuitorial.highlighting import FocusType
+from tuitorial.widgets import GRADIENTS
 
 _DEFAULT_STYLE = "yellow bold"
 
@@ -393,7 +394,10 @@ def cli() -> None:  # pragma: no cover
     """Run the tutorial from a YAML file."""
     import argparse
 
-    parser = argparse.ArgumentParser(description="Run a tuitorial from a YAML file or URL.")
+    parser = argparse.ArgumentParser(
+        description="Run a tuitorial from a YAML file or URL."
+        "See the documentation at https://tuitorial.readthedocs.io/ for more information.",
+    )
     parser.add_argument("yaml_source", help="Path to the YAML configuration file or URL.", type=str)
     parser.add_argument(
         "-w",
@@ -419,6 +423,13 @@ def cli() -> None:  # pragma: no cover
         default=None,
         help="Initial theme to use for the app.",
         choices=tuple(textual.theme.BUILTIN_THEMES.keys()),
+    )
+    parser.add_argument(
+        "--title-gradient",
+        type=str,
+        default="lava",
+        help="Color gradient to use for the title slide font.",
+        choices=tuple(GRADIENTS.keys()),
     )
     args = parser.parse_args()
 
