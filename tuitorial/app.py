@@ -53,6 +53,7 @@ class TuitorialApp(App):
 
     #image-container {
         align: center middle;
+        height: auto;
     }
 
     #image {
