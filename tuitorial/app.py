@@ -7,7 +7,6 @@ from typing import Any, ClassVar
 from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.css.scalar import Scalar
 from textual.events import MouseScrollDown, MouseScrollUp
 from textual.widgets import Footer, Header, TabbedContent, TabPane, Tabs
 
@@ -23,7 +22,7 @@ class TuitorialApp(App):
     }
 
     TabPane {
-        padding: 1 2;
+        padding: 1 1;
     }
 
     CodeDisplay {
@@ -44,10 +43,6 @@ class TuitorialApp(App):
         padding: 1;
     }
 
-    TabbedContent {
-        height: 100%;
-    }
-
     ContentContainer {
         height: auto;
     }
@@ -62,18 +57,28 @@ class TuitorialApp(App):
         height: auto;
     }
 
-    #markdown-container {
-        height: 1fr;
+    TitleSlide {
+        align: center middle;
+    }
+
+    #title-container {
+        align: center middle;
     }
 
     #title-rich-log {
         overflow-y: auto;
         background: black 0%;
+        align: center middle;
+        width: auto;
+        height: auto;
+        /* When removing the border, the whole thing is gone? */
+        border: solid green 0%;
     }
 
-    #title-slide-tab {
-        align: center middle;
+    #markdown-container {
+        height: 1fr;
     }
+
     """
 
     BINDINGS: ClassVar[list[Binding]] = [
@@ -137,17 +142,6 @@ class TuitorialApp(App):
             n_steps = len(self.current_chapter.steps) - 1
             self.current_chapter.current_index = max(0, min(step_index, n_steps))
             await self.update_display()
-
-    def on_ready(self) -> None:
-        """Handle on ready event."""
-        self.set_title_slide_height()
-
-    def set_title_slide_height(self) -> None:
-        """Set the height of the title slide tab to match the title slide to center in middle."""
-        if self.title_slide:
-            tab = self.query_one("#title-slide-tab")
-            tabbed = self.query_one(TabbedContent)
-            tab.styles.height = Scalar.from_number(tabbed.size.height)
 
     async def on_mount(self) -> None:
         """Set initial chapter and step."""

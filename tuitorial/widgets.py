@@ -77,22 +77,7 @@ class TitleSlide(Container):
         if self.subtitle:
             rich_log.write("\n")  # Add some spacing
             rich_log.write(self.subtitle)
-        self._set_width_and_height()
         self.refresh()
-
-    def _set_width_and_height(self) -> None:
-        """Set the height of the description."""
-        max_length = max(len(line) for line in self.ascii_art)
-        width_padding = 10
-        width = max_length + width_padding
-        width = max(width, 40)  # Minimum width
-
-        asciii_art_height = len(self.ascii_art)
-        heigh_subtitle = _calculate_height(self.subtitle, width)
-        height = heigh_subtitle + asciii_art_height + 2
-
-        self.styles.height = Scalar.from_number(height)
-        self.styles.width = Scalar.from_number(width)
 
 
 GRADIENTS = {
