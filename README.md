@@ -107,7 +107,7 @@ pip install tuitorial
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from tuitorial import Chapter, Step, TuitorialApp, Focus
 from rich.style import Style
 
@@ -179,14 +179,14 @@ chapters:
 
 To run the YAML example:
 
-1. Save the YAML content as a `.yaml` file (e.g., `tutorial.yaml`).
+1. Save the YAML content as a `.yaml` file (e.g., `tuitorial.yaml`).
 2. Either:
    - Use the provided `tuitorial.run_from_yaml(...)` function:
-   - Run `tuitorial --watch tutorial.yaml` from the command line.
+   - Run `tuitorial --watch tuitorial.yaml` from the command line.
 
 ```bash
 # From the command line
-tuitorial --watch tutorial.yaml
+tuitorial --watch tuitorial.yaml
 ```
 
 or
@@ -195,7 +195,7 @@ or
 # In a separate Python file (e.g., run_yaml.py)
 from tuitorial.parse_yaml import run_from_yaml
 
-run_from_yaml("tutorial.yaml")
+run_from_yaml("tuitorial.yaml")
 ```
 
 </details>
@@ -207,7 +207,7 @@ run_from_yaml("tutorial.yaml")
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 # First chapter
 chapter1_code = '''
 def greet(name: str) -> str:
@@ -279,7 +279,7 @@ Each step in a tutorial consists of a description and a list of focuses.
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Step(
     "Step Description",  # Shown in the UI
     [
@@ -307,7 +307,7 @@ steps:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.literal("def", style="bold yellow")
 Focus.literal("def", style="bold yellow", match_index=[0, 2]) # Highlight the first and third "def"
 ```
@@ -335,7 +335,7 @@ focus:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.regex(r"def \w+\(.*\):", style="bold green")
 ```
 
@@ -352,7 +352,7 @@ focus:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.line(1, style="bold blue")  # Highlight first line
 ```
 
@@ -371,7 +371,7 @@ Highlights a specific range of characters within the code based on their indices
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.range(0, 10, style="bold magenta")  # Highlight first 10 characters
 ```
 
@@ -391,7 +391,7 @@ Highlights lines starting with the specified text. Can be configured to match fr
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.startswith("import", style="bold blue", from_start_of_line=True)
 Focus.startswith("from", style="bold blue", from_start_of_line=False)
 ```
@@ -416,7 +416,7 @@ Highlights text between two specified patterns. Supports inclusive or exclusive 
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.between("start_function", "end_function", style="bold blue", inclusive=True, multiline=True)
 ```
 
@@ -441,7 +441,7 @@ Can match either literal text or regular expressions, and can select specific ma
 
 **Python:**
 
-```python
+```python markdown-code-runner
 # Highlight all lines containing "def"
 Focus.line_containing("def", style="bold yellow")
 
@@ -488,7 +488,7 @@ Displays the content as Markdown instead of code, using Textual's built-in `Mark
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.markdown()
 ```
 
@@ -505,7 +505,7 @@ Uses Rich's built-in syntax highlighting for the entire code or specific lines. 
 
 **Python:**
 
-```python
+```python markdown-code-runner
 # Highlight all code
 Focus.syntax(theme="monokai", line_numbers=True)
 
@@ -535,7 +535,7 @@ Styles can be customized using Rich's style syntax:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from rich.style import Style
 
 # Using string syntax
@@ -593,7 +593,7 @@ When you run `tuitorial` with the `--watch` flag, it will monitor the specified 
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from tuitorial import TuitorialApp, Focus
 from rich.style import Style
 
@@ -657,7 +657,7 @@ chapters:
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from tuitorial import Chapter, Step, TuitorialApp, Focus
 from rich.style import Style
 
@@ -728,7 +728,7 @@ The `ImageStep` class takes the path to an image file (or a PIL Image object) an
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from pathlib import Path
 from tuitorial import Chapter, ImageStep, TuitorialApp
 
@@ -762,7 +762,7 @@ You can control the size of the image using the `width` and `height` properties 
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from pathlib import Path
 from textual_image.widget import Image
 from tuitorial import Chapter, ImageStep, TuitorialApp
@@ -799,11 +799,8 @@ chapters:
 #### Alignment
 
 By default, images are aligned to the center.
-You can align images to the left or right by setting `halign` to `"left"` or `"right"` respectively when creating the `Image` widget.
+You can align images to the left or right by setting `halign` to `"left"` or `"right"` respectively when creating the `ImageStep`.
 
-```python
-image_widget = Image(image_path, halign="left")
-```
 
 ```yaml
 chapters:
@@ -823,7 +820,7 @@ chapters:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from tuitorial import TuitorialApp, TitleSlide
 
 title_slide = TitleSlide(
@@ -878,6 +875,569 @@ import pyfiglet
 print(pyfiglet.FigletFont.getFonts())
 ```
 
+<details>
+<summary><b>Click to see all</b></summary>
+
+<!-- CODE:START -->
+<!-- import pyfiglet -->
+<!-- for name in sorted(pyfiglet.FigletFont.getFonts()): -->
+<!--     print(f"- `{name}`") -->
+<!-- CODE:END -->
+<!-- OUTPUT:START -->
+<!-- ⚠️ This content is auto-generated by `markdown-code-runner`. -->
+- `1943____`
+- `1row`
+- `3-d`
+- `3d-ascii`
+- `3d_diagonal`
+- `3x5`
+- `4max`
+- `4x4_offr`
+- `5lineoblique`
+- `5x7`
+- `5x8`
+- `64f1____`
+- `6x10`
+- `6x9`
+- `a_zooloo`
+- `acrobatic`
+- `advenger`
+- `alligator`
+- `alligator2`
+- `alpha`
+- `alphabet`
+- `amc_3_line`
+- `amc_3_liv1`
+- `amc_aaa01`
+- `amc_neko`
+- `amc_razor`
+- `amc_razor2`
+- `amc_slash`
+- `amc_slider`
+- `amc_thin`
+- `amc_tubes`
+- `amc_untitled`
+- `ansi_regular`
+- `ansi_shadow`
+- `aquaplan`
+- `arrows`
+- `asc_____`
+- `ascii___`
+- `ascii_new_roman`
+- `assalt_m`
+- `asslt__m`
+- `atc_____`
+- `atc_gran`
+- `avatar`
+- `b1ff`
+- `b_m__200`
+- `banner`
+- `banner3`
+- `banner3-D`
+- `banner4`
+- `barbwire`
+- `basic`
+- `battle_s`
+- `battlesh`
+- `baz__bil`
+- `bear`
+- `beer_pub`
+- `bell`
+- `benjamin`
+- `big`
+- `big_money-ne`
+- `big_money-nw`
+- `big_money-se`
+- `big_money-sw`
+- `bigchief`
+- `bigfig`
+- `binary`
+- `block`
+- `blocks`
+- `blocky`
+- `bloody`
+- `bolger`
+- `braced`
+- `bright`
+- `brite`
+- `briteb`
+- `britebi`
+- `britei`
+- `broadway`
+- `broadway_kb`
+- `bubble`
+- `bubble__`
+- `bubble_b`
+- `bulbhead`
+- `c1______`
+- `c2______`
+- `c_ascii_`
+- `c_consen`
+- `calgphy2`
+- `caligraphy`
+- `calvin_s`
+- `cards`
+- `catwalk`
+- `caus_in_`
+- `char1___`
+- `char2___`
+- `char3___`
+- `char4___`
+- `charact1`
+- `charact2`
+- `charact3`
+- `charact4`
+- `charact5`
+- `charact6`
+- `characte`
+- `charset_`
+- `chartr`
+- `chartri`
+- `chiseled`
+- `chunky`
+- `clb6x10`
+- `clb8x10`
+- `clb8x8`
+- `cli8x8`
+- `clr4x6`
+- `clr5x10`
+- `clr5x6`
+- `clr5x8`
+- `clr6x10`
+- `clr6x6`
+- `clr6x8`
+- `clr7x10`
+- `clr7x8`
+- `clr8x10`
+- `clr8x8`
+- `coil_cop`
+- `coinstak`
+- `cola`
+- `colossal`
+- `com_sen_`
+- `computer`
+- `contessa`
+- `contrast`
+- `convoy__`
+- `cosmic`
+- `cosmike`
+- `cour`
+- `courb`
+- `courbi`
+- `couri`
+- `crawford`
+- `crawford2`
+- `crazy`
+- `cricket`
+- `cursive`
+- `cyberlarge`
+- `cybermedium`
+- `cybersmall`
+- `cygnet`
+- `d_dragon`
+- `danc4`
+- `dancing_font`
+- `dcs_bfmo`
+- `decimal`
+- `deep_str`
+- `def_leppard`
+- `defleppard`
+- `delta_corps_priest_1`
+- `demo_1__`
+- `demo_2__`
+- `demo_m__`
+- `devilish`
+- `diamond`
+- `diet_cola`
+- `digital`
+- `doh`
+- `doom`
+- `dos_rebel`
+- `dotmatrix`
+- `double`
+- `double_shorts`
+- `drpepper`
+- `druid___`
+- `dwhistled`
+- `e__fist_`
+- `ebbs_1__`
+- `ebbs_2__`
+- `eca_____`
+- `efti_robot`
+- `eftichess`
+- `eftifont`
+- `eftipiti`
+- `eftirobot`
+- `eftitalic`
+- `eftiwall`
+- `eftiwater`
+- `electronic`
+- `elite`
+- `epic`
+- `etcrvs__`
+- `f15_____`
+- `faces_of`
+- `fair_mea`
+- `fairligh`
+- `fantasy_`
+- `fbr12___`
+- `fbr1____`
+- `fbr2____`
+- `fbr_stri`
+- `fbr_tilt`
+- `fender`
+- `filter`
+- `finalass`
+- `fire_font-k`
+- `fire_font-s`
+- `fireing_`
+- `flipped`
+- `flower_power`
+- `flyn_sh`
+- `fourtops`
+- `fp1_____`
+- `fp2_____`
+- `fraktur`
+- `fun_face`
+- `fun_faces`
+- `funky_dr`
+- `future_1`
+- `future_2`
+- `future_3`
+- `future_4`
+- `future_5`
+- `future_6`
+- `future_7`
+- `future_8`
+- `fuzzy`
+- `gauntlet`
+- `georgi16`
+- `georgia11`
+- `ghost`
+- `ghost_bo`
+- `ghoulish`
+- `glenyn`
+- `goofy`
+- `gothic`
+- `gothic__`
+- `graceful`
+- `gradient`
+- `graffiti`
+- `grand_pr`
+- `greek`
+- `green_be`
+- `hades___`
+- `heart_left`
+- `heart_right`
+- `heavy_me`
+- `helv`
+- `helvb`
+- `helvbi`
+- `helvi`
+- `henry_3d`
+- `heroboti`
+- `hex`
+- `hieroglyphs`
+- `high_noo`
+- `hills___`
+- `hollywood`
+- `home_pak`
+- `horizontal_left`
+- `horizontal_right`
+- `house_of`
+- `hypa_bal`
+- `hyper___`
+- `icl-1900`
+- `impossible`
+- `inc_raw_`
+- `invita`
+- `isometric1`
+- `isometric2`
+- `isometric3`
+- `isometric4`
+- `italic`
+- `italics_`
+- `ivrit`
+- `jacky`
+- `jazmine`
+- `jerusalem`
+- `joust___`
+- `js_block_letters`
+- `js_bracket_letters`
+- `js_capital_curves`
+- `js_cursive`
+- `js_stick_letters`
+- `katakana`
+- `kban`
+- `keyboard`
+- `kgames_i`
+- `kik_star`
+- `knob`
+- `konto`
+- `konto_slant`
+- `krak_out`
+- `larry3d`
+- `lazy_jon`
+- `lcd`
+- `lean`
+- `letter_w`
+- `letters`
+- `letterw3`
+- `lexible_`
+- `lil_devil`
+- `line_blocks`
+- `linux`
+- `lockergnome`
+- `mad_nurs`
+- `madrid`
+- `magic_ma`
+- `marquee`
+- `master_o`
+- `maxfour`
+- `mayhem_d`
+- `mcg_____`
+- `merlin1`
+- `merlin2`
+- `mig_ally`
+- `mike`
+- `mini`
+- `mirror`
+- `mnemonic`
+- `modern__`
+- `modular`
+- `morse`
+- `morse2`
+- `moscow`
+- `mshebrew210`
+- `muzzle`
+- `nancyj`
+- `nancyj-fancy`
+- `nancyj-improved`
+- `nancyj-underlined`
+- `new_asci`
+- `nfi1____`
+- `nipples`
+- `notie_ca`
+- `npn_____`
+- `nscript`
+- `ntgreek`
+- `nvscript`
+- `o8`
+- `octal`
+- `odel_lak`
+- `ogre`
+- `ok_beer_`
+- `old_banner`
+- `os2`
+- `outrun__`
+- `p_s_h_m_`
+- `p_skateb`
+- `pacos_pe`
+- `panther_`
+- `patorjk's_cheese`
+- `patorjk-hex`
+- `pawn_ins`
+- `pawp`
+- `peaks`
+- `pebbles`
+- `pepper`
+- `phonix__`
+- `platoon2`
+- `platoon_`
+- `pod_____`
+- `poison`
+- `puffy`
+- `puzzle`
+- `pyramid`
+- `r2-d2___`
+- `rad_____`
+- `rad_phan`
+- `radical_`
+- `rainbow_`
+- `rally_s2`
+- `rally_sp`
+- `rammstein`
+- `rampage_`
+- `rastan__`
+- `raw_recu`
+- `rci_____`
+- `rectangles`
+- `red_phoenix`
+- `relief`
+- `relief2`
+- `rev`
+- `ripper!_`
+- `road_rai`
+- `rockbox_`
+- `rok_____`
+- `roman`
+- `roman___`
+- `rot13`
+- `rotated`
+- `rounded`
+- `rowancap`
+- `rozzo`
+- `runic`
+- `runyc`
+- `sans`
+- `sansb`
+- `sansbi`
+- `sansi`
+- `santa_clara`
+- `sblood`
+- `sbook`
+- `sbookb`
+- `sbookbi`
+- `sbooki`
+- `script`
+- `script__`
+- `serifcap`
+- `shadow`
+- `shimrod`
+- `short`
+- `skate_ro`
+- `skateord`
+- `skateroc`
+- `sketch_s`
+- `sl_script`
+- `slant`
+- `slant_relief`
+- `slide`
+- `slscript`
+- `sm______`
+- `small`
+- `small_caps`
+- `small_poison`
+- `small_shadow`
+- `small_slant`
+- `smisome1`
+- `smkeyboard`
+- `smscript`
+- `smshadow`
+- `smslant`
+- `smtengwar`
+- `soft`
+- `space_op`
+- `spc_demo`
+- `speed`
+- `spliff`
+- `stacey`
+- `stampate`
+- `stampatello`
+- `standard`
+- `star_strips`
+- `star_war`
+- `starwars`
+- `stealth_`
+- `stellar`
+- `stencil1`
+- `stencil2`
+- `stforek`
+- `stick_letters`
+- `stop`
+- `straight`
+- `street_s`
+- `stronger_than_all`
+- `sub-zero`
+- `subteran`
+- `super_te`
+- `swamp_land`
+- `swan`
+- `sweet`
+- `t__of_ap`
+- `tanja`
+- `tav1____`
+- `taxi____`
+- `tec1____`
+- `tec_7000`
+- `tecrvs__`
+- `tengwar`
+- `term`
+- `test1`
+- `the_edge`
+- `thick`
+- `thin`
+- `this`
+- `thorned`
+- `threepoint`
+- `ti_pan__`
+- `ticks`
+- `ticksslant`
+- `tiles`
+- `times`
+- `timesofl`
+- `tinker-toy`
+- `tomahawk`
+- `tombstone`
+- `top_duck`
+- `train`
+- `trashman`
+- `trek`
+- `triad_st`
+- `ts1_____`
+- `tsalagi`
+- `tsm_____`
+- `tsn_base`
+- `tty`
+- `ttyb`
+- `tubular`
+- `twin_cob`
+- `twisted`
+- `twopoint`
+- `type_set`
+- `ucf_fan_`
+- `ugalympi`
+- `unarmed_`
+- `univers`
+- `usa_____`
+- `usa_pq__`
+- `usaflag`
+- `utopia`
+- `utopiab`
+- `utopiabi`
+- `utopiai`
+- `varsity`
+- `vortron_`
+- `war_of_w`
+- `wavy`
+- `weird`
+- `wet_letter`
+- `whimsy`
+- `wow`
+- `xbrite`
+- `xbriteb`
+- `xbritebi`
+- `xbritei`
+- `xchartr`
+- `xchartri`
+- `xcour`
+- `xcourb`
+- `xcourbi`
+- `xcouri`
+- `xhelv`
+- `xhelvb`
+- `xhelvbi`
+- `xhelvi`
+- `xsans`
+- `xsansb`
+- `xsansbi`
+- `xsansi`
+- `xsbook`
+- `xsbookb`
+- `xsbookbi`
+- `xsbooki`
+- `xtimes`
+- `xtty`
+- `xttyb`
+- `yie-ar__`
+- `yie_ar_k`
+- `z-pilot_`
+- `zig_zag_`
+- `zone7___`
+
+<!-- OUTPUT:END -->
+</details>
+
 **Available Gradients:**
 
 You can choose from a variety of gradients Tuitorial provides. These are:
@@ -908,7 +1468,7 @@ It automatically generates the code content from the list of bullet points, and 
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from rich.style import Style
 from tuitorial import TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
