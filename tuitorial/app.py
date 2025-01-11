@@ -57,10 +57,6 @@ class TuitorialApp(App):
         height: auto;
     }
 
-    TitleSlide {
-        align: center middle;
-    }
-
     #title-container {
         align: center middle;
     }
@@ -68,7 +64,6 @@ class TuitorialApp(App):
     #title-rich-log {
         overflow-y: auto;
         background: black 0%;
-        align: center middle;
         width: auto;
         height: auto;
         /* When removing the border, the whole thing is gone? */
