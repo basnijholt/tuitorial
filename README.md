@@ -107,7 +107,7 @@ pip install tuitorial
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from tuitorial import Chapter, Step, TuitorialApp, Focus
 from rich.style import Style
 
@@ -191,7 +191,7 @@ tuitorial --watch tutorial.yaml
 
 or
 
-```python
+```python markdown-code-runner
 # In a separate Python file (e.g., run_yaml.py)
 from tuitorial.parse_yaml import run_from_yaml
 
@@ -207,7 +207,7 @@ run_from_yaml("tutorial.yaml")
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 # First chapter
 chapter1_code = '''
 def greet(name: str) -> str:
@@ -279,7 +279,7 @@ Each step in a tutorial consists of a description and a list of focuses.
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Step(
     "Step Description",  # Shown in the UI
     [
@@ -307,7 +307,7 @@ steps:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.literal("def", style="bold yellow")
 Focus.literal("def", style="bold yellow", match_index=[0, 2]) # Highlight the first and third "def"
 ```
@@ -335,7 +335,7 @@ focus:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.regex(r"def \w+\(.*\):", style="bold green")
 ```
 
@@ -352,7 +352,7 @@ focus:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.line(1, style="bold blue")  # Highlight first line
 ```
 
@@ -371,7 +371,7 @@ Highlights a specific range of characters within the code based on their indices
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.range(0, 10, style="bold magenta")  # Highlight first 10 characters
 ```
 
@@ -391,7 +391,7 @@ Highlights lines starting with the specified text. Can be configured to match fr
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.startswith("import", style="bold blue", from_start_of_line=True)
 Focus.startswith("from", style="bold blue", from_start_of_line=False)
 ```
@@ -416,7 +416,7 @@ Highlights text between two specified patterns. Supports inclusive or exclusive 
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.between("start_function", "end_function", style="bold blue", inclusive=True, multiline=True)
 ```
 
@@ -441,7 +441,7 @@ Can match either literal text or regular expressions, and can select specific ma
 
 **Python:**
 
-```python
+```python markdown-code-runner
 # Highlight all lines containing "def"
 Focus.line_containing("def", style="bold yellow")
 
@@ -488,7 +488,7 @@ Displays the content as Markdown instead of code, using Textual's built-in `Mark
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.markdown()
 ```
 
@@ -505,7 +505,7 @@ Uses Rich's built-in syntax highlighting for the entire code or specific lines. 
 
 **Python:**
 
-```python
+```python markdown-code-runner
 # Highlight all code
 Focus.syntax(theme="monokai", line_numbers=True)
 
@@ -535,7 +535,7 @@ Styles can be customized using Rich's style syntax:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from rich.style import Style
 
 # Using string syntax
@@ -593,7 +593,7 @@ When you run `tuitorial` with the `--watch` flag, it will monitor the specified 
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from tuitorial import TuitorialApp, Focus
 from rich.style import Style
 
@@ -657,7 +657,7 @@ chapters:
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from tuitorial import Chapter, Step, TuitorialApp, Focus
 from rich.style import Style
 
@@ -728,7 +728,7 @@ The `ImageStep` class takes the path to an image file (or a PIL Image object) an
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from pathlib import Path
 from tuitorial import Chapter, ImageStep, TuitorialApp
 
@@ -762,7 +762,7 @@ You can control the size of the image using the `width` and `height` properties 
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from pathlib import Path
 from textual_image.widget import Image
 from tuitorial import Chapter, ImageStep, TuitorialApp
@@ -801,7 +801,7 @@ chapters:
 By default, images are aligned to the center.
 You can align images to the left or right by setting `halign` to `"left"` or `"right"` respectively when creating the `Image` widget.
 
-```python
+```python markdown-code-runner
 image_widget = Image(image_path, halign="left")
 ```
 
@@ -823,7 +823,7 @@ chapters:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from tuitorial import TuitorialApp, TitleSlide
 
 title_slide = TitleSlide(
@@ -873,7 +873,7 @@ You can choose from a variety of fonts provided by PyFiglet. Some popular option
 
 You can find a full list of available fonts in the [PyFiglet documentation](https://github.com/pwaller/pyfiglet/tree/master/pyfiglet/fonts) or by running:
 
-```python
+```python markdown-code-runner
 import pyfiglet
 print(pyfiglet.FigletFont.getFonts())
 ```
@@ -908,7 +908,7 @@ It automatically generates the code content from the list of bullet points, and 
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from rich.style import Style
 from tuitorial import TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
