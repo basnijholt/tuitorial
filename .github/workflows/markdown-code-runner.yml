@@ -26,7 +26,7 @@ jobs:
 
       - name: Run update-readme.py
         run: |
-          export README="1"  # Mocks out App.run()
+          export MARKDOWN_CODE_RUNNER="1"  # Mocks out App.run()
           uv sync --all-groups --frozen
           uv run markdown-code-runner --verbose README.md
 

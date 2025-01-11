@@ -214,7 +214,7 @@ class TuitorialApp(App):
             await self.action_previous_focus()
 
 
-if os.getenv("README"):
+if os.getenv("MARKDOWN_CODE_RUNNER"):
 
     def mock_run(*args: Any, **kwargs: Any) -> None:
         """Mock the run method to prevent the app from running."""
