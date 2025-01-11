@@ -25,6 +25,7 @@ class FocusType(Enum):
     SYNTAX = auto()
     MARKDOWN = auto()
 
+
 @dataclass
 class Focus:
     """A pattern to focus on with its style."""
