@@ -2,7 +2,10 @@ title_slide:
   title: PipeFunc
   subtitle: |
     Structure, Automate, and Simplify Your Computational Workflows
+
     - by Bas Nijholt <bas@nijho.lt>
+    - docs: https://pipefunc.readthedocs.io
+    - source: https://github.com/pipefunc/pipefunc
 chapters:
   - title: "Introduction"
     type: bullet_points
