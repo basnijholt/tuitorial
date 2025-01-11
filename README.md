@@ -90,6 +90,8 @@
 
 https://github.com/user-attachments/assets/53a0cdff-ed1b-479f-b94c-6a7b113bd8b3
 
+This is a recording of the [examples/pipefunc.yaml](./examples/pipefunc.yaml) tutorial of the [`pipefunc` package](https://github.com/pipefunc/pipefunc).
+
 ## 🚀 Installation
 
 ```bash
