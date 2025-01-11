@@ -23,7 +23,6 @@ class TuitorialApp(App):
 
     TabPane {
         padding: 1 1;
-        align: center middle;
     }
 
     CodeDisplay {
