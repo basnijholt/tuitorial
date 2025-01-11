@@ -179,14 +179,14 @@ chapters:
 
 To run the YAML example:
 
-1. Save the YAML content as a `.yaml` file (e.g., `tutorial.yaml`).
+1. Save the YAML content as a `.yaml` file (e.g., `tuitorial.yaml`).
 2. Either:
    - Use the provided `tuitorial.run_from_yaml(...)` function:
-   - Run `tuitorial --watch tutorial.yaml` from the command line.
+   - Run `tuitorial --watch tuitorial.yaml` from the command line.
 
 ```bash
 # From the command line
-tuitorial --watch tutorial.yaml
+tuitorial --watch tuitorial.yaml
 ```
 
 or
@@ -195,7 +195,7 @@ or
 # In a separate Python file (e.g., run_yaml.py)
 from tuitorial.parse_yaml import run_from_yaml
 
-run_from_yaml("tutorial.yaml")
+run_from_yaml("tuitorial.yaml")
 ```
 
 </details>
@@ -799,11 +799,8 @@ chapters:
 #### Alignment
 
 By default, images are aligned to the center.
-You can align images to the left or right by setting `halign` to `"left"` or `"right"` respectively when creating the `Image` widget.
+You can align images to the left or right by setting `halign` to `"left"` or `"right"` respectively when creating the `ImageStep`.
 
-```python markdown-code-runner
-image_widget = Image(image_path, halign="left")
-```
 
 ```yaml
 chapters:
