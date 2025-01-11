@@ -25,7 +25,6 @@ class FocusType(Enum):
     SYNTAX = auto()
     MARKDOWN = auto()
 
-
 @dataclass
 class Focus:
     """A pattern to focus on with its style."""
@@ -69,10 +68,11 @@ class Focus:
         cls,
         pattern: str | Pattern,
         style: Style = Style(color="green", bold=True),  # noqa: B008
+        flags: re.RegexFlag = re.MULTILINE,
     ) -> Focus:
         """Create a focus for a regular expression."""
         if isinstance(pattern, str):
-            pattern = re.compile(pattern)
+            pattern = re.compile(pattern, flags)
         return cls(pattern, style, FocusType.REGEX)
 
     @classmethod
