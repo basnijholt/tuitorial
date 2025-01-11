@@ -876,7 +876,7 @@ print(pyfiglet.FigletFont.getFonts())
 ```
 
 <details>
-<summary><b>Output</b></summary>
+<summary><b>Click to see all</b></summary>
 
 <!-- CODE:START -->
 <!-- import pyfiglet -->
