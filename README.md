@@ -107,7 +107,7 @@ pip install tuitorial
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from tuitorial import Chapter, Step, TuitorialApp, Focus
 from rich.style import Style
 
@@ -179,14 +179,14 @@ chapters:
 
 To run the YAML example:
 
-1. Save the YAML content as a `.yaml` file (e.g., `tutorial.yaml`).
+1. Save the YAML content as a `.yaml` file (e.g., `tuitorial.yaml`).
 2. Either:
    - Use the provided `tuitorial.run_from_yaml(...)` function:
-   - Run `tuitorial --watch tutorial.yaml` from the command line.
+   - Run `tuitorial --watch tuitorial.yaml` from the command line.
 
 ```bash
 # From the command line
-tuitorial --watch tutorial.yaml
+tuitorial --watch tuitorial.yaml
 ```
 
 or
@@ -195,7 +195,7 @@ or
 # In a separate Python file (e.g., run_yaml.py)
 from tuitorial.parse_yaml import run_from_yaml
 
-run_from_yaml("tutorial.yaml")
+run_from_yaml("tuitorial.yaml")
 ```
 
 </details>
@@ -207,7 +207,7 @@ run_from_yaml("tutorial.yaml")
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 # First chapter
 chapter1_code = '''
 def greet(name: str) -> str:
@@ -279,7 +279,7 @@ Each step in a tutorial consists of a description and a list of focuses.
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Step(
     "Step Description",  # Shown in the UI
     [
@@ -307,7 +307,7 @@ steps:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.literal("def", style="bold yellow")
 Focus.literal("def", style="bold yellow", match_index=[0, 2]) # Highlight the first and third "def"
 ```
@@ -335,7 +335,7 @@ focus:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.regex(r"def \w+\(.*\):", style="bold green")
 ```
 
@@ -352,7 +352,7 @@ focus:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.line(1, style="bold blue")  # Highlight first line
 ```
 
@@ -371,7 +371,7 @@ Highlights a specific range of characters within the code based on their indices
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.range(0, 10, style="bold magenta")  # Highlight first 10 characters
 ```
 
@@ -391,7 +391,7 @@ Highlights lines starting with the specified text. Can be configured to match fr
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.startswith("import", style="bold blue", from_start_of_line=True)
 Focus.startswith("from", style="bold blue", from_start_of_line=False)
 ```
@@ -416,7 +416,7 @@ Highlights text between two specified patterns. Supports inclusive or exclusive 
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.between("start_function", "end_function", style="bold blue", inclusive=True, multiline=True)
 ```
 
@@ -441,7 +441,7 @@ Can match either literal text or regular expressions, and can select specific ma
 
 **Python:**
 
-```python
+```python markdown-code-runner
 # Highlight all lines containing "def"
 Focus.line_containing("def", style="bold yellow")
 
@@ -488,7 +488,7 @@ Displays the content as Markdown instead of code, using Textual's built-in `Mark
 
 **Python:**
 
-```python
+```python markdown-code-runner
 Focus.markdown()
 ```
 
@@ -505,7 +505,7 @@ Uses Rich's built-in syntax highlighting for the entire code or specific lines. 
 
 **Python:**
 
-```python
+```python markdown-code-runner
 # Highlight all code
 Focus.syntax(theme="monokai", line_numbers=True)
 
@@ -535,7 +535,7 @@ Styles can be customized using Rich's style syntax:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from rich.style import Style
 
 # Using string syntax
@@ -593,7 +593,7 @@ When you run `tuitorial` with the `--watch` flag, it will monitor the specified 
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from tuitorial import TuitorialApp, Focus
 from rich.style import Style
 
@@ -657,7 +657,7 @@ chapters:
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from tuitorial import Chapter, Step, TuitorialApp, Focus
 from rich.style import Style
 
@@ -728,7 +728,7 @@ The `ImageStep` class takes the path to an image file (or a PIL Image object) an
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from pathlib import Path
 from tuitorial import Chapter, ImageStep, TuitorialApp
 
@@ -762,7 +762,7 @@ You can control the size of the image using the `width` and `height` properties 
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from pathlib import Path
 from textual_image.widget import Image
 from tuitorial import Chapter, ImageStep, TuitorialApp
@@ -799,11 +799,8 @@ chapters:
 #### Alignment
 
 By default, images are aligned to the center.
-You can align images to the left or right by setting `halign` to `"left"` or `"right"` respectively when creating the `Image` widget.
+You can align images to the left or right by setting `halign` to `"left"` or `"right"` respectively when creating the `ImageStep`.
 
-```python
-image_widget = Image(image_path, halign="left")
-```
 
 ```yaml
 chapters:
@@ -823,7 +820,7 @@ chapters:
 
 **Python:**
 
-```python
+```python markdown-code-runner
 from tuitorial import TuitorialApp, TitleSlide
 
 title_slide = TitleSlide(
@@ -873,10 +870,16 @@ You can choose from a variety of fonts provided by PyFiglet. Some popular option
 
 You can find a full list of available fonts in the [PyFiglet documentation](https://github.com/pwaller/pyfiglet/tree/master/pyfiglet/fonts) or by running:
 
-```python
+```python markdown-code-runner
 import pyfiglet
 print(pyfiglet.FigletFont.getFonts())
 ```
+
+<!-- OUTPUT:START -->
+<!-- ⚠️ This content is auto-generated by `markdown-code-runner`. -->
+['clb6x10', 'nipples', 'amc_3_liv1', 'muzzle', 'computer', 'electronic', 'charact1', 'xtty', 'xcourb', 'xchartr', 'ghoulish', 'future_1', 'lcd', 'letters', 'fp2_____', 'rev', 'caus_in_', 'roman___', 'barbwire', 'threepoint', 'smkeyboard', 'couri', 'impossible', '1943____', 'bright', 'heroboti', 'madrid', 'grand_pr', '3-d', 'radical_', 'amc_aaa01', 'atc_____', 'benjamin', 'bubble_b', 'bloody', 'skate_ro', 'blocky', 'xsans', 'aquaplan', 'nvscript', 'brite', 'heart_right', 'sub-zero', 'p_s_h_m_', 'tiles', 'xsbooki', 'pyramid', 'dos_rebel', 'crawford', 'charact2', 'ansi_regular', 'flower_power', 'utopiai', 'future_2', 'shadow', 'italics_', 'asslt__m', 'new_asci', 'future_3', 'delta_corps_priest_1', 'c2______', 'characte', 'charact3', 'sans', 'xsansbi', 'com_sen_', 'fire_font-s', 'bulbhead', 'clr5x8', 'mshebrew210', 'old_banner', 'doh', 'script__', 'platoon2', 'nancyj-fancy', 'mike', 'this', 'odel_lak', 'the_edge', 'sansb', 'b_m__200', 'dwhistled', 'slide', 'future_7', 'joust___', 'amc_razor', '5x8', 't__of_ap', 'smscript', 'xbritebi', 'js_cursive', 'convoy__', 'alligator', 'graceful', 'gothic__', 'wow', 'starwars', 'cli8x8', 'future_6', 'charact6', 'super_te', 'zig_zag_', 'xsansi', 'relief2', 'atc_gran', 'small_shadow', 'basic', 'fun_face', 'vortron_', 'sm______', 'tecrvs__', 'pawn_ins', 'clb8x10', 'colossal', 'decimal', 'britei', 'unarmed_', 'funky_dr', 'jerusalem', 'amc_neko', 'fbr_stri', 'charact4', 'js_bracket_letters', 'future_4', 'bear', 'ascii_new_roman', 'horizontal_left', 'small', 'nscript', 'dcs_bfmo', 'future_5', 'britebi', 'charact5', 'courbi', 'stronger_than_all', 'morse', 'amc_3_line', 'fender', 'clr7x8', 'notie_ca', 'amc_razor2', '3d_diagonal', '6x10', 'usaflag', 'hollywood', 'skateord', 'poison', 'pepper', 'rot13', 'small_slant', 'coil_cop', 'master_o', 'double_shorts', 'puffy', 'raw_recu', 'times', 'eftitalic', 'stencil1', 'a_zooloo', 'catwalk', 'cour', 'cards', 'isometric1', 'chunky', 'xcour', 'xbriteb', 'inc_raw_', 'yie-ar__', 'eftifont', 'tsalagi', 'block', 'rainbow_', 'calvin_s', 'big_money-nw', 'mirror', 'avatar', 'defleppard', 'clr5x10', 'ok_beer_', 'stealth_', 'runyc', 'thick', '4max', 'univers', 'isometric3', 'top_duck', 'stencil2', 'utopiabi', 'glenyn', 'alphabet', 'assalt_m', 'isometric2', 'stick_letters', 'slant_relief', 'banner3-D', 'braced', 'ugalympi', 'char3___', 'script', 'varsity', 'tty', 'fair_mea', 'soft', 'ti_pan__', 'ripper!_', 'war_of_w', 'konto', '6x9', 'amc_thin', 'slscript', 'asc_____', 'fbr12___', 'twopoint', 'kgames_i', 'cosmike', 'deep_str', 'tsm_____', '4x4_offr', 'stforek', 'house_of', 'cola', 'mnemonic', 'rok_____', 'sweet', 'clr7x10', 'nancyj-underlined', 'xhelvbi', '5lineoblique', 'tav1____', 'greek', 'eftiwater', '64f1____', 'filter', 'subteran', 'sbookb', 'dancing_font', 'eftirobot', 'eftipiti', '3d-ascii', 'tombstone', 'modern__', 'spliff', 'kban', 'italic', 'amc_slider', 'clr6x8', 'smshadow', 'char1___', 'whimsy', 'cursive', 'hyper___', 'heavy_me', 'binary', 'xsbook', 'line_blocks', 'fbr_tilt', 'street_s', 'mini', 'rammstein', 'xhelv', 'js_stick_letters', 'xhelvi', 'fun_faces', 'helv', 'helvb', 'isometric4', 'sblood', 'road_rai', 'ticks', 'small_poison', 'horizontal_right', 'fireing_', 'tsn_base', 'spc_demo', 'broadway_kb', 'nancyj', 'rad_____', 'diamond', 'sketch_s', 'big_money-ne', 'eftiwall', 'straight', 'sbookbi', 'xchartri', 'stellar', 'bubble__', 'pacos_pe', 'wavy', 'rci_____', 'beer_pub', 'invita', 'slant', 'bubble', 'npn_____', 'taxi____', 'marquee', 'twin_cob', 'clr6x6', 'rastan__', 'eftichess', 'swan', 'contrast', 'amc_tubes', 'cricket', 'trek', 'gothic', 'ascii___', 'goofy', 'speed', 'calgphy2', 'clr8x8', 'puzzle', 'krak_out', 'z-pilot_', 'phonix__', 'cybersmall', 'alpha', 'banner3', 'zone7___', 'pebbles', 'platoon_', 'ebbs_1__', 'coinstak', 'icl-1900', 'green_be', 'letterw3', 'digital', 'demo_1__', 'fourtops', 'gauntlet', 'moscow', 'xbritei', 'xtimes', 'yie_ar_k', 'ansi_shadow', 'maxfour', 'f15_____', 'clr4x6', 'fraktur', 'hypa_bal', 'hills___', 'e__fist_', 'char4___', 'term', 'usa_pq__', 'chartri', 'katakana', 'ticksslant', 'georgi16', 'xsbookbi', 'js_block_letters', 'rockbox_', 'crawford2', 'xcourbi', 'caligraphy', 'fbr2____', 'relief', 'chartr', 'jazmine', 'sbook', 'dotmatrix', 'nfi1____', 'mayhem_d', 'banner4', 'home_pak', '1row', 'rotated', 'doom', 'helvi', 'linux', 'tengwar', 'twisted', 'battlesh', 'xhelvb', 'def_leppard', 'lexible_', 'rowancap', 'peaks', 'mig_ally', 'ivrit', 'rad_phan', 'ghost_bo', 'acrobatic', 'contessa', 'battle_s', 'merlin2', 'eca_____', 'ntgreek', 'test1', 'smtengwar', 'efti_robot', 'flyn_sh', 'wet_letter', 'cyberlarge', 'larry3d', 'rounded', 'devilish', 'short', 'faces_of', 'type_set', 'hex', 'jacky', 'usa_____', 'tanja', 'r2-d2___', 'sbooki', 'big', 'heart_left', 'rectangles', 'fp1_____', 'sansbi', 'knob', 'c_consen', 'epic', 'ghost', 'pawp', 'konto_slant', 'utopia', 'merlin1', 'flipped', 'p_skateb', 'c_ascii_', 'arrows', 'shimrod', 'char2___', 'blocks', 'b1ff', 'xbrite', 'helvbi', 'smisome1', 'lockergnome', 'drpepper', 'magic_ma', 'graffiti', 'future_8', 'swamp_land', 'ebbs_2__', '5x7', 'tec_7000', 'star_war', 'letter_w', 'skateroc', 'diet_cola', 'fbr1____', 'chiseled', 'gradient', 'utopiab', 'amc_slash', 'js_capital_curves', 'hieroglyphs', 'ts1_____', 'xsbookb', 'clr8x10', 'big_money-sw', 'charset_', 'timesofl', 'high_noo', 'clr5x6', 'bolger', 'santa_clara', 'stop', 'xttyb', 'tomahawk', 'henry_3d', 'broadway', 'o8', 'tinker-toy', 'courb', 'etcrvs__', 'c1______', 'train', 'stacey', 'alligator2', 'demo_2__', 'triad_st', 'octal', 'lean', 'd_dragon', 'bell', 'ucf_fan_', 'xcouri', 'lazy_jon', 'elite', 'rozzo', 'demo_m__', 'ttyb', 'fairligh', 'hades___', 'fuzzy', 'os2', 'bigfig', 'lil_devil', 'smslant', 'rampage_', 'amc_untitled', 'nancyj-improved', 'crazy', 'tubular', 'finalass', 'tec1____', 'sl_script', 'star_strips', 'red_phoenix', 'danc4', 'ogre', 'stampatello', 'patorjk-hex', 'pod_____', 'rally_sp', 'clb8x8', 'outrun__', 'weird', 'kik_star', 'serifcap', 'small_caps', 'briteb', 'mcg_____', 'standard', 'trashman', 'stampate', 'thin', 'xsansb', 'georgia11', "patorjk's_cheese", 'cybermedium', 'space_op', 'cygnet', 'cosmic', 'fantasy_', 'double', 'morse2', 'advenger', 'druid___', 'sansi', 'rally_s2', 'mad_nurs', 'clr6x10', '3x5', 'keyboard', 'big_money-se', 'fire_font-k', 'bigchief', 'baz__bil', 'modular', 'roman', 'runic', 'thorned', 'panther_', 'banner']
+
+<!-- OUTPUT:END -->
 
 **Available Gradients:**
 
@@ -908,7 +911,7 @@ It automatically generates the code content from the list of bullet points, and 
 <details>
 <summary><b>Python</b></summary>
 
-```python
+```python markdown-code-runner
 from rich.style import Style
 from tuitorial import TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter

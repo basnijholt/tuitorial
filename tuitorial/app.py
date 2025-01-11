@@ -1,7 +1,8 @@
 """App for presenting code tutorials."""
 
+import os
 import time
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from textual import on
 from textual.app import App, ComposeResult
@@ -222,3 +223,11 @@ class TuitorialApp(App):
         if current_time - self.last_scroll_time >= self.scroll_debounce_time:
             self.last_scroll_time = current_time
             await self.action_previous_focus()
+
+
+if os.getenv("README"):
+
+    def mock_run(*args: Any, **kwargs: Any) -> None:
+        """Mock the run method to prevent the app from running."""
+
+    TuitorialApp.run = mock_run
