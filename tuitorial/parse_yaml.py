@@ -11,6 +11,7 @@ import traceback
 import urllib.request
 from pathlib import Path
 
+import chardet
 import rich
 import textual.theme
 import yaml
@@ -283,11 +284,33 @@ def _parse_chapter(chapter_data: dict) -> Chapter:
     return Chapter(title, code, steps)
 
 
+def _detect_encoding(file_path: Path | str) -> str:
+    """Detects the encoding of a file using chardet, defaulting to UTF-8."""
+    with open(file_path, "rb") as f:  # noqa: PTH123
+        rawdata = f.read()
+        result = chardet.detect(rawdata)
+        encoding = result["encoding"]
+        confidence = result["confidence"]
+        if confidence < 0.7:  # noqa: PLR2004
+            print(
+                f"Warning: Low confidence ({confidence:.2f}) in detected encoding ({encoding}) for {file_path}. "
+                "Defaulting to UTF-8.",
+            )
+            return "utf-8"
+
+        return encoding or "utf-8"
+
+
 def parse_yaml_config(yaml_file: str | Path) -> tuple[list[Chapter], TitleSlide | None]:
     """Parses a YAML configuration file and returns a list of Chapter objects."""
     install()
     try:
-        with open(yaml_file) as f:  # noqa: PTH123
+        encoding = _detect_encoding(yaml_file)
+    except FileNotFoundError as e:
+        msg = f"YAML file not found: {yaml_file}"
+        raise InvalidYamlError(msg) from e
+    try:
+        with open(yaml_file, encoding=encoding) as f:  # noqa: PTH123
             config = yaml.safe_load(f)
     except FileNotFoundError as e:
         msg = f"YAML file not found: {yaml_file}"
