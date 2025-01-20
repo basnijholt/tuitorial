@@ -48,10 +48,7 @@ def _validate_focus_data(focus_data: dict) -> None:
             continue
         if key not in sig.parameters:
             allowed = ", ".join(sig.parameters)
-            msg = (
-                f"Invalid key '{key}' for focus type '{focus_type}'. "
-                f"Allowed keys are: {allowed}"
-            )
+            msg = f"Invalid key '{key}' for focus type '{focus_type}'. Allowed keys are: {allowed}"
             raise InvalidYamlError(msg)
 
 
@@ -205,8 +202,7 @@ def _validate_bullet_points_data(chapter_data: dict) -> None:
         raise InvalidYamlError(msg)
     if not isinstance(chapter_data["bullet_points"], list):
         msg = (
-            f"Invalid 'bullet_points' format in chapter '{title}'. "
-            f"'bullet_points' must be a list."
+            f"Invalid 'bullet_points' format in chapter '{title}'. 'bullet_points' must be a list."
         )
         raise InvalidYamlError(msg)
     allowed_keys = {"type", "title", "bullet_points", "marker", "style"}
