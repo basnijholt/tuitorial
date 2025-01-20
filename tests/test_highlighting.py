@@ -230,9 +230,9 @@ def test_overlapping_bracket_highlights():
     # Check that no segment has both dim and bold styles
     for segment in segments:
         if segment.style:
-            assert not (
-                segment.style.dim and segment.style.bold
-            ), f"Segment '{segment.text}' has both dim and bold styles: {segment.style}"
+            assert not (segment.style.dim and segment.style.bold), (
+                f"Segment '{segment.text}' has both dim and bold styles: {segment.style}"
+            )
 
     # Specifically check the closing brackets
     for segment in segments:
