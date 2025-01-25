@@ -6,11 +6,15 @@ import itertools
 import os.path
 import re
 import shutil
+import tempfile
+import urllib.request
+from dataclasses import dataclass
 from pathlib import Path
 from re import Pattern
 from typing import TYPE_CHECKING, Literal, NamedTuple
 
 import rich
+from PIL import Image as PILImage
 from pyfiglet import Figlet
 from rich.style import Style
 from rich.syntax import Syntax
@@ -23,7 +27,6 @@ from .highlighting import Focus, FocusType, _BetweenTuple, _RangeTuple, _StartsW
 
 if TYPE_CHECKING:
     import textual_image.widget
-    from PIL import Image as PILImage
     from textual.app import ComposeResult
 
 
@@ -34,7 +37,8 @@ class Step(NamedTuple):
     focuses: list[Focus]
 
 
-class ImageStep(NamedTuple):
+@dataclass
+class ImageStep:
     """A step that displays an image."""
 
     description: str
@@ -42,6 +46,20 @@ class ImageStep(NamedTuple):
     width: int | str | None = None
     height: int | str | None = None
     halign: Literal["left", "center", "right"] | None = None
+
+    def _maybe_download_image(self) -> None:
+        """Download the image to the specified path."""
+        if isinstance(self.image, str) and self.image.startswith("http"):
+            self.image = _download_image(self.image)
+
+
+def _download_image(url: str) -> PILImage:
+    with (
+        urllib.request.urlopen(url) as response,  # noqa: S310
+        tempfile.NamedTemporaryFile(delete=False) as tmp_file,
+    ):
+        tmp_file.write(response.read())
+        return PILImage.open(tmp_file.name)
 
 
 class TitleSlide(Container):
@@ -293,6 +311,7 @@ class ContentContainer(Container):
 
         if not isinstance(image_widget, Static):
             image_msg = self.query_one("#image-text", Static)
+            step._maybe_download_image()
             if isinstance(step.image, str | Path) and not os.path.exists(step.image):  # noqa: PTH110
                 image_msg.update(
                     f"[red bold]Image file not found: {step.image}",
