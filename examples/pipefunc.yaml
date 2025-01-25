@@ -535,6 +535,7 @@ chapters:
       pipeline = Pipeline([double_it, take_sum])
       pipeline.add_mapspec_axis("b", axis="j")
       pipeline.mapspecs_as_strings  # ['x[i], b[j] -> y[i, j]', 'y[:, j] -> sum[j]']
+      pipeline.visualize()
 
       results = pipeline.map({"x": [0, 1, 2, 3], "b": [1, 2, 3]})
       results["y"].output.shape  # (4, 3)
@@ -622,6 +623,22 @@ chapters:
             text: take_sum
             style: "bright_red bold"
             match_index: 0
+
+      - description: Let's visualize the pipeline again to see the new mapspecs.
+        focus:
+          - type: line_containing
+            pattern: pipeline.visualize()
+            style: "bright_yellow bold"
+
+      - description: |
+          Output of [bold blue]pipeline.visualize()[/]
+          We see:
+          - input arguments [green bold]x\[i][/] and [green bold]b\[j][/]
+          - [bright_yellow bold]y\[i, j][/] as output of [bright_yellow bold]double_it[/]
+          - [bright_red bold]sum\[j][/] as output of [bright_red bold]take_sum[/]
+        image: http://files.nijho.lt/pipeline-tuitorial-add_mapspec_axis.png
+        height: auto
+        width: 60%
 
       - description: |
           We can now run the [bright_yellow bold]pipeline.map[/] with the 1D [bold blue]inputs[/].
