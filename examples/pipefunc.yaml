@@ -401,7 +401,7 @@ chapters:
             text: "[2, 4, 6, 8, 10]"
             style: "bright_cyan bold"
 
-  - title: "mapspecs"
+  - title: "map-reduce"
     code: |
       import numpy as np
       from pipefunc import Pipeline, pipefunc
@@ -536,12 +536,142 @@ chapters:
       pipeline.add_mapspec_axis("b", axis="j")
       pipeline.mapspecs_as_strings  # ['x[i], b[j] -> y[i, j]', 'y[:, j] -> sum[j]']
 
-      pipeline.map({"x": [0, 1, 2, 3], "b": [1, 2, 3]})
+      results = pipeline.map({"x": [0, 1, 2, 3], "b": [1, 2, 3]})
       results["y"].output.shape  # (4, 3)
       results["sum"].output  # array([3, 6, 9])
     steps:
       - description: |
-          TODO
+          Let's assume that the previous example is our workflow.
+          Often we have some workflow that we want to run for different parameter combinations.
         focus:
           - type: syntax
             theme: monokai
+      - description: |
+          Here we have the same functions ([bright_yellow bold]double_it[/] and [bright_red bold]take_sum[/]) and [bright_cyan bold]pipeline[/] from the previous slide.
+        focus:
+          - type: line_containing
+            pattern: output_name="y"
+            style: "bright_yellow bold"
+            lines_after: 3
+          - type: line_containing
+            pattern: output_name="sum"
+            style: "bright_red bold"
+            lines_after: 3
+          - type: literal
+            text: double_it
+            style: "bright_yellow bold"
+            match_index: 1
+          - type: literal
+            text: take_sum
+            style: "bright_red bold"
+            match_index: 1
+          - type: literal
+            text: pipeline
+            style: "bright_cyan bold"
+            match_index: 0
+
+      - description: |
+          Imagine we want to run the pipeline for different values of [yellow bold]b[/].
+          We could manually write the mapspec for this:
+          - in [bright_yellow bold]double_it[/]: [bright_cyan bold]x\[i], b\[j] -> y\[i, j][/]
+          - in [bright_red bold]take_sum[/]: [bright_cyan bold]y\[:, j] -> sum\[j][/]
+        focus:
+          - type: literal
+            text: "b: int"
+            style: "yellow bold"
+            match_index: 0
+          - type: literal
+            text: double_it
+            style: "bright_yellow bold"
+            match_index: 0
+          - type: literal
+            text: take_sum
+            style: "bright_red bold"
+            match_index: 0
+
+      - description: |
+          However, for adding these [bold]"cross-products"[/] we can use the [bright_cyan bold]pipeline.add_mapspec_axis(...)[/] method.
+          This method automatically generates the mapspecs for you!
+        focus:
+          - type: line_containing
+            pattern: add_mapspec_axis
+            style: "bright_cyan bold"
+
+      - description: |
+          However, for adding these [bold]"cross-products"[/] we can use the [bright_cyan bold]pipeline.add_mapspec_axis(...)[/] method.
+          This method automatically generates the mapspecs for you!
+          We can check the generated mapspecs using the [yellow bold]pipeline.mapspecs_as_strings[/] property.
+        focus:
+          - type: line_containing
+            pattern: add_mapspec_axis
+            style: "bright_cyan bold"
+          - type: literal
+            text: pipeline.mapspecs_as_strings
+            style: "yellow bold"
+          - type: literal
+            text: x[i], b[j] -> y[i, j]
+            style: "bright_yellow bold"
+          - type: literal
+            text: y[:, j] -> sum[j]
+            style: "bright_red bold"
+          - type: literal
+            text: double_it
+            style: "bright_yellow bold"
+            match_index: 0
+          - type: literal
+            text: take_sum
+            style: "bright_red bold"
+            match_index: 0
+
+      - description: |
+          We can now run the [bright_yellow bold]pipeline.map[/] with the 1D [bold blue]inputs[/].
+        focus:
+          - type: literal
+            text: pipeline.map
+            style: "bright_yellow bold"
+            match_index: 1
+          - type: literal
+            text: '{"x": [0, 1, 2, 3], "b": [1, 2, 3]}'
+            style: "bright_cyan bold"
+          - type: literal
+            text: "results"
+            style: "bold yellow"
+            match_index: 0
+
+      - description: |
+          Again, we can print the output of both functions by accessing the [bold blue].output[/] attributes of the [bold blue]Result[/] objects.
+          We see that the output of [green bold]double_it[/] is now a 2D array.
+          And the output of [bright_red bold]take_sum[/] is a 1D array, one for each value of [bright_cyan bold]"b"[/].
+        focus:
+          - type: literal
+            text: pipeline.map
+            style: "bright_yellow bold"
+            match_index: 1
+          - type: literal
+            text: '{"x": [0, 1, 2, 3], "b": [1, 2, 3]}'
+            style: "bright_cyan bold"
+          - type: literal
+            text: "results"
+            style: "bold yellow"
+          - type: literal
+            text: '"y"'
+            style: "bold green"
+          - type: literal
+            text: '"sum"'
+            style: "bold red"
+          - type: literal
+            text: double_it
+            style: "green bold"
+            match_index: 0
+          - type: literal
+            text: take_sum
+            style: "bright_red bold"
+            match_index: 0
+          - type: literal
+            text: (4, 3)
+            style: "green bold"
+            match_index: 0
+          - type: literal
+            text: array([3, 6, 9])
+            style: "bright_red bold"
+            match_index: 0
