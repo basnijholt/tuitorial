@@ -419,7 +419,7 @@ chapters:
 
       pipeline = Pipeline([double_it, take_sum])
       pipeline.visualize()
-      r = pipeline.map({"x": [0, 1, 2, 3]})
+      results = pipeline.map({"x": [0, 1, 2, 3]})
 
       results["y"].output.tolist()  # [0, 2, 4, 6]
       results["sum"].output  # 12
@@ -463,6 +463,61 @@ chapters:
             text: take_sum
             style: "bright_red bold"
             match_index: 1
+      - description: |
+          Let's look at the graph of the pipeline, using the [bright_yellow bold]pipline.visualize()[/] method.
+        focus:
+          - type: line_containing
+            pattern: visualize
+            style: "bright_yellow bold"
+      - description: |
+          Let's look at the graph of the pipeline, using the [bright_yellow bold]pipline.visualize()[/] method.
+          Here we see the mapspec [bright_cyan bold]x\[i][/] (the input) and [bright_cyan bold]y\[i][/] (output of [bright_yellow bold]double_it[/]) appear too.
+        image: http://files.nijho.lt/pipefunc-map-reduce-example.png
+        height: auto
+        width: 60%
+      - description: |
+          Then we call the [bright_yellow bold]pipeline.map[/] method with the inputs [bright_cyan bold]{"x": [0, 1, 2, 3]}[/] and get the [bold yellow]results[/] dictionary.
+        focus:
+          - type: literal
+            text: pipeline.map
+            style: "bright_yellow bold"
+          - type: literal
+            text: '{"x": [0, 1, 2, 3]}'
+            style: "bright_cyan bold"
+          - type: literal
+            text: "results"
+            style: "bold yellow"
+            match_index: 0
+      - description: |
+          Finally, we print the output of both functions by accessing the [bold blue].output[/] attributes of the [bold blue]Result[/] objects.
+        focus:
+          - type: literal
+            text: "results"
+            style: "bold yellow"
+          - type: literal
+            text: '"y"'
+            style: "bold green"
+          - type: literal
+            text: "y[i]"
+            style: "bold green"
+          - type: literal
+            text: '"sum"'
+            style: "bold red"
+          - type: literal
+            text: '"x"'
+            style: "bold blue"
+          - type: literal
+            text: "x[i]"
+            style: "bold blue"
+          - type: literal
+            text: "[0, 1, 2, 3]"
+            style: "bright_cyan bold"
+          - type: literal
+            text: "[0, 2, 4, 6]"
+            style: "bright_cyan bold"
+          - type: literal
+            text: "12"
+            style: "bright_cyan bold"
 
 
   - title: "add_mapspec_axis"
