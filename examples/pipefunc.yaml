@@ -113,7 +113,7 @@ chapters:
             style: "bright_yellow bold"
 
       - description: Output of [bold blue]pipeline.visualize()[/]
-        image: pipeline.png
+        image: http://files.nijho.lt/pipeline-tuitorial-example.png
         height: auto
         width: 60%
 
@@ -426,10 +426,44 @@ chapters:
 
     steps:
       - description: |
-          TODO
+          Now let's look at a map-reduce example.
         focus:
           - type: syntax
             theme: monokai
+      - description: |
+          Here we have the same function [bright_yellow bold]double_it[/] from the previous slide.
+        focus:
+          - type: line_containing
+            pattern: output_name="y"
+            style: "bright_yellow bold"
+            lines_after: 3
+          - type: literal
+            text: double_it
+            style: "bright_yellow bold"
+            match_index: 1
+      - description: |
+          Here we have the same function [bright_yellow bold]double_it[/] from the previous slide.
+          But we follow it with a new function [bright_red bold]take_sum[/].
+          Importantly, [bright_red bold]take_sum[/] does not have a [bright_cyan bold]mapspec[/] argument.
+          This means that it receives the entire output of [bright_yellow bold]double_it[/] as input.
+        focus:
+          - type: line_containing
+            pattern: output_name="y"
+            style: "bright_yellow bold"
+            lines_after: 3
+          - type: line_containing
+            pattern: output_name="sum"
+            style: "bright_red bold"
+            lines_after: 3
+          - type: literal
+            text: double_it
+            style: "bright_yellow bold"
+            match_index: 1
+          - type: literal
+            text: take_sum
+            style: "bright_red bold"
+            match_index: 1
+
 
   - title: "add_mapspec_axis"
     code: |
