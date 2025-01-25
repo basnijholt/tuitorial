@@ -8,6 +8,7 @@ import re
 import shutil
 import tempfile
 import urllib.request
+from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 from re import Pattern
@@ -50,7 +51,8 @@ class ImageStep:
     def _maybe_download_image(self) -> None:
         """Download the image to the specified path."""
         if isinstance(self.image, str) and self.image.startswith("http"):
-            self.image = _download_image(self.image)
+            with suppress(Exception):
+                self.image = _download_image(self.image)
 
 
 def _download_image(url: str) -> PILImage:
