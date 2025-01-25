@@ -1,5 +1,7 @@
 """App for presenting code tutorials."""
 
+import asyncio
+import concurrent.futures
 import os
 import time
 from typing import Any, ClassVar
@@ -10,7 +12,7 @@ from textual.binding import Binding
 from textual.events import MouseScrollDown, MouseScrollUp
 from textual.widgets import Footer, Header, TabbedContent, TabPane, Tabs
 
-from .widgets import Chapter, TitleSlide
+from .widgets import Chapter, ImageStep, TitleSlide
 
 
 class TuitorialApp(App):
@@ -102,6 +104,7 @@ class TuitorialApp(App):
         self.is_scrolling: bool = False  # Flag to track if a scroll action is in progress
         self.last_scroll_time: float = 0.0  # Initialize the time of the last scroll event
         self.scroll_debounce_time: float = 0.1  # Minimum time between scroll events in seconds
+        self._predownload_images()
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -212,6 +215,15 @@ class TuitorialApp(App):
         if current_time - self.last_scroll_time >= self.scroll_debounce_time:
             self.last_scroll_time = current_time
             await self.action_previous_focus()
+
+    def _predownload_images(self) -> None:
+        """Preload images in a thread pool."""
+        loop = asyncio.get_event_loop()
+        executor = concurrent.futures.ThreadPoolExecutor()
+        for chapter in self.chapters:
+            for step in chapter.steps:
+                if isinstance(step, ImageStep):
+                    loop.run_in_executor(executor, step._maybe_download_image)
 
 
 if os.getenv("MARKDOWN_CODE_RUNNER"):
