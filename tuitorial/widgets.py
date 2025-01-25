@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import functools
 import itertools
 import os.path
 import re
@@ -56,7 +55,6 @@ class ImageStep:
                 self.image = _download_image(self.image)
 
 
-@functools.lru_cache
 def _download_image(url: str) -> PILImage:
     with (
         urllib.request.urlopen(url) as response,  # noqa: S310
