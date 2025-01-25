@@ -724,7 +724,7 @@ This allows you to incorporate visual aids, diagrams, or any other images to enh
 
 #### ImageStep
 
-The `ImageStep` class takes the path to an image file (or a PIL Image object) and a description as input.
+The `ImageStep` class takes the path or URL to an image file (or a PIL Image object) and a description as input.
 
 **Python:**
 
@@ -753,7 +753,7 @@ chapters:
   - title: "Image Example"
     steps:
       - description: "Displaying an example image"
-        image: "path/to/your/image.png"
+        image: "path/to/your/image.png" # or URL
 ```
 
 #### Image Positioning and Sizing
