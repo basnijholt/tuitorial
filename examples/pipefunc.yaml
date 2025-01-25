@@ -113,7 +113,7 @@ chapters:
             style: "bright_yellow bold"
 
       - description: Output of [bold blue]pipeline.visualize()[/]
-        image: pipeline.png
+        image: http://files.nijho.lt/pipeline.png
         height: auto
         width: 60%
 

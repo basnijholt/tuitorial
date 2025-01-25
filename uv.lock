@@ -2034,7 +2034,7 @@ wheels = [
 
 [[package]]
 name = "tuitorial"
-version = "0.13.0.dev2+main.g59edf32"
+version = "0.13.0.dev2+main.g59edf32.dirty"
 source = { editable = "." }
 dependencies = [
     { name = "chardet" },
