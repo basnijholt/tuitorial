@@ -74,11 +74,11 @@ def _validate_url(url: str, allowed_extensions: tuple[str, ...]) -> tuple[str, s
             ],
         ):
             msg = f"Invalid or unsafe URL: {url}"
-            raise ValueError(msg)  # noqa: TRY301
+            raise ImageValidationError(msg)  # noqa: TRY301
         return url, os.path.splitext(parsed.path)[1].lower()  # noqa: PTH122
     except Exception as e:
         msg = f"Invalid URL format: {e}"
-        raise ValueError(msg) from e
+        raise ImageValidationError(msg) from e
 
 
 def _validate_image(
@@ -108,12 +108,12 @@ def _validate_response_headers(response: httpx.Response, config: ImageDownloadCo
     content_length = response.headers.get("content-length")
     if content_length and int(content_length) > config.MAX_FILE_SIZE:
         msg = f"File too large (from headers): {content_length} bytes"
-        raise ValueError(msg)
+        raise ImageValidationError(msg)
 
     content_type = response.headers.get("content-type", "").lower()
     if content_type not in config.ALLOWED_CONTENT_TYPES:
         msg = f"Invalid content type: {content_type}"
-        raise ValueError(msg)
+        raise ImageValidationError(msg)
 
 
 def _stream_to_file(
@@ -127,7 +127,7 @@ def _stream_to_file(
         size += len(chunk)
         if size > max_size:
             msg = f"File too large: {size} bytes"
-            raise ValueError(msg)
+            raise ImageValidationError(msg)
         tmp_file.write(chunk)
     tmp_file.flush()
 
@@ -136,19 +136,12 @@ def _verify_image_format(img: Image.Image, config: ImageDownloadConfig) -> None:
     """Verify the image format is valid and allowed."""
     if not img.format:
         msg = "Unable to determine image format"
-        raise ValueError(msg)
+        raise ImageValidationError(msg)
 
-    format_to_mime = {
-        "JPEG": "image/jpeg",
-        "PNG": "image/png",
-        "GIF": "image/gif",
-        "WEBP": "image/webp",
-    }
-
-    detected_mime = format_to_mime.get(img.format)
+    detected_mime = FORMAT_TO_MIME.get(img.format)
     if not detected_mime or detected_mime not in config.ALLOWED_CONTENT_TYPES:
         msg = f"Invalid image format: {img.format}"
-        raise ValueError(msg)
+        raise ImageValidationError(msg)
 
 
 def _download_to_tempfile(url: str, config: ImageDownloadConfig) -> tuple[str, Image.Image]:
@@ -193,7 +186,7 @@ def download_image(url: str, config: ImageDownloadConfig | None = None) -> Image
 
     Raises
     ------
-    ValueError
+    ImageValidationError
         If the image is invalid or unsafe
     httpx.HTTPError
         If the download fails
@@ -203,14 +196,7 @@ def download_image(url: str, config: ImageDownloadConfig | None = None) -> Image
         config = ImageDownloadConfig()
 
     url, file_ext = _validate_url(url, config.ALLOWED_FILE_EXTENSIONS)
-
-    tmp_path = None
-    try:
-        tmp_path, img = _download_to_tempfile(url, config)
-        img.load()  # Force load the image to catch any malformed data
-        _validate_image(img, file_ext, config)
-        return img
-    finally:
-        if tmp_path:
-            with suppress(OSError):
-                os.unlink(tmp_path)  # noqa: PTH108
+    tmp_path, img = _download_to_tempfile(url, config)
+    img.load()  # Force load the image to catch any malformed data
+    _validate_image(img, file_ext, config)
+    return img
