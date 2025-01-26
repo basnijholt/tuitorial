@@ -81,9 +81,57 @@ def _validate_image(
         raise ValueError(msg)
 
 
+def _validate_response_headers(response: httpx.Response, config: ImageDownloadConfig) -> None:
+    """Validate content length and type from response headers."""
+    content_length = response.headers.get("content-length")
+    if content_length and int(content_length) > config.MAX_FILE_SIZE:
+        msg = f"File too large (from headers): {content_length} bytes"
+        raise ValueError(msg)
+
+    content_type = response.headers.get("content-type", "").lower()
+    if content_type not in config.ALLOWED_CONTENT_TYPES:
+        msg = f"Invalid content type: {content_type}"
+        raise ValueError(msg)
+
+
+def _stream_to_file(
+    response: httpx.Response,
+    tmp_file: tempfile._TemporaryFileWrapper,
+    max_size: int,
+) -> None:
+    """Stream response content to file while checking size."""
+    size = 0
+    for chunk in response.iter_bytes():
+        size += len(chunk)
+        if size > max_size:
+            msg = f"File too large: {size} bytes"
+            raise ValueError(msg)
+        tmp_file.write(chunk)
+    tmp_file.flush()
+
+
+def _verify_image_format(img: Image.Image, config: ImageDownloadConfig) -> None:
+    """Verify the image format is valid and allowed."""
+    if not img.format:
+        msg = "Unable to determine image format"
+        raise ValueError(msg)
+
+    format_to_mime = {
+        "JPEG": "image/jpeg",
+        "PNG": "image/png",
+        "GIF": "image/gif",
+        "WEBP": "image/webp",
+    }
+
+    detected_mime = format_to_mime.get(img.format)
+    if not detected_mime or detected_mime not in config.ALLOWED_CONTENT_TYPES:
+        msg = f"Invalid image format: {img.format}"
+        raise ValueError(msg)
+
+
 def _download_to_tempfile(url: str, config: ImageDownloadConfig) -> tuple[str, Image.Image]:
     """Download image to temporary file and perform initial validations."""
-    tmp_file = tempfile.NamedTemporaryFile(prefix=secrets.token_hex(8), delete=False)
+    tmp_file = tempfile.NamedTemporaryFile(prefix=secrets.token_hex(8), delete=False)  # noqa: SIM115
     try:
         with (
             httpx.Client(
@@ -94,53 +142,16 @@ def _download_to_tempfile(url: str, config: ImageDownloadConfig) -> tuple[str, I
             client.stream("GET", url) as response,
         ):
             response.raise_for_status()
+            _validate_response_headers(response, config)
+            _stream_to_file(response, tmp_file, config.MAX_FILE_SIZE)
 
-            # Check content length before downloading
-            content_length = response.headers.get("content-length")
-            if content_length and int(content_length) > config.MAX_FILE_SIZE:
-                msg = f"File too large (from headers): {content_length} bytes"
-                raise ValueError(msg)  # noqa: TRY301
-
-            # Validate content type from headers
-            content_type = response.headers.get("content-type", "").lower()
-            if content_type not in config.ALLOWED_CONTENT_TYPES:
-                msg = f"Invalid content type: {content_type}"
-                raise ValueError(msg)  # noqa: TRY301
-
-            # Stream the file while checking size
-            size = 0
-            for chunk in response.iter_bytes():
-                size += len(chunk)
-                if size > config.MAX_FILE_SIZE:
-                    msg = f"File too large: {size} bytes"
-                    raise ValueError(msg)  # noqa: TRY301
-                tmp_file.write(chunk)
-
-            tmp_file.flush()
-
-            # Load and verify the image format
             try:
                 img = Image.open(tmp_file.name)
             except Exception as e:
                 msg = f"Failed to open image: {e}"
                 raise ValueError(msg) from e
 
-            if not img.format:
-                msg = "Unable to determine image format"
-                raise ValueError(msg)
-
-            format_to_mime = {
-                "JPEG": "image/jpeg",
-                "PNG": "image/png",
-                "GIF": "image/gif",
-                "WEBP": "image/webp",
-            }
-
-            detected_mime = format_to_mime.get(img.format)
-            if not detected_mime or detected_mime not in config.ALLOWED_CONTENT_TYPES:
-                msg = f"Invalid image format: {img.format}"
-                raise ValueError(msg)  # noqa: TRY301
-
+            _verify_image_format(img, config)
             return tmp_file.name, img
 
     except Exception:
