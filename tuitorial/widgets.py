@@ -6,8 +6,6 @@ import itertools
 import os.path
 import re
 import shutil
-import tempfile
-import urllib.request
 from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
@@ -15,7 +13,6 @@ from re import Pattern
 from typing import TYPE_CHECKING, Literal, NamedTuple
 
 import rich
-from PIL import Image as PILImage
 from pyfiglet import Figlet
 from rich.style import Style
 from rich.syntax import Syntax
@@ -24,10 +21,12 @@ from textual.containers import Container
 from textual.css.scalar import Scalar
 from textual.widgets import Markdown, RichLog, Static
 
+from ._utils import download_image
 from .highlighting import Focus, FocusType, _BetweenTuple, _RangeTuple, _StartsWithTuple
 
 if TYPE_CHECKING:
     import textual_image.widget
+    from PIL import Image as PILImage
     from textual.app import ComposeResult
 
 
@@ -56,16 +55,7 @@ class ImageStep:
             return
         if isinstance(self.image, str) and self.image.startswith("http"):
             with suppress(Exception):
-                self.image = _download_image(self.image)
-
-
-def _download_image(url: str) -> PILImage:
-    with (
-        urllib.request.urlopen(url) as response,  # noqa: S310
-        tempfile.NamedTemporaryFile(delete=False) as tmp_file,
-    ):
-        tmp_file.write(response.read())
-        return PILImage.open(tmp_file.name)
+                self.image = download_image(self.image)
 
 
 class TitleSlide(Container):

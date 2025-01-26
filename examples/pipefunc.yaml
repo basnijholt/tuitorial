@@ -6,6 +6,7 @@ title_slide:
     - by Bas Nijholt <bas@nijho.lt>
     - docs: https://pipefunc.readthedocs.io
     - source: https://github.com/pipefunc/pipefunc
+    - presentation source: https://github.com/basnijholt/tuitorial
 chapters:
   - title: "Introduction"
     type: bullet_points
