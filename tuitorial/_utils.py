@@ -1,7 +1,8 @@
 import os
 import secrets
 import tempfile
-from contextlib import suppress
+from collections.abc import Iterator
+from contextlib import contextmanager, suppress
 from dataclasses import dataclass
 from typing import Final
 from urllib.parse import urlparse
@@ -11,6 +12,36 @@ from PIL import Image
 
 DEFAULT_ALLOWED_CONTENT_TYPES = ("image/jpeg", "image/png", "image/gif", "image/webp")
 DEFAULT_ALLOWED_FILE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".gif", ".webp")
+FORMAT_TO_MIME = {
+    "JPEG": "image/jpeg",
+    "PNG": "image/png",
+    "GIF": "image/gif",
+    "WEBP": "image/webp",
+}
+
+EXTENSION_TO_FORMAT = {
+    ".jpg": "jpeg",
+    ".jpeg": "jpeg",
+    ".png": "png",
+    ".gif": "gif",
+    ".webp": "webp",
+}
+
+
+class ImageValidationError(ValueError):
+    """Raised when image validation fails."""
+
+
+@contextmanager
+def _temp_file() -> Iterator[tempfile._TemporaryFileWrapper]:
+    """Create a temporary file that's always cleaned up."""
+    tmp_file = tempfile.NamedTemporaryFile(prefix=secrets.token_hex(8), delete=False)  # noqa: SIM115
+    try:
+        yield tmp_file
+    finally:
+        tmp_file.close()
+        with suppress(OSError):
+            os.unlink(tmp_file.name)  # noqa: PTH108
 
 
 @dataclass
@@ -63,22 +94,13 @@ def _validate_image(
         or img.height < config.MIN_IMAGE_DIMENSION
     ):
         msg = f"Invalid image dimensions: {img.width}x{img.height}"
-        raise ValueError(msg)
+        raise ImageValidationError(msg)
 
-    # Verify image format matches extension
     actual_format = img.format.lower() if img.format else None
-    expected_formats = {
-        ".jpg": "jpeg",
-        ".jpeg": "jpeg",
-        ".png": "png",
-        ".gif": "gif",
-        ".webp": "webp",
-    }
-    if not actual_format or actual_format != expected_formats.get(file_ext):
-        msg = (
-            f"Image format mismatch: got {actual_format}, expected {expected_formats.get(file_ext)}"
-        )
-        raise ValueError(msg)
+    expected_format = EXTENSION_TO_FORMAT.get(file_ext)
+    if not actual_format or actual_format != expected_format:
+        msg = f"Image format mismatch: got {actual_format}, expected {expected_format}"
+        raise ImageValidationError(msg)
 
 
 def _validate_response_headers(response: httpx.Response, config: ImageDownloadConfig) -> None:
@@ -131,33 +153,27 @@ def _verify_image_format(img: Image.Image, config: ImageDownloadConfig) -> None:
 
 def _download_to_tempfile(url: str, config: ImageDownloadConfig) -> tuple[str, Image.Image]:
     """Download image to temporary file and perform initial validations."""
-    tmp_file = tempfile.NamedTemporaryFile(prefix=secrets.token_hex(8), delete=False)  # noqa: SIM115
-    try:
-        with (
-            httpx.Client(
-                timeout=config.TIMEOUT,
-                follow_redirects=True,
-                max_redirects=config.MAX_REDIRECTS,
-            ) as client,
-            client.stream("GET", url) as response,
-        ):
-            response.raise_for_status()
-            _validate_response_headers(response, config)
-            _stream_to_file(response, tmp_file, config.MAX_FILE_SIZE)
+    with (
+        _temp_file() as tmp_file,
+        httpx.Client(
+            timeout=config.TIMEOUT,
+            follow_redirects=True,
+            max_redirects=config.MAX_REDIRECTS,
+        ) as client,
+        client.stream("GET", url) as response,
+    ):
+        response.raise_for_status()
+        _validate_response_headers(response, config)
+        _stream_to_file(response, tmp_file, config.MAX_FILE_SIZE)
 
-            try:
-                img = Image.open(tmp_file.name)
-            except Exception as e:
-                msg = f"Failed to open image: {e}"
-                raise ValueError(msg) from e
+        try:
+            img = Image.open(tmp_file.name)
+        except Exception as e:
+            msg = f"Failed to open image: {e}"
+            raise ImageValidationError(msg) from e
 
-            _verify_image_format(img, config)
-            return tmp_file.name, img
-
-    except Exception:
-        with suppress(OSError):
-            os.unlink(tmp_file.name)  # noqa: PTH108
-        raise
+        _verify_image_format(img, config)
+        return tmp_file.name, img
 
 
 def download_image(url: str, config: ImageDownloadConfig | None = None) -> Image.Image:
