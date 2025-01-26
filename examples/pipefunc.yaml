@@ -52,7 +52,7 @@ chapters:
           [f, g, h],
           debug=True,  # optionally print debug information
           profile=True,  # optionally profile the pipeline
-          cache_type="hybrid",  # optionally cache the pipeline
+          cache_type="lru",  # optionally cache the pipeline
       )
 
       pipeline.visualize()
