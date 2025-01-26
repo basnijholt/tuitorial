@@ -63,6 +63,7 @@ dev = [
 ]
 webapp = [
     "panel>=1.5.5",
+    "httpx",
 ]
 readme = [
     "markdown-code-runner>=2.1.0",
