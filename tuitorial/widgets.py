@@ -50,6 +50,9 @@ class ImageStep:
 
     def _maybe_download_image(self) -> None:
         """Download the image to the specified path."""
+        if os.environ.get("APP_ENV") == "TUITORIAL_DOCKER_WEBAPP":
+            # Disable image download in the Docker webapp environment
+            return
         if isinstance(self.image, str) and self.image.startswith("http"):
             with suppress(Exception):
                 self.image = _download_image(self.image)
