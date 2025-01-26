@@ -1,3 +1,4 @@
+# STart 11:41
 title_slide:
   title: PipeFunc
   subtitle: |
@@ -23,7 +24,7 @@ chapters:
       - text: "Running on laptop usually requires vastly different code than in parallel on a cluster."
         extra: "Adapting code for different execution environments often involves significant code duplication and platform-specific logic."
       - text: "Reproducibility and maintainability are crucial in scientific computing."
-        extra: "It's essential to be able to rerun experiments with the same results and easily update or extend the workflow."
+        extra: "It's essential to be able to rerun experiments and get the same results and easily update or extend the workflow."
       - text: "Ideally, we focus on the science and not the plumbing."
         extra: "Scientists should spend more time on the problem and less time on writing execution details and boilerplate code."
       - text: "What if we could automate the creation, execution, and management of function pipelines?"
@@ -377,7 +378,7 @@ chapters:
             style: "bright_magenta bold"
 
       - description: |
-          Finally, we print the output of the [bold blue]double_it[/] function by accessing the [bold blue]output[/] attribute of the [bold blue]Result[/] object.
+          Finally, we print the output of the [bold blue]double_it[/] function by accessing the [bold blue].output[/] attribute of the [bold blue]Result[/] object.
         focus:
           - type: literal
             text: "result"
@@ -692,3 +693,47 @@ chapters:
             text: array([3, 6, 9])
             style: "bright_red bold"
             match_index: 0
+
+  - title: "What's next?"
+    code: |
+      These were the basics of pipefunc.
+      Let's continue with the tutorial on pipefunc.readthedocs.io:
+
+      Run the tutorial locally with:
+      ```bash
+      # Start tutorial:
+      uvx --with "pipefunc[docs]" opennb pipefunc/pipefunc/example.ipynb
+      pixi x -s pipefunc-extras -s opennb pipefunc/pipefunc/example.ipynb
+      ```
+      If time permits, look at:
+      * Physics based example (`physics-simulation.ipynb`)
+      * Type checking (`type-checking.ipynb`)
+      * Error-handling (`error-handing.ipynb`)
+      * Renaming and defaults (`function-io.ipynb`)
+      * Parameter scopes (`parameter-scopes.ipynb`)
+      * Caching (`example.ipynb`)
+      * Profiling (`example.ipynb`)
+      * Parallel execution (`execution-and-parallelism.ipynb`)
+
+    steps:
+      - description: |
+          What's next?
+        focus:
+          - type: markdown
+      - description: |
+          Download all notebooks with:
+          [bold blue]uv run https://raw.githubusercontent.com/pipefunc/pipefunc/refs/heads/main/get-notebooks.py[/]
+        focus:
+          - type: markdown
+      - description: |
+          Or run the main tutorial locally with:
+          [bold blue]uvx --with "pipefunc[docs]" opennb pipefunc/pipefunc/example.ipynb[/]
+          [bold blue]pixi x -s pipefunc-extras -s opennb pipefunc/pipefunc/example.ipynb[/]
+        focus:
+          - type: markdown
+      - description: |
+          Or run some of the documentation pages like:
+          [bold blue]uvx --with "pipefunc[docs]" opennb pipefunc/pipefunc/docs/source/examples/physics-simulation.md[/]
+          [bold blue]pixi x -s pipefunc-extras -s opennb pipefunc/pipefunc/docs/source/examples/physics-simulation.md[/]
+        focus:
+          - type: markdown
