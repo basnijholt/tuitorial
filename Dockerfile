@@ -6,4 +6,5 @@ WORKDIR /app
 USER appuser
 RUN uv sync
 EXPOSE 80
+ENV APP_ENV=TUITORIAL_DOCKER_WEBAPP
 CMD ["uv", "run", "--group", "webapp", "panel", "serve", "--port", "7860", "--address", "0.0.0.0", "--allow-websocket-origin", "*", "webapp/app.py"]
