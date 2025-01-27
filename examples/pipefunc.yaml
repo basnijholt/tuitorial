@@ -232,7 +232,7 @@ chapters:
       f(a=1, b=2)  # returns 3
       f.func # is the original function
 
-      pipeline = Pipeline([f])
+      pipeline = Pipeline([...])
       pipeline.info() # returns:
       # {'inputs': ('a', 'b', 'x'), 'outputs': ('e',), 'intermediate_outputs': ('c', 'd'),
       #  'required_inputs': ('a', 'b'), 'optional_inputs': ('x',)}
@@ -287,7 +287,7 @@ chapters:
       - description: |
           Another useful method is [bold blue]pipeline.info()[/] which returns information about the pipeline.
           Or call [bold blue]pipeline.info(print_table=True)[/] to print a pretty table.
-          Also check [bold blue]pipeline.defaults()[/] and or any of the 20+ other methods/properties.
+          Also check [bold blue]pipeline.defaults[/] and or any of the 20+ other methods/properties.
         focus:
           - type: line_containing
             pattern: pipeline =
@@ -697,14 +697,8 @@ chapters:
   - title: "What's next?"
     code: |
       These were the basics of pipefunc.
-      Let's continue with the tutorial on pipefunc.readthedocs.io:
+      Let's continue with the tutorial on pipefunc.readthedocs.io.
 
-      Run the tutorial locally with:
-      ```bash
-      # Start tutorial:
-      uvx --with "pipefunc[docs]" opennb pipefunc/pipefunc/example.ipynb
-      pixi x -s pipefunc-extras -s opennb pipefunc/pipefunc/example.ipynb
-      ```
       If time permits, look at:
       * Physics based example (`physics-simulation.ipynb`)
       * Type checking (`type-checking.ipynb`)
@@ -727,13 +721,13 @@ chapters:
           - type: markdown
       - description: |
           Or run the main tutorial locally with:
-          [bold blue]uvx --with "pipefunc[docs]" opennb pipefunc/pipefunc/example.ipynb[/]
+          [bold blue]uvx --with "pipefunc\[docs]" opennb pipefunc/pipefunc/example.ipynb[/]
           [bold blue]pixi x -s pipefunc-extras -s opennb pipefunc/pipefunc/example.ipynb[/]
         focus:
           - type: markdown
       - description: |
           Or run some of the documentation pages like:
-          [bold blue]uvx --with "pipefunc[docs]" opennb pipefunc/pipefunc/docs/source/examples/physics-simulation.md[/]
+          [bold blue]uvx --with "pipefunc\[docs]" opennb pipefunc/pipefunc/docs/source/examples/physics-simulation.md[/]
           [bold blue]pixi x -s pipefunc-extras -s opennb pipefunc/pipefunc/docs/source/examples/physics-simulation.md[/]
         focus:
           - type: markdown
