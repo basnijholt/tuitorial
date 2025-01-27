@@ -9,7 +9,7 @@ repos:
       - id: debug-statements
       - id: check-ast
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.9.2"
+    rev: "v0.9.3"
     hooks:
       - id: ruff
         exclude: docs/source/conf.py|ipynb_filter.py
