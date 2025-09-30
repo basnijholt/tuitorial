@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from rich.style import Style
 
-from tuitorial import Focus, ImageStep, Step
+from tuitorial import Focus, ImageStep, Step, TerminalStep
 from tuitorial.parse_yaml import (
     InvalidYamlError,
     _parse_chapter,
@@ -170,6 +170,34 @@ def test_parse_step_with_multiple_focus() -> None:
     assert len(step.focuses) == 2
     assert step.focuses[0].type == Focus.type.LITERAL
     assert step.focuses[1].type == Focus.type.REGEX
+
+
+def test_parse_terminal_step_with_command_list() -> None:
+    """Terminal steps accept a list command and optional configuration."""
+    step_data = {
+        "description": "Shell",
+        "terminal": {
+            "command": ["bash", "-lc", "echo hello"],
+            "cwd": "/tmp",
+            "env": {"FOO": "bar"},
+        },
+    }
+
+    step = _parse_step(step_data)
+
+    assert isinstance(step, TerminalStep)
+    assert step.description == "Shell"
+    assert step.command == ["bash", "-lc", "echo hello"]
+    assert step.env == {"FOO": "bar"}
+    assert step.cwd and step.cwd.as_posix() == "/tmp"
+
+
+def test_parse_terminal_step_requires_mapping() -> None:
+    """Non-mapping terminal definitions raise a validation error."""
+    step_data = {"description": "Shell", "terminal": "bash"}
+
+    with pytest.raises(InvalidYamlError, match="terminal step definition"):
+        _parse_step(step_data)
 
 
 def test_parse_chapter_with_code_file(tmp_path):

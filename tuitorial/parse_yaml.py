@@ -21,7 +21,7 @@ from textual._context import active_app
 from textual.app import App
 from textual.widgets import TextArea
 
-from tuitorial import Chapter, Focus, ImageStep, Step, TitleSlide, TuitorialApp
+from tuitorial import Chapter, Focus, ImageStep, Step, TerminalStep, TitleSlide, TuitorialApp
 from tuitorial.helpers import create_bullet_point_chapter
 from tuitorial.highlighting import FocusType
 
@@ -119,19 +119,44 @@ def _validate_step_data(step_data: dict) -> None:
             f"Invalid step definition: Each step must have a 'description' key. Found: {step_data}"
         )
         raise InvalidYamlError(msg)
-    if "image" in step_data and "focus" in step_data:
+    has_image = "image" in step_data
+    has_terminal = "terminal" in step_data
+    has_focus = "focus" in step_data
+    if has_image and has_focus:
         msg = (
-            f"Invalid step definition: A step cannot have both 'image' and 'focus' keys. "
+            "Invalid step definition: A step cannot have both 'image' and 'focus' keys. "
             f"Found: {step_data}"
         )
         raise InvalidYamlError(msg)
-    if "image" in step_data:
+    if has_image and has_terminal:
+        msg = (
+            "Invalid step definition: A step cannot have both 'image' and 'terminal' keys. "
+            f"Found: {step_data}"
+        )
+        raise InvalidYamlError(msg)
+    if has_terminal and has_focus:
+        msg = (
+            "Invalid step definition: A step cannot have both 'terminal' and 'focus' keys. "
+            f"Found: {step_data}"
+        )
+        raise InvalidYamlError(msg)
+    if has_image:
         allowed_keys = set(inspect.signature(ImageStep).parameters)
         for key in step_data:
             if key not in allowed_keys:
                 allowed = ", ".join(allowed_keys)
                 msg = (
                     f"Invalid key '{key}' for ImageStep in step with description '{step_data['description']}'. "
+                    f"Allowed keys are: {allowed}"
+                )
+                raise InvalidYamlError(msg)
+    elif has_terminal:
+        allowed_keys = {"description", "terminal"}
+        for key in step_data:
+            if key not in allowed_keys:
+                allowed = ", ".join(allowed_keys)
+                msg = (
+                    f"Invalid key '{key}' for TerminalStep in step with description '{step_data['description']}'. "
                     f"Allowed keys are: {allowed}"
                 )
                 raise InvalidYamlError(msg)
@@ -147,7 +172,7 @@ def _validate_step_data(step_data: dict) -> None:
                 raise InvalidYamlError(msg)
 
 
-def _parse_step(step_data: dict) -> Step | ImageStep:
+def _parse_step(step_data: dict) -> Step | ImageStep | TerminalStep:
     """Parses a single step from the YAML data."""
     _validate_step_data(step_data)
     description = step_data["description"]
@@ -159,6 +184,35 @@ def _parse_step(step_data: dict) -> Step | ImageStep:
         height = step_data.get("height")
         halign = step_data.get("halign")
         return ImageStep(description, image, width, height, halign)
+    if "terminal" in step_data:
+        terminal_config = step_data.get("terminal") or {}
+        if not isinstance(terminal_config, dict):
+            msg = (
+                "Invalid terminal step definition: 'terminal' must be a mapping with optional "
+                "'command', 'cwd', and 'env' keys."
+            )
+            raise InvalidYamlError(msg)
+
+        command = terminal_config.get("command")
+        if not isinstance(command, (str, list, type(None))):
+            msg = "Invalid terminal command: must be a string or list of strings."
+            raise InvalidYamlError(msg)
+        env_config = terminal_config.get("env")
+        if env_config is not None and not isinstance(env_config, dict):
+            msg = "Invalid terminal environment: 'env' must be a mapping of string keys to values."
+            raise InvalidYamlError(msg)
+
+        if isinstance(command, list):
+            command = [str(item) for item in command]
+
+        env = None if env_config is None else {str(k): str(v) for k, v in env_config.items()}
+
+        return TerminalStep(
+            description,
+            command=command,
+            cwd=terminal_config.get("cwd"),
+            env=env,
+        )
     # It's a regular Step
     focus_list = [_parse_focus(focus_data) for focus_data in step_data.get("focus", [])]
     return Step(description, focus_list)

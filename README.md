@@ -722,6 +722,52 @@ chapters:
 `tuitorial` supports displaying images within your tutorials using the `ImageStep` class.
 This allows you to incorporate visual aids, diagrams, or any other images to enhance your presentations.
 
+### 🖥️ Terminal Steps
+
+Want to demonstrate commands directly inside your tutorial? Use the new `TerminalStep` to embed an
+interactive shell session on any slide. When the step is active, you get a live terminal that runs
+in the background, so commands keep their state when you navigate away and return.
+
+<details>
+<summary><b>Python</b></summary>
+
+```python markdown-code-runner
+from tuitorial import Chapter, TerminalStep, TuitorialApp
+
+terminal_demo = TerminalStep(
+    "Run commands live",
+    command=["bash", "-lc", "echo 'Welcome to the terminal step!'"],
+)
+
+chapter = Chapter("Interactive Shell", "", [terminal_demo])
+
+TuitorialApp([chapter]).run()
+```
+
+</details>
+
+<details>
+<summary><b>YAML</b></summary>
+
+```yaml
+chapters:
+  - title: "Interactive Shell"
+    steps:
+      - description: "Run commands live"
+        terminal:
+          command:
+            - bash
+            - -lc
+            - echo 'Welcome to the terminal step!'
+          env:
+            DEMO: "1"
+```
+
+</details>
+
+By default the step launches your system shell in interactive mode. Provide a custom command,
+working directory (`cwd`), or environment variables (`env`) to tailor the session for your demo.
+
 #### ImageStep
 
 The `ImageStep` class takes the path or URL to an image file (or a PIL Image object) and a description as input.

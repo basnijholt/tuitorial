@@ -20,11 +20,13 @@ from pyfiglet import Figlet
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
+from textual._context import NoActiveAppError
 from textual.containers import Container
 from textual.css.scalar import Scalar
 from textual.widgets import Markdown, RichLog, Static
 
 from .highlighting import Focus, FocusType, _BetweenTuple, _RangeTuple, _StartsWithTuple
+from .terminal_widget import TerminalWidget
 
 if TYPE_CHECKING:
     import textual_image.widget
@@ -57,6 +59,24 @@ class ImageStep:
         if isinstance(self.image, str) and self.image.startswith("http"):
             with suppress(Exception):
                 self.image = _download_image(self.image)
+
+
+@dataclass
+class TerminalStep:
+    """A step that embeds an interactive terminal session."""
+
+    description: str
+    command: str | list[str] | None = None
+    cwd: str | Path | None = None
+    env: dict[str, str] | None = None
+
+    def __post_init__(self) -> None:
+        if isinstance(self.command, list):
+            self.command = [str(part) for part in self.command]
+        if self.env is not None:
+            self.env = {str(key): str(value) for key, value in self.env.items()}
+        if self.cwd is not None:
+            self.cwd = Path(self.cwd)
 
 
 def _download_image(url: str) -> PILImage:
@@ -192,7 +212,7 @@ def _ascii_art(text: str, font: str, gradient_name: str) -> tuple[list[str], lis
 class Chapter(Container):
     """A chapter of a tutorial, containing multiple steps."""
 
-    def __init__(self, title: str, code: str, steps: list[Step | ImageStep]) -> None:
+    def __init__(self, title: str, code: str, steps: list[Step | ImageStep | TerminalStep]) -> None:
         super().__init__()
         self.title = title or f"Untitled {id(self)}"
         self.code = code
@@ -202,7 +222,7 @@ class Chapter(Container):
         self.description = Static("", id="description")
 
     @property
-    def current_step(self) -> Step | ImageStep:
+    def current_step(self) -> Step | ImageStep | TerminalStep:
         """Get the current step."""
         if not self.steps:
             return Step("", [])  # Return an empty Step object if no steps
@@ -287,18 +307,23 @@ class ContentContainer(Container):
         image_text = Static("Image not available", id="image-text")
         image_text.styles.display = "none"
         self.image_container = Container(image, image_text, id="image-container")
+        self.terminal_container = Container(id="terminal-container")
+        self.terminal_container.styles.display = "none"
+        self._terminal_widgets: dict[int, TerminalWidget] = {}
 
     def compose(self) -> ComposeResult:
         """Compose the container with both widgets."""
         yield self.code_display
         yield self.markdown
         yield self.image_container
+        yield self.terminal_container
 
     async def show_code(self, focuses: list[Focus]) -> None:
         """Show code content."""
         self.code_display.styles.display = "block"
         self.markdown.styles.display = "none"
         self.image_container.styles.display = "none"
+        self.terminal_container.styles.display = "none"
         self.code_display.update_focuses(focuses)
 
     async def show_markdown(self) -> None:
@@ -306,6 +331,11 @@ class ContentContainer(Container):
         self.code_display.styles.display = "none"
         self.markdown.styles.display = "block"
         self.image_container.styles.display = "none"
+        self.terminal_container.styles.display = "none"
+        try:
+            self.markdown.update(self.code_display.code)
+        except NoActiveAppError:
+            self.markdown._markdown = self.code_display.code
 
     async def show_image(self, step: ImageStep) -> None:
         """Show image content."""
@@ -314,6 +344,7 @@ class ContentContainer(Container):
         self.code_display.styles.display = "none"
         self.markdown.styles.display = "none"
         self.image_container.styles.display = "block"
+        self.terminal_container.styles.display = "none"
 
         if not isinstance(image_widget, Static):
             image_msg = self.query_one("#image-text", Static)
@@ -337,10 +368,36 @@ class ContentContainer(Container):
         if step.halign is not None:
             image_widget.styles.align_horizontal = step.halign
 
-    async def update_display(self, step: Step | ImageStep) -> None:
+    async def show_terminal(self, step: TerminalStep) -> None:
+        """Show terminal content."""
+        self.code_display.styles.display = "none"
+        self.markdown.styles.display = "none"
+        self.image_container.styles.display = "none"
+        self.terminal_container.styles.display = "block"
+
+        widget_key = id(step)
+        widget = self._terminal_widgets.get(widget_key)
+        if widget is None:
+            widget = TerminalWidget(
+                command=step.command,
+                cwd=step.cwd,
+                env=step.env,
+                id=f"terminal-{widget_key}",
+            )
+            self._terminal_widgets[widget_key] = widget
+            await self.terminal_container.mount(widget)
+
+        for child in self.terminal_container.children:
+            child.styles.display = "none"
+        widget.styles.display = "block"
+
+    async def update_display(self, step: Step | ImageStep | TerminalStep) -> None:
         """Update the display based on the step type."""
         if isinstance(step, ImageStep):
             await self.show_image(step)
+            return
+        if isinstance(step, TerminalStep):
+            await self.show_terminal(step)
             return
 
         assert isinstance(step, Step)
@@ -758,13 +815,13 @@ def _calculate_height(
 
 
 def _calculate_heights_of_steps(
-    steps: list[Step | ImageStep],
+    steps: list[Step | ImageStep | TerminalStep],
     width: int | None = None,
 ) -> int:
     """Calculate the height of each step."""
     height = 0
     for step in steps:
-        if isinstance(step, Step):
+        if isinstance(step, (Step, TerminalStep)):
             h_step = _calculate_height(step.description, width)
             height = max(height, h_step)
     return height
