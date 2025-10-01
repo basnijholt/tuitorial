@@ -42,6 +42,7 @@
   - [🎨 Custom Highlighting Patterns](#-custom-highlighting-patterns)
   - [✨ Multiple Highlights per Step](#-multiple-highlights-per-step)
   - [🖼️ Displaying Images](#-displaying-images)
+  - [🖥️ Terminal Steps](#-terminal-steps)
     - [ImageStep](#imagestep)
     - [Image Positioning and Sizing](#image-positioning-and-sizing)
     - [Alignment](#alignment)
