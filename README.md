@@ -1525,7 +1525,7 @@ chapters:
       - text: "Here is the second point."
         extra: "More details about point 2."
       - text: "And finally, the third point."
-        extra: "More details about point 2."
+        extra: "Final thoughts on point 3."
       - Fourth point without extra
     style: "green bold"
 ```
