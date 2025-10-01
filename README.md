@@ -84,7 +84,7 @@
 - **Reproducible and Versionable:** Define tutorials in code (Python or YAML) for easy tracking and updates.
 - **Lightweight and Fast:** No more bloated presentation software.
 - **Perfect for Nerds:** Ideal for explaining code, technical workshops, interactive documentation, and anyone who loves the terminal.
-- **Parametrize:** Create dynamic tutorials driven by code snippets and focus points.
+- **Parameterize:** Create dynamic tutorials driven by code snippets and focus points.
 
 ## 📸 Recording
 
@@ -1525,7 +1525,7 @@ chapters:
       - text: "Here is the second point."
         extra: "More details about point 2."
       - text: "And finally, the third point."
-        extra: "More details about point 2."
+        extra: "Final thoughts on point 3."
       - Fourth point without extra
     style: "green bold"
 ```
