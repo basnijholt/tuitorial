@@ -9,6 +9,8 @@ import sys
 import tempfile
 import traceback
 import urllib.request
+import zipfile
+from collections.abc import Callable
 from pathlib import Path
 
 import chardet
@@ -465,8 +467,102 @@ def cli() -> None:  # pragma: no cover
         run_from_yaml(yaml_file, chapter_index=args.chapter, step_index=args.step)
         os.remove(yaml_file)  # Clean up the temporary file  # noqa: PTH107
         return
+
+    source_path = Path(args.yaml_source).expanduser().resolve()
+
+    if _run_from_zip(
+        source_path,
+        watch=args.watch,
+        chapter=args.chapter,
+        step=args.step,
+        theme=args.theme,
+    ):
+        return
+
     # Use the provided local YAML file
-    path = Path(args.yaml_source)
-    os.chdir(path.parent)
+    path = source_path
     run = run_dev_mode if args.watch else run_from_yaml
-    run(path.name, chapter_index=args.chapter, step_index=args.step, theme=args.theme)
+    _run_with_chdir(
+        path,
+        run,
+        chapter=args.chapter,
+        step=args.step,
+        theme=args.theme,
+    )
+
+
+def _run_with_chdir(
+    yaml_path: Path,
+    runner: Callable[..., None],
+    *,
+    chapter: int | None,
+    step: int,
+    theme: str | None,
+) -> None:
+    """Run `runner` ensuring relative paths resolve from the YAML location."""
+    yaml_path = yaml_path.expanduser()
+
+    if not yaml_path.exists():
+        rich.print(f"[red bold]Error[/]: YAML file not found: {yaml_path}")
+        return
+
+    original_cwd = Path.cwd()
+    try:
+        os.chdir(yaml_path.parent)
+        runner(yaml_path.name, chapter_index=chapter, step_index=step, theme=theme)
+    finally:
+        os.chdir(original_cwd)
+
+
+def _run_from_zip(
+    source_path: Path,
+    *,
+    watch: bool,
+    chapter: int | None,
+    step: int,
+    theme: str | None,
+) -> bool:
+    """Return True if the YAML source was handled via ZIP extraction."""
+    if source_path.suffix.lower() != ".zip":
+        return False
+
+    if watch:
+        rich.print("[red bold]Error[/]: `--watch` is not supported for ZIP archives.")
+        return True
+
+    if not source_path.exists():
+        rich.print(f"[red bold]Error[/]: ZIP archive not found: {source_path}")
+        return True
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        with zipfile.ZipFile(source_path) as archive:
+            archive.extractall(tmp_dir)
+
+        extracted_dir = Path(tmp_dir)
+        yaml_candidates = list(extracted_dir.rglob("tuitorial.yaml"))
+
+        if not yaml_candidates:
+            rich.print(
+                f"[red bold]Error[/]: No 'tuitorial.yaml' found in archive {source_path.name}.",
+            )
+            return True
+
+        if len(yaml_candidates) > 1:
+            rich.print(
+                (
+                    f"[red bold]Error[/]: Multiple 'tuitorial.yaml' files found in archive"
+                    f" {source_path.name}."
+                ),
+            )
+            return True
+
+        yaml_path = yaml_candidates[0]
+        _run_with_chdir(
+            yaml_path,
+            run_from_yaml,
+            chapter=chapter,
+            step=step,
+            theme=theme,
+        )
+
+    return True
