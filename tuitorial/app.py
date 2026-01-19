@@ -218,7 +218,10 @@ class TuitorialApp(App):
 
     def _predownload_images(self) -> None:
         """Preload images in a thread pool."""
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
         executor = concurrent.futures.ThreadPoolExecutor()
         for chapter in self.chapters:
             for step in chapter.steps:
