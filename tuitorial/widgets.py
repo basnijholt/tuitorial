@@ -228,8 +228,8 @@ class Chapter(Container):
         step = self.current_step
         await self.content.update_display(step)
         step_counter = f"**Step {self.current_index + 1}/{len(self.steps)}**\n\n"
-        markdown_content = RichMarkdown(step_counter + step.description)
-        self.description.update(markdown_content)
+        markdown_text = _render_markdown(step_counter + step.description)
+        self.description.update(markdown_text)
         self._set_description_height()
 
     async def next_step(self) -> None:
@@ -742,6 +742,22 @@ def _highlight_with_syntax(code: str, focus: Focus) -> Text:
         line_numbers=focus.extra.get("line_numbers", False),
     )
     return syntax.highlight(code)
+
+
+def _render_markdown(text: str, width: int | None = None) -> Text:
+    """Render Markdown text to a Rich Text object."""
+    from io import StringIO
+
+    from rich.console import Console
+
+    if width is None or width == 0:
+        width = shutil.get_terminal_size().columns - 8
+
+    string_io = StringIO()
+    console = Console(file=string_io, width=width, force_terminal=True)
+    console.print(RichMarkdown(text))
+    output = string_io.getvalue()
+    return Text.from_ansi(output)
 
 
 def _calculate_height(
