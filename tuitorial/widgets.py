@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Literal, NamedTuple
 
 from PIL import Image as PILImage
 from pyfiglet import Figlet
-from rich.markdown import Markdown as RichMarkdown
+from rich.console import Console as RichConsole
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
@@ -227,9 +227,8 @@ class Chapter(Container):
         """Update the display with current focus or image."""
         step = self.current_step
         await self.content.update_display(step)
-        step_counter = f"**Step {self.current_index + 1}/{len(self.steps)}**\n\n"
-        markdown_text = _render_markdown(step_counter + step.description)
-        self.description.update(markdown_text)
+        step_counter = f"[bold]Step {self.current_index + 1}/{len(self.steps)}[/bold]\n\n"
+        self.description.update(step_counter + step.description)
         self._set_description_height()
 
     async def next_step(self) -> None:
@@ -744,38 +743,17 @@ def _highlight_with_syntax(code: str, focus: Focus) -> Text:
     return syntax.highlight(code)
 
 
-def _render_markdown(text: str, width: int | None = None) -> Text:
-    """Render Markdown text to a Rich Text object."""
-    from io import StringIO
-
-    from rich.console import Console
-
-    if width is None or width == 0:
-        width = shutil.get_terminal_size().columns - 8
-
-    string_io = StringIO()
-    console = Console(file=string_io, width=width, force_terminal=True)
-    console.print(RichMarkdown(text))
-    output = string_io.getvalue()
-    return Text.from_ansi(output)
-
-
 def _calculate_height(
     text: str,
     width: int | None = None,
 ) -> int:
-    """Calculate the height of the Markdown content."""
+    """Calculate the height of Rich markup content."""
     if width is None or width == 0:
         width = shutil.get_terminal_size().columns - 8
-    from io import StringIO
-
-    from rich.console import Console
-
-    string_io = StringIO()
-    console = Console(file=string_io, width=width, force_terminal=True)
-    console.print(RichMarkdown(text))
-    output = string_io.getvalue()
-    return output.count("\n")
+    console = RichConsole(width=width)
+    rich_text = Text.from_markup(text)
+    lines = rich_text.wrap(console, width=width)
+    return len(lines)
 
 
 def _calculate_heights_of_steps(
@@ -791,7 +769,7 @@ def _calculate_heights_of_steps(
     for i, step in enumerate(steps):
         if isinstance(step, Step):
             # Include step counter prefix as it appears in actual rendering
-            step_counter = f"**Step {i + 1}/{n_steps}**\n\n"
+            step_counter = f"[bold]Step {i + 1}/{n_steps}[/bold]\n\n"
             full_content = step_counter + step.description
             h_step = _calculate_height(full_content, width)
             height = max(height, h_step)
