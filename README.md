@@ -27,6 +27,7 @@
 - [📖 Usage](#-usage)
   - [📚 Multiple Chapters](#-multiple-chapters)
   - [🚶 Steps](#-steps)
+  - [📝 Markdown Descriptions](#-markdown-descriptions)
   - [🎯 Focus Types](#-focus-types)
     - [Literal Match](#literal-match)
     - [Regular Expression](#regular-expression)
