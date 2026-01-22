@@ -1,0 +1,81 @@
+title_slide:
+  title: "Markdown Descriptions Demo"
+  subtitle: "Rich formatting in your slide notes"
+
+chapters:
+  - title: "Basic Formatting"
+    code: |
+      def greet(name):
+          return f"Hello, {name}!"
+    steps:
+      - description: |
+          ## Welcome!
+
+          This description uses **Markdown** formatting.
+
+          - **Bold text** for emphasis
+          - *Italic text* for subtle emphasis
+          - `inline code` for technical terms
+        focus:
+          - type: literal
+            text: "def greet"
+            style: "bold bright_cyan"
+
+      - description: |
+          ### F-strings
+
+          The `f"..."` syntax allows **variable interpolation**.
+
+          > Pro tip: Always use f-strings for readability!
+        focus:
+          - type: literal
+            text: 'f"Hello'
+            style: "bold bright_yellow"
+
+  - title: "Lists and Structure"
+    code: |
+      # Three ways to loop
+      for i in range(10):
+          print(i)
+
+      while condition:
+          do_something()
+
+      [x for x in items]
+    steps:
+      - description: |
+          ## Looping in Python
+
+          1. **For loops** - iterate over sequences
+          2. **While loops** - repeat until condition false
+          3. **Comprehensions** - inline transformations
+        focus:
+          - type: line_containing
+            pattern: "Three ways"
+            style: "bold underline bright_cyan"
+
+      - description: |
+          ### The `for` loop
+
+          Most common pattern:
+          - Iterates over any *iterable*
+          - `range()` generates numbers
+        focus:
+          - type: literal
+            text: "for i in range"
+            style: "bold bright_green"
+
+      - description: |
+          ### List Comprehensions
+
+          Compact syntax for transforming data:
+
+          ```
+          [expression for item in iterable]
+          ```
+
+          **Readable** and **Pythonic**!
+        focus:
+          - type: line_containing
+            pattern: "[x for x"
+            style: "bold bright_magenta"
