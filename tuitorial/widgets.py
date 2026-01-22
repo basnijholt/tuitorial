@@ -10,13 +10,15 @@ import tempfile
 import urllib.request
 from contextlib import suppress
 from dataclasses import dataclass
+from io import StringIO
 from pathlib import Path
 from re import Pattern
 from typing import TYPE_CHECKING, Literal, NamedTuple
 
-import rich
 from PIL import Image as PILImage
 from pyfiglet import Figlet
+from rich.console import Console
+from rich.markdown import Markdown as RichMarkdown
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
@@ -218,18 +220,18 @@ class Chapter(Container):
 
     def _set_description_height(self) -> None:
         """Set the height of the description."""
-        padding_and_counter = 5  # 4 for padding and 1 for the step counter
+        padding = 4  # For widget padding/borders
         height_description = _calculate_heights_of_steps(self.steps, self.description.size.width)
-        max_description_height = height_description + padding_and_counter
+        max_description_height = height_description + padding
         self.description.styles.height = Scalar.from_number(max_description_height)
 
     async def update_display(self) -> None:
         """Update the display with current focus or image."""
         step = self.current_step
         await self.content.update_display(step)
-        self.description.update(
-            f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
-        )
+        step_counter = f"**Step {self.current_index + 1}/{len(self.steps)}**\n\n"
+        markdown_text = _render_markdown(step_counter + step.description)
+        self.description.update(markdown_text)
         self._set_description_height()
 
     async def next_step(self) -> None:
@@ -744,27 +746,48 @@ def _highlight_with_syntax(code: str, focus: Focus) -> Text:
     return syntax.highlight(code)
 
 
+def _render_markdown(text: str, width: int | None = None) -> Text:
+    """Render Markdown text to a Rich Text object."""
+    if width is None or width == 0:
+        width = shutil.get_terminal_size().columns - 8
+
+    string_io = StringIO()
+    console = Console(file=string_io, width=width, force_terminal=True)
+    console.print(RichMarkdown(text))
+    output = string_io.getvalue()
+    return Text.from_ansi(output)
+
+
 def _calculate_height(
     text: str,
     width: int | None = None,
 ) -> int:
-    """Calculate the height of the chapter."""
+    """Calculate the height of the Markdown content."""
     if width is None or width == 0:
         width = shutil.get_terminal_size().columns - 8
-    console = rich.get_console()
-    rich_text = Text.from_markup(text)
-    lines = rich_text.wrap(console, width=width)
-    return len(lines)
+
+    string_io = StringIO()
+    console = Console(file=string_io, width=width, force_terminal=True)
+    console.print(RichMarkdown(text))
+    output = string_io.getvalue()
+    return output.count("\n")
 
 
 def _calculate_heights_of_steps(
     steps: list[Step | ImageStep],
     width: int | None = None,
 ) -> int:
-    """Calculate the height of each step."""
+    """Calculate the max height across all steps.
+
+    Includes the step counter prefix that gets added during rendering.
+    """
     height = 0
-    for step in steps:
+    n_steps = len(steps)
+    for i, step in enumerate(steps):
         if isinstance(step, Step):
-            h_step = _calculate_height(step.description, width)
+            # Include step counter prefix as it appears in actual rendering
+            step_counter = f"**Step {i + 1}/{n_steps}**\n\n"
+            full_content = step_counter + step.description
+            h_step = _calculate_height(full_content, width)
             height = max(height, h_step)
     return height

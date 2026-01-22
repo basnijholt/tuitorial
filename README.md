@@ -27,6 +27,7 @@
 - [📖 Usage](#-usage)
   - [📚 Multiple Chapters](#-multiple-chapters)
   - [🚶 Steps](#-steps)
+  - [📝 Markdown Descriptions](#-markdown-descriptions)
   - [🎯 Focus Types](#-focus-types)
     - [Literal Match](#literal-match)
     - [Regular Expression](#regular-expression)
@@ -300,6 +301,57 @@ steps:
       - type: regex
         pattern: "pattern.*"
 ```
+
+### 📝 Markdown Descriptions
+
+Step descriptions support **Markdown formatting** using [Rich's Markdown renderer](https://rich.readthedocs.io/en/latest/markdown.html). This allows you to create richly formatted descriptions with headings, bold/italic text, lists, code snippets, and more.
+
+**Supported Markdown features:**
+
+- `## Headings` - Section headers
+- `**bold**` and `*italic*` - Text emphasis
+- `` `inline code` `` - Code snippets
+- `- bullet lists` and `1. numbered lists` - Lists
+- `> blockquotes` - Quoted text
+- Code blocks with triple backticks
+
+**Example (YAML):**
+
+```yaml
+steps:
+  - description: |
+      ## Welcome to the Tutorial
+
+      This step demonstrates **Markdown** formatting:
+
+      - **Bold text** for emphasis
+      - *Italic text* for subtle emphasis
+      - `inline code` for technical terms
+
+      > Pro tip: Use Markdown to make your descriptions more readable!
+    focus:
+      - type: literal
+        text: "some_function"
+```
+
+**Example (Python):**
+
+```python markdown-code-runner
+Step(
+    """## Key Concept
+
+This function does **two things**:
+
+1. Validates the input
+2. Returns the result
+
+Use `help(func)` for more info.""",
+    [Focus.literal("def func")]
+)
+```
+
+> [!NOTE]
+> Markdown descriptions also work with bullet point chapters via the `extra` field.
 
 ### 🎯 Focus Types
 
