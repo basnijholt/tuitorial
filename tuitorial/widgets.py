@@ -14,9 +14,9 @@ from pathlib import Path
 from re import Pattern
 from typing import TYPE_CHECKING, Literal, NamedTuple
 
-import rich
 from PIL import Image as PILImage
 from pyfiglet import Figlet
+from rich.markdown import Markdown as RichMarkdown
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
@@ -227,9 +227,9 @@ class Chapter(Container):
         """Update the display with current focus or image."""
         step = self.current_step
         await self.content.update_display(step)
-        self.description.update(
-            f"Step {self.current_index + 1}/{len(self.steps)}\n{step.description}",
-        )
+        step_counter = f"**Step {self.current_index + 1}/{len(self.steps)}**\n\n"
+        markdown_content = RichMarkdown(step_counter + step.description)
+        self.description.update(markdown_content)
         self._set_description_height()
 
     async def next_step(self) -> None:
@@ -748,13 +748,18 @@ def _calculate_height(
     text: str,
     width: int | None = None,
 ) -> int:
-    """Calculate the height of the chapter."""
+    """Calculate the height of the Markdown content."""
     if width is None or width == 0:
         width = shutil.get_terminal_size().columns - 8
-    console = rich.get_console()
-    rich_text = Text.from_markup(text)
-    lines = rich_text.wrap(console, width=width)
-    return len(lines)
+    from io import StringIO
+
+    from rich.console import Console
+
+    string_io = StringIO()
+    console = Console(file=string_io, width=width, force_terminal=True)
+    console.print(RichMarkdown(text))
+    output = string_io.getvalue()
+    return output.count("\n")
 
 
 def _calculate_heights_of_steps(
