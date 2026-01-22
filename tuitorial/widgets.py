@@ -218,9 +218,9 @@ class Chapter(Container):
 
     def _set_description_height(self) -> None:
         """Set the height of the description."""
-        padding_and_counter = 5  # 4 for padding and 1 for the step counter
+        padding = 4  # For widget padding/borders
         height_description = _calculate_heights_of_steps(self.steps, self.description.size.width)
-        max_description_height = height_description + padding_and_counter
+        max_description_height = height_description + padding
         self.description.styles.height = Scalar.from_number(max_description_height)
 
     async def update_display(self) -> None:
@@ -782,10 +782,17 @@ def _calculate_heights_of_steps(
     steps: list[Step | ImageStep],
     width: int | None = None,
 ) -> int:
-    """Calculate the height of each step."""
+    """Calculate the max height across all steps.
+
+    Includes the step counter prefix that gets added during rendering.
+    """
     height = 0
-    for step in steps:
+    n_steps = len(steps)
+    for i, step in enumerate(steps):
         if isinstance(step, Step):
-            h_step = _calculate_height(step.description, width)
+            # Include step counter prefix as it appears in actual rendering
+            step_counter = f"**Step {i + 1}/{n_steps}**\n\n"
+            full_content = step_counter + step.description
+            h_step = _calculate_height(full_content, width)
             height = max(height, h_step)
     return height
