@@ -13,9 +13,9 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.3
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: "3.14.2"
       - name: Install dependencies
