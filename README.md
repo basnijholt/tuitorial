@@ -113,28 +113,19 @@ from tuitorial import Chapter, Step, TuitorialApp, Focus
 from rich.style import Style
 
 # Your code to present
-code = '''
+code = """
 def hello(name: str) -> str:
     return f"Hello, {name}!"
 
 def main():
     print(hello("World"))
-'''
+"""
 
 # Define tutorial steps
 steps = [
-    Step(
-        "Function Definition",
-        [Focus.regex(r"def hello.*:$", style="bold yellow")]
-    ),
-    Step(
-        "Return Statement",
-        [Focus.literal('return f"Hello, {name}!"', style="bold green")]
-    ),
-    Step(
-        "Main Function",
-        [Focus.range(code.find("def main"), len(code), style="bold blue")]
-    ),
+    Step("Function Definition", [Focus.regex(r"def hello.*:$", style="bold yellow")]),
+    Step("Return Statement", [Focus.literal('return f"Hello, {name}!"', style="bold green")]),
+    Step("Main Function", [Focus.range(code.find("def main"), len(code), style="bold blue")]),
 ]
 
 # Create a chapter
@@ -210,10 +201,10 @@ run_from_yaml("tuitorial.yaml")
 
 ```python markdown-code-runner
 # First chapter
-chapter1_code = '''
+chapter1_code = """
 def greet(name: str) -> str:
     return f"Hello, {name}!"
-'''
+"""
 chapter1_steps = [
     Step("Greeting Function", [Focus.regex(r"def greet.*:$")]),
     Step("Return Statement", [Focus.literal('return f"Hello, {name}!"')]),
@@ -221,10 +212,10 @@ chapter1_steps = [
 chapter1 = Chapter("Greetings", chapter1_code, chapter1_steps)
 
 # Second chapter
-chapter2_code = '''
+chapter2_code = """
 def farewell(name: str) -> str:
     return f"Goodbye, {name}!"
-'''
+"""
 chapter2_steps = [
     Step("Farewell Function", [Focus.regex(r"def farewell.*:$")]),
     Step("Return Statement", [Focus.literal('return f"Goodbye, {name}!"')]),
@@ -285,8 +276,8 @@ Step(
     "Step Description",  # Shown in the UI
     [
         Focus.literal("some text"),  # One or more Focus objects
-        Focus.regex(r"pattern.*"),   # Can combine different focus types
-    ]
+        Focus.regex(r"pattern.*"),  # Can combine different focus types
+    ],
 )
 ```
 
@@ -346,7 +337,7 @@ This function does **two things**:
 2. Returns the result
 
 Use `help(func)` for more info.""",
-    [Focus.literal("def func")]
+    [Focus.literal("def func")],
 )
 ```
 
@@ -361,7 +352,7 @@ Use `help(func)` for more info.""",
 
 ```python markdown-code-runner
 Focus.literal("def", style="bold yellow")
-Focus.literal("def", style="bold yellow", match_index=[0, 2]) # Highlight the first and third "def"
+Focus.literal("def", style="bold yellow", match_index=[0, 2])  # Highlight the first and third "def"
 ```
 
 **YAML:**
@@ -654,10 +645,10 @@ FUNCTION_STYLE = Style(color="bright_yellow", bold=True)
 ARGUMENT_STYLE = Style(color="bright_green", italic=True)
 
 # Your code to present
-code = '''
+code = """
 def hello(name: str) -> str:
     return f"Hello, {name}!"
-'''
+"""
 
 # Create focused patterns
 patterns = [
@@ -714,10 +705,10 @@ from tuitorial import Chapter, Step, TuitorialApp, Focus
 from rich.style import Style
 
 # Your code to present
-code = '''
+code = """
 def hello(name: str) -> str:
     return f"Hello, {name}!"
-'''
+"""
 
 tutorial_steps = [
     Step(
@@ -725,7 +716,7 @@ tutorial_steps = [
         [
             Focus.literal("name", style="bold cyan"),
             Focus.regex(r"->.*$", style="bold yellow"),
-        ]
+        ],
     ),
     Step(
         "Complex Example",
@@ -876,9 +867,9 @@ chapters:
 from tuitorial import TuitorialApp, TitleSlide
 
 title_slide = TitleSlide(
-    "My Tutorial",     # Title text (required)
+    "My Tutorial",  # Title text (required)
     subtitle="An Awesome Tutorial",  # Optional subtitle
-    font="slant",   # Optional: PyFiglet font (see available fonts below)
+    font="slant",  # Optional: PyFiglet font (see available fonts below)
     gradient="lava",  # Optional: Gradient color (see available gradients below)
 )
 
@@ -924,6 +915,7 @@ You can find a full list of available fonts in the [PyFiglet documentation](http
 
 ```python
 import pyfiglet
+
 print(pyfiglet.FigletFont.getFonts())
 ```
 
